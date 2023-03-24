@@ -1,25 +1,25 @@
 build-backend:
-  on:
-    pull_request:
-  
-  runs-on: ubuntu-latest
-  steps:
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.10.1
-      with:
-        access_token: ${{ github.token }}
+on:
+  pull_request:
 
-    - name: "checkout repository"
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
+runs-on: ubuntu-latest
+steps:
+  - name: Cancel Previous Runs
+    uses: styfle/cancel-workflow-action@0.10.1
+    with:
+      access_token: ${{ github.token }}
 
-    - name: "setup java"
-      uses: actions/setup-java@v3
-      with:
-        distribution: temurin
-        java-version: 17
+  - name: "checkout repository"
+    uses: actions/checkout@v3
+    with:
+      submodules: recursive
 
-    - name: "build backend"
-      run: ./gradlew :bootJar
-      working-directory: ./backend
+  - name: "setup java"
+    uses: actions/setup-java@v3
+    with:
+      distribution: temurin
+      java-version: 17
+
+  - name: "build backend"
+    run: ./gradlew :bootJar
+    working-directory: ./backend
