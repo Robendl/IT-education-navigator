@@ -23,5 +23,5 @@ jobs:
           java-version: 17
 
       - name: "build backend"
-        run: ./gradlew :bootJar
+        run: ./gradlew build
         working-directory: ./backend
