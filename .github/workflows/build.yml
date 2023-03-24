@@ -1,6 +1,5 @@
 name: Build Backend
 on:
-  push:
   pull_request:
 
 jobs:
