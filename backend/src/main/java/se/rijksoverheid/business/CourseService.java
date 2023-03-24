@@ -21,7 +21,7 @@ public class CourseService {
     public Course save(CourseDTO courseDTO) {
         Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
         Course course = Mapper.map(courseDTO, Course.class);
-//        course.setProvince(province);
+        course.setProvince(province);
         return courseRepository.save(course);
     }
 

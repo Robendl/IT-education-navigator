@@ -1,4 +1,7 @@
 build-backend:
+  on:
+    pull_request:
+  
   runs-on: ubuntu-latest
   steps:
     - name: Cancel Previous Runs
