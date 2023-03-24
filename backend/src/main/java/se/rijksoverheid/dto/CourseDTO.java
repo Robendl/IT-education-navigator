@@ -1,12 +1,9 @@
 package se.rijksoverheid.dto;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import se.rijksoverheid.model.Province;
 
 @Getter
 @Setter
@@ -17,6 +14,7 @@ public class CourseDTO {
     @NotNull
     @NotBlank
     private String institution;
+    private Boolean archived;
     @NotNull
     @NotBlank
     private String location;

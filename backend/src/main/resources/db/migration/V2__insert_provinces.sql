@@ -1,2 +1,2 @@
-INSERT INTO rijksoverheid.provinces VALUES (0, "Flevoland");
-INSERT INTO rijksoverheid.provinces VALUES (1, "Groningen");
+INSERT INTO provinces (id, name) VALUES (0, 'Flevoland');
+INSERT INTO provinces (id, name) VALUES (1, 'Groningen');

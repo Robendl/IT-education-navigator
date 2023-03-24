@@ -14,12 +14,12 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private Boolean archived;
+    private Boolean archived = false;
     private String name;
     private String institution;
     private String location;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="courses_id", nullable=false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="province_id", nullable=false)
     private Province province;
     private String level;
     private String courseType;

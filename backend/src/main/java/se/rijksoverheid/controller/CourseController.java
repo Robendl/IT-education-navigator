@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseDTO;
@@ -12,7 +12,6 @@ import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -27,7 +26,7 @@ public class CourseController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Course> createCourse(@RequestBody @Valid CourseDTO courseDTO) {
+    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseDTO courseDTO) {
         try {
             return ResponseEntity.ok(courseService.save(courseDTO));
         } catch (IllegalArgumentException e) {
