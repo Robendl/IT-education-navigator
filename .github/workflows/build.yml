@@ -2,14 +2,14 @@ name: Build Backend
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   build-backend:
     runs-on: ubuntu-latest
     steps:
-#      - name: Cancel Previous Runs
-#        uses: styfle/cancel-workflow-action@0.10.1
-#        with:
-#          access_token: ${{ github.token }}
 
       - name: "checkout repository"
         uses: actions/checkout@v3
