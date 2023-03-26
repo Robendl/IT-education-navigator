@@ -17,6 +17,7 @@ public class CourseService {
     private CourseRepository courseRepository;
     private ProvinceRepository provinceRepository;
 
+
     @Transactional
     public Course save(CourseDTO courseDTO) {
         Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
