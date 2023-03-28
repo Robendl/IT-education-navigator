@@ -9,7 +9,9 @@ Run backend vanuit IntelliJ IDEA, wanneer je het project laad zou automatisch Ba
 base url:
 http://localhost:8081/rijksoverheid/api
 
-Voorbeeld CourseRequest:
+Om alle courses te krijgen, moet je een GET request doen op ``http://localhost:8081/rijksoverheid/api/courses``.
+
+Om een nieuwe course toe te voegen, moet je een POST request doen op ``http://localhost:8081/rijksoverheid/api/courses``. Hieronder vind je een voorbeeld van de body van zo'n POST request die een nieuwe course toevoegt:
 ```
 {
     "name": "Introduction to Computer Science",
