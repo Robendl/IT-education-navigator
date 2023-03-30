@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class CourseController {
     }
 
     @PostMapping("")
+    @Secured({"ROLE_DATA_MANAGER", "ROLE_ADMIN"})
     public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         try {
             return ResponseEntity.ok(courseService.save(courseDTO));
