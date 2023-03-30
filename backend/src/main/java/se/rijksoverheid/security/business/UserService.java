@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import se.rijksoverheid.mapper.Mapper;
+import se.rijksoverheid.security.dto.UserDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
@@ -21,5 +23,14 @@ public class UserService implements UserDetailsService {
                 orElseThrow(() -> new UsernameNotFoundException("There exists no user with username: " + username));
         user.setAuthorities(new SimpleGrantedAuthority(user.getAuthorityString()));
         return user;
+    }
+
+    public User save(UserDTO userDTO) {
+        User user = Mapper.map(userDTO, User.class);
+        return userRepository.save(user);
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }
