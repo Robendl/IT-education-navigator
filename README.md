@@ -9,7 +9,9 @@ Run backend vanuit IntelliJ IDEA, wanneer je het project laad zou automatisch Ba
 base url:
 http://localhost:8081/rijksoverheid/api
 
-Voorbeeld CourseRequest:
+Om alle courses te krijgen, moet je een GET request doen op ``http://localhost:8081/rijksoverheid/api/courses``.
+
+Om een nieuwe course toe te voegen, moet je een POST request doen op ``http://localhost:8081/rijksoverheid/api/courses``. Hieronder vind je een voorbeeld van de body van zo'n POST request die een nieuwe course toevoegt:
 ```
 {
     "name": "Introduction to Computer Science",
@@ -28,3 +30,12 @@ Voorbeeld CourseRequest:
     "explanation": "This course covers the fundamentals of computer science, including programming, algorithms, and data structures."
 }
 ```
+
+Run frontend met node in /frontend:
+```
+npm install (alleen eerste keer)
+npm start
+```
+
+De pagina wordt automatisch geopend (http://localhost:3000)  
+Het testen van de login kan op http://localhost:3000/logintest
