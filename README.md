@@ -30,3 +30,12 @@ Om een nieuwe course toe te voegen, moet je een POST request doen op ``http://lo
     "explanation": "This course covers the fundamentals of computer science, including programming, algorithms, and data structures."
 }
 ```
+
+Run frontend met node in /frontend:
+```
+npm install (alleen eerste keer)
+npm start
+```
+
+De pagina wordt automatisch geopend (http://localhost:3000)  
+Het testen van de login kan op http://localhost:3000/logintest
