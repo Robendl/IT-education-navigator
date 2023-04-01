@@ -9,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import se.rijksoverheid.security.business.UserDetailsServiceImpl;
+import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.JwtTokenDTO;
 import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserDTO;
@@ -21,7 +21,7 @@ import se.rijksoverheid.security.dto.UserDTO;
 public class AuthenticationController {
     private AuthenticationManager authenticationManager;
     private JwtTokenUtil jwtTokenUtil;
-    private UserDetailsServiceImpl userDetailsService;
+    private UserService userDetailsService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserDTO userDTO) {

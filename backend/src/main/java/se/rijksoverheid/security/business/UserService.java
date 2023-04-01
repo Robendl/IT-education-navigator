@@ -12,7 +12,7 @@ import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
     @Autowired
