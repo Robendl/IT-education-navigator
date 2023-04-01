@@ -1,6 +1,6 @@
 package se.rijksoverheid.business;
 
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +27,7 @@ public class CourseService {
     private ProvinceRepository provinceRepository;
 
     @Transactional
-    public List<CourseResponseDTO> getCourses(String search, boolean archived, int page, int size, String orderBy, Sort.Direction direction ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
+    public List<CourseResponseDTO> getCourses(String search, boolean archived, Pageable pageable ) {
         Page<Course> coursePage = courseRepository.searchAllFields(search, archived, pageable);
         List<CourseResponseDTO> courses = new ArrayList<>();
         for(Course course: coursePage.getContent()) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 //    Page<Course> findCourseByArchivedEquals(Boolean archived);
 
+
     @Query(value = "SELECT * FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) LIKE %:search% AND c.archived = :archived",
             countQuery = "SELECT COUNT(*) FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived",
             nativeQuery = true)

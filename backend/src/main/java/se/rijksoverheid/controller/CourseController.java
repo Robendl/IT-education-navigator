@@ -1,9 +1,10 @@
 package se.rijksoverheid.controller;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -27,7 +28,8 @@ public class CourseController {
 
     @Transactional
     @GetMapping("")
-    public ResponseEntity<List<CourseResponseDTO>> getAllCourses(
+//    @Secured("DATA_CONSUMER")
+    public ResponseEntity<List<CourseResponseDTO>> getCourses(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -35,11 +37,12 @@ public class CourseController {
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
-        return ResponseEntity.ok(courseService.getCourses(search, archived, page, size, orderBy, direction));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
+        return ResponseEntity.ok(courseService.getCourses(search, archived, pageable));
     }
 
     @PostMapping("")
-    @Secured({"ROLE_DATA_MANAGER", "ROLE_ADMIN"})
+//    @Secured({"DATA_MANAGER", "ADMIN"})
     public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         try {
             return ResponseEntity.ok(courseService.save(courseDTO));
@@ -49,6 +52,7 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
+//    @Secured({"DATA_MANAGER", "ADMIN"})
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
             @RequestBody @Valid CourseRequestDTO courseDTO) {
@@ -62,6 +66,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
+//    @Secured({"ADMIN"})
     public ResponseEntity<Object> removeCourse(@PathVariable long id) {
         courseRepository.deleteById(id);
         return ResponseEntity.noContent().build();

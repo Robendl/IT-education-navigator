@@ -3,7 +3,7 @@ package se.rijksoverheid.mapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
-public class Mapper {
+public abstract class Mapper {
     private static final ModelMapper modelMapper;
 
     static {

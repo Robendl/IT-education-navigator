@@ -1,12 +1,14 @@
 package se.rijksoverheid.security.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,9 +22,14 @@ public class User implements UserDetails {
     private long id;
     private String username;
     private String password;
-    private String authorityString;
-    @Transient
-    private GrantedAuthority authorities;
+    private String role;
+
+    @Override
+    public List<GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role));
+        return authorities;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
