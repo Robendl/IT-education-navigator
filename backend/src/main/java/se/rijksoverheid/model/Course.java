@@ -18,7 +18,7 @@ public class Course {
     private String name;
     private String institution;
     private String location;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name="province_id", nullable=false)
     private Province province;
     private String level;

@@ -57,4 +57,8 @@ public class CourseService {
         }
         return courseRepository.save(course);
     }
+
+    public void deleteById(long id) {
+        courseRepository.deleteById(id);
+    }
 }

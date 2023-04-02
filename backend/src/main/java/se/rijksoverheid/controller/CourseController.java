@@ -23,12 +23,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
-    private CourseRepository courseRepository;
     private CourseService courseService;
 
     @Transactional
     @GetMapping("")
-//    @Secured("DATA_CONSUMER")
     public ResponseEntity<List<CourseResponseDTO>> getCourses(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
@@ -42,7 +40,6 @@ public class CourseController {
     }
 
     @PostMapping("")
-//    @Secured({"DATA_MANAGER", "ADMIN"})
     public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         try {
             return ResponseEntity.ok(courseService.save(courseDTO));
@@ -52,7 +49,6 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
-//    @Secured({"DATA_MANAGER", "ADMIN"})
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
             @RequestBody @Valid CourseRequestDTO courseDTO) {
@@ -66,9 +62,8 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-//    @Secured({"ADMIN"})
     public ResponseEntity<Object> removeCourse(@PathVariable long id) {
-        courseRepository.deleteById(id);
+        courseService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
