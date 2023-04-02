@@ -1,7 +1,6 @@
 package se.rijksoverheid.security.config;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

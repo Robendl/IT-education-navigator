@@ -13,7 +13,6 @@ const http = {
   put: axios.put,
   delete: axios.delete,
   patch: axios.patch,
-  setHeader(): axios.
 };
 
 export default http;

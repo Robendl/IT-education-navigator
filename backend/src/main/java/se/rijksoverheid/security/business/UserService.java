@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username).
                 orElseThrow(() -> new UsernameNotFoundException("There exists no user with username: " + username));
         return user;
@@ -29,6 +29,7 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setRole(userDTO.getRole());
         return Mapper.map(userRepository.save(user), UserDTO.class);
     }
 
