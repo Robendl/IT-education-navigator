@@ -1,0 +1,48 @@
+.login {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  width: 400px;
+  margin-top: 100px;
+  padding: 20px;
+  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
+}
+
+.login-form > h2 {
+  font-size: 1.8rem;
+}
+
+.login-form button {
+  background-color: #154273;
+  border: none;
+  color: #ffffff;
+  padding: 5px 10px 5px 10px;
+  font-size: 1.2rem;
+  width: 70px;
+}
+
+.login-form .login-form-footer {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-form .login-form-footer .login-error-message {
+  color: rgb(182, 42, 42);
+  font-size: 1rem;
+  order: 1;
+}
+
+.login-form .submit-loading {
+  color: #ffffff;
+  max-height: 20px;
+  max-width: 20px;
+}
