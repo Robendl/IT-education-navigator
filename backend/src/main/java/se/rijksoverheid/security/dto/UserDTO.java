@@ -4,6 +4,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * Data Transfer Object used for registering and logging in.
+ */
 @Data
 public class UserDTO {
     @NotNull

@@ -14,6 +14,9 @@ import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserDTO;
 import se.rijksoverheid.security.model.User;
 
+/**
+ * Holds the endpoints related to authentication
+ */
 @AllArgsConstructor
 @RestController
 @CrossOrigin
@@ -23,6 +26,11 @@ public class AuthenticationController {
     private JwtTokenUtil jwtTokenUtil;
     private UserService userService;
 
+    /**
+     * Register a new user
+     * @param userDTO   Data Transfer Object conatining user info.
+     * @return          Created user.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserDTO userDTO) {
 
@@ -32,6 +40,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(userService.save(userDTO));
     }
 
+    /**
+     * Login endpoint
+     * @param userDTO   Data Transfer Object containing login info
+     * @return          Data Transfer Object conating JwtToken and role of user
+     * @throws Exception
+     */
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody @Validated UserDTO userDTO) throws Exception {
         try {

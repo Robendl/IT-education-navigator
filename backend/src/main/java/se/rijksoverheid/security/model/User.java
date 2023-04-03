@@ -10,6 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity class used for interacting with User data.
+ * Implements UserDetails so that it can be used in Spring Security context.
+ */
 @Entity
 @Getter
 @Setter
