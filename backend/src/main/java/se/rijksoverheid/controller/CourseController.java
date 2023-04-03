@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/courses")
+@CrossOrigin
 public class CourseController {
     private CourseRepository courseRepository;
     private CourseService courseService;

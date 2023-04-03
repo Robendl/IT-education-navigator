@@ -2,23 +2,35 @@ import logo from 'assets/svg/logo.svg';
 import MainHeader from 'components/layout/MainHeader';
 import Home from 'pages/home/Home';
 import Map from 'pages/map/Map';
+import LoginPage from 'pages/login/LoginPage';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
-
-import LoginTest from 'pages/testing/LoginTest';
+import AuthService, { UserContext } from 'services/AuthService';
+import RegisterPage from 'pages/testing/RegisterPage'
+import { useEffect, useState } from 'react';
 
 export default function App() {
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    setUserInfo({
+      name: AuthService.getUser()?.name,
+      loggedIn: AuthService.isLoggedIn(),
+      role: AuthService.getRole()
+    })
+  }, []);
+
   return (
     <div className="App">
-      <Routes>
-        <Route path="/logintest" element={<LoginTest />}>
-
-        </Route>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />}></Route>
-          <Route path="kaart" element={<Map />}></Route>
-        </Route>
-      </Routes>
+      <UserContext.Provider value={userInfo}>
+        <Routes>
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />}></Route>
+            <Route path="kaart" element={<Map />}></Route>
+          </Route>
+        </Routes>
+      </UserContext.Provider>
     </div>
   );
 }
@@ -26,11 +38,18 @@ export default function App() {
 function Layout() {
   return (
     <div>
-      <header className="logo-header">
-        <img src={logo} className="ro-logo" alt="logo" />
-      </header>
-      <MainHeader />
-      <Outlet />
+      {(AuthService.getRole() &&
+        <div>
+          <header className="logo-header ignore-overlay">
+            <img src={logo} className="ro-logo" alt="logo" />
+          </header>
+          <MainHeader />
+          <Outlet />
+        </div>)
+        ||
+        <LoginPage />
+      }
+      
     </div>
   );
 }
