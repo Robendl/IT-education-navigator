@@ -3,7 +3,7 @@ import AuthService from "./AuthService";
 
 axios.interceptors.request.use(
   (config) => {
-    config.baseURL = "http://192.168.68.60:8081/rijksoverheid/api";
+    config.baseURL = "http://localhost:8081/rijksoverheid/api";
     let user = AuthService.getUser();
     if (user && user.token) {
       config.headers = {
