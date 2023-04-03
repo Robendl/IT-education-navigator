@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Defines the Spring Boot Application.
+ */
 @SpringBootApplication
 public class BackendApplication {
 
@@ -13,6 +16,10 @@ public class BackendApplication {
         SpringApplication.run(BackendApplication.class, args);
     }
 
+    /**
+     * Password Encoder bean used for saving passwords.
+     * @return  Password encoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import java.util.Set;
 
+/**
+ * Entity class for Province data
+ */
 @Entity
 @RequiredArgsConstructor
 @Getter

@@ -15,6 +15,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Extension of WebSecurityConfigurerAdapter from Spring Security, used for configuring the security settings.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -32,17 +35,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    /**
+     * Configures implementation of UserDetailsService (UserService) and what password encoder to use.
+     * @param auth          authentication manager builder.
+     * @throws Exception    if an error occurs when adding the UserService to the configuration.
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
 
+    /**
+     * Sets up the Authentication Manager Bean to be used by Spring Security.
+     * @return AuthenticationManagerBean
+     * @throws Exception
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * Configures the security settings. Sets which endpoints need which roles and specifies classes to be used in the
+     * security process.
+     * @param httpSecurity the {@link HttpSecurity} to modify
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()

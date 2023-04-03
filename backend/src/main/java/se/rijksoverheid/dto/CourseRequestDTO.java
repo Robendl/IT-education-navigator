@@ -4,6 +4,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * Data Transfer Object used for accepting requests related to courses.
+ */
 @Data
 public class CourseRequestDTO {
     @NotNull

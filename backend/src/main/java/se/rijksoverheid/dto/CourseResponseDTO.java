@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * A DTO for the {@link se.rijksoverheid.model.Course} entity
+ * Data Transfer Object used for sending responses containing course data.
  */
 @Data
 public class CourseResponseDTO implements Serializable {
