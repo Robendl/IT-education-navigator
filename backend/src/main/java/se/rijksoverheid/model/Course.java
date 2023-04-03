@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity object for Course data.
+ */
 @Entity
 @RequiredArgsConstructor
 @Getter

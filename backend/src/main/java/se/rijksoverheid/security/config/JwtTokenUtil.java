@@ -13,16 +13,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Utility class used for generating and checking JwtTokens.
+ */
 @Component
 public class JwtTokenUtil {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     private static final SecretKey secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
+    /**
+     * Retrieves username from token.
+     * @param token token
+     * @return      username
+     */
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
+    /**
+     * Retrieves
+     * @param token
+     * @return
+     */
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }

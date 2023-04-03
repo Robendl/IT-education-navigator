@@ -19,12 +19,25 @@ import se.rijksoverheid.model.CourseRepository;
 
 import java.util.List;
 
+/**
+ * Holds endpoints to which the course data can be accessed/altered from the outside world.
+ */
 @AllArgsConstructor
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
     private CourseService courseService;
 
+    /**
+     * Endpoint for retrieving courses
+     * @param search        every string field is checked for this search string when provided.
+     * @param archived      determines whether to return unarchived or archived course, unarchived by default.
+     * @param page          page number of page to return, 0 by default.
+     * @param size          size of page to return, 500 by default.
+     * @param orderBy       what field to order by, name by default.
+     * @param direction     direction to order by, can be ASC or DESC, ASC by default.
+     * @return              List of courses.
+     */
     @Transactional
     @GetMapping("")
     public ResponseEntity<List<CourseResponseDTO>> getCourses(
@@ -39,6 +52,11 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getCourses(search, archived, pageable));
     }
 
+    /**
+     * Endpoint for saving a course in the database.
+     * @param courseDTO     Data Transfer Object holding the data to be used for creating course entity.
+     * @return              The saved Course.
+     */
     @PostMapping("")
     public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         try {
@@ -48,6 +66,13 @@ public class CourseController {
         }
     }
 
+    /**
+     * Endpoint used for editing course.
+     * @param id            id of the course to be edited.
+     * @param courseDTO     Data Transfer Object containing new data for course.
+     * @return              The saved course or bad request when invalid provinceId is provided or not found when
+     *                      no course with the given id can be found.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
@@ -61,6 +86,11 @@ public class CourseController {
         }
     }
 
+    /**
+     * Endpoint used for deleting a course.
+     * @param id    id of course to be deleted.
+     * @return      No content response.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> removeCourse(@PathVariable long id) {
         courseService.deleteById(id);

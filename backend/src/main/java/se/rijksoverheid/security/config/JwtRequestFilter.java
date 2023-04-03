@@ -18,6 +18,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
+/**
+ * This implementation of OncePerRequestFilter specifies a filter that is performed on every request that requires
+ * authentication. It filters out request with missing or invalid JwtTokens.
+ */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -27,6 +31,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    /**
+     * Handles filtering of request based on valid JwtTokens.
+     * @param request           incoming request.
+     * @param response          response that can be sent.
+     * @param chain             filter chain in use.
+     * @throws ServletException when something goes wrong within the servlets.
+     * @throws IOException      when incorrect input is given.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
