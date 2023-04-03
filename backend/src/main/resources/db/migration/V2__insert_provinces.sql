@@ -9,4 +9,5 @@ INSERT INTO provinces (id, name) VALUES (0, 'Noord-Brabant'),
                                         (8, 'Limburg'),
                                         (9, 'Noord-Holland'),
                                         (10, 'Overijssel'),
-                                        (11, 'Zuid-Holland')
+                                        (11, 'Zuid-Holland'),
+                                        (12, 'Other')

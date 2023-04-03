@@ -17,7 +17,7 @@ CREATE TABLE courses
     professor              VARCHAR(255),
     contact                VARCHAR(255),
     web                    VARCHAR(255),
-    explanation            VARCHAR(255),
+    explanation            VARCHAR(1023),
     CONSTRAINT pk_courses  PRIMARY KEY (id)
 );
 
