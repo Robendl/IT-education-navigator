@@ -74,6 +74,7 @@ function register(userInfo) {
     });
 }
 
+
 const AuthService = {
   login,
   logout,

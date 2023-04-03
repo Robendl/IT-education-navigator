@@ -1,13 +1,11 @@
 package se.rijksoverheid.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import se.rijksoverheid.model.Province;
 
 import java.io.Serializable;
 
 /**
- * A DTO for the {@link Province} entity
+ * Data Transer Object used for sending Province related data
  */
 @Data
 public class ProvinceDTO implements Serializable {
