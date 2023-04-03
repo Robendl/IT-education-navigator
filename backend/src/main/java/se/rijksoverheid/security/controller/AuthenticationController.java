@@ -19,7 +19,6 @@ import se.rijksoverheid.security.model.User;
  */
 @AllArgsConstructor
 @RestController
-@CrossOrigin
 @RequestMapping("/auth")
 public class AuthenticationController {
     private AuthenticationManager authenticationManager;

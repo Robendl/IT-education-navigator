@@ -25,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/courses")
+@CrossOrigin
 public class CourseController {
     private CourseService courseService;
 
