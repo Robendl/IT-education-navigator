@@ -1,2 +1,13 @@
-INSERT INTO provinces (id, name) VALUES (0, 'Flevoland');
-INSERT INTO provinces (id, name) VALUES (1, 'Groningen');
+INSERT INTO provinces (id, name) VALUES (0, 'Noord-Brabant'),
+                                        (1, 'Utrecht'),
+                                        (2, 'Drenthe'),
+                                        (3, 'Flevoland'),
+                                        (4, 'Friesland'),
+                                        (5, 'Gelderland'),
+                                        (6, 'Groningen'),
+                                        (7, 'Heerlen'),
+                                        (8, 'Limburg'),
+                                        (9, 'Noord-Holland'),
+                                        (10, 'Overijssel'),
+                                        (11, 'Zuid-Holland'),
+                                        (12, 'Other')
