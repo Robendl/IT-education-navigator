@@ -3,6 +3,7 @@ package se.rijksoverheid.controller;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,7 @@ import java.util.List;
 /**
  * Holds endpoints to which the course data can be accessed/altered from the outside world.
  */
+@Slf4j
 @AllArgsConstructor
 @RestController
 @RequestMapping("/courses")

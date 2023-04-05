@@ -21,7 +21,7 @@ public class Province {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "province", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Course> courses;
 }
