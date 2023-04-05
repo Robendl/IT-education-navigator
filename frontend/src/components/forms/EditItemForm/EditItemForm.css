@@ -1,0 +1,50 @@
+.edit-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  background-color: white;
+  width: 420px;
+}
+
+.edit-item-form > h2 {
+  font-size: 2rem;
+}
+
+.edit-item-form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 0 10px 0;
+  border-top: 1px solid rgba(0,0,0,0.3);
+}
+
+.edit-item-form > div:first-of-type, .edit-item-form > div:last-of-type {
+  border-top: none;
+}
+
+.edit-item-form .form-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.edit-item-form .form-actions button {
+  appearance: none;
+  border: none;
+  padding: 5px 8px 5px 8px;
+  font-size: 1rem;
+  width: 100px;
+  height: 40px;
+}
+
+.edit-item-form .form-actions .save-button {
+  background-color: #154273;
+  color: white;
+}
+
+.edit-item-form .submit-loading {
+  color: #ffffff;
+  max-height: 25px;
+  max-width: 25px;
+}

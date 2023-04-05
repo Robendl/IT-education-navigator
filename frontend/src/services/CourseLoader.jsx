@@ -1,9 +1,9 @@
 import http from "./httpService";
 
 const CourseLoader = {
-  loadCourses: () => {
+  loadCourses: (filters) => {
     return new Promise((resolve, reject) => {
-      http.get("/courses").then((response) => {
+      http.get(`/courses${filters ? "/" + filters : ""}`).then((response) => {
         resolve(response.data);
       }, (error) => {
         console.log(error);
@@ -22,6 +22,20 @@ const CourseLoader = {
         resolve(response);
       }, (error) => {
         reject("Kon opleiding niet toevoegen.")
+      });
+    });
+  },
+  editCourse: (course) => {
+    return new Promise((resolve, reject) => {
+      http.put(`/courses/${course.id}`, course, {
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => {
+        console.log(response);
+        resolve(response);
+      }, (error) => {
+        reject("Kon opleiding niet bewerken.")
       });
     });
   },

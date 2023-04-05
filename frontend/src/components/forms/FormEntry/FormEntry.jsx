@@ -9,8 +9,8 @@ export default function FormEntry({ type, propertyName, propertyKey, required })
           {
             (type === "checkbox" &&
               <>
-                <input type="hidden" name={propertyKey} value="false" required={required}/>
                 <input type="checkbox" name={propertyKey} value="true" required={required}/>
+                <input type="hidden" name={propertyKey} value="false" required={required}/>
               </>
             ) ||
             (type === "password" &&

@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import CourseLoader from 'services/CourseLoader';
+import { useContext } from 'react';
+import { OverlayContext } from './PageOverlay/PageOverlay';
+import { UserContext } from 'services/AuthService';
 
 export default function ResultList () {
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const location = useLocation();
+
   useEffect(() => {
     setIsLoading(true);
-    CourseLoader.loadCourses().then((courses) => {
+    CourseLoader.loadCourses(location.search ? location.search : "").then((courses) => {
       setResults(courses);
       setIsLoading(false);
     });
-  }, []);
+  }, [location]);
 
   return (
     <div className="result-list">
@@ -33,11 +38,17 @@ export default function ResultList () {
 
 function Result({entry}) {
 
+  const overlay = useContext(OverlayContext);
+  const user = useContext(UserContext);
+
   function handleArchive(e) {
     CourseLoader.archiveCourse(entry).then(() => {
       window.location.reload();
     });
-    
+  }
+
+  function handleEdit() {
+    overlay.openEdit(entry);
   }
 
   return (
@@ -45,7 +56,8 @@ function Result({entry}) {
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
         <Link to="#" className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
-        <button className="archive-button" onClick={handleArchive}><span className="material-symbols-outlined archive-icon">archive</span></button>
+        {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && !entry["archived"] &&<button className="edit-button" onClick={handleEdit}><span className="material-symbols-outlined edit-icon">edit</span></button>}
+        {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && !entry["archived"] &&<button className="archive-button" onClick={handleArchive}><span className="material-symbols-outlined archive-icon">archive</span></button>}
         
       </div>
       <div className="result-body">
