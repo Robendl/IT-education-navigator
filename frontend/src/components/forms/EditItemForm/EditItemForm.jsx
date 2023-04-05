@@ -36,10 +36,14 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
   function populate() {
     Object.keys(entry).forEach(key => {
       let inputElement = document.querySelector(`.edit-item-form input[name=${key}]`);
-      if (inputElement && inputElement.getAttribute("type") === "checkbox") {
-        inputElement?.setAttribute("checked", entry[key]);
+      let value = entry[key];
+      if (key === "province") {
+        value = value.id;
       }
-      inputElement?.setAttribute("value", entry[key]);
+      if (inputElement && inputElement.getAttribute("type") === "checkbox") {
+        inputElement?.setAttribute("checked", value);
+      }
+      inputElement?.setAttribute("value", value);
     });
   }
 

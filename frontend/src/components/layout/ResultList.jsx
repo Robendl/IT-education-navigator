@@ -64,12 +64,23 @@ function Result({entry}) {
         {
           // Return a span for the remaining tags
           Object.keys(entry)
-            .filter(key => !["level", "name", "province"].includes(key))
-            .map(key => <span className="result-property" key={key}><b>{key}: </b>{entry[key]}</span>)
+            .filter(key => !["level", "name"].includes(key))
+            .map(key => <ResultProperty key={key} keyName={key} value={entry[key]}/>)
         }
       </div>
     </div>
   );
+}
+
+function ResultProperty({ keyName, value }) {
+  return (
+    <span className="result-property">
+    {(keyName === "province" &&
+      <><b>{keyName}: </b>{value["name"]}</>) ||
+      <><b>{keyName}: </b>{value}</>
+    }
+    </span>
+  )
 }
 
 function LoadingMessage() {
