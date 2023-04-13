@@ -3,10 +3,7 @@ package se.rijksoverheid.security.model;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import se.rijksoverheid.model.Course;
 
 import java.util.Optional;
 
@@ -23,14 +20,16 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findUserByUsername(String username);
 
     /**
+     * Retrieve all users.
+     * @param pageable  page information
+     * @return          All users
+     */
+    Page<User> findAll(Pageable pageable);
+
+    /**
      * Checks if username already exists in the database.
      * @param username  username
      * @return          true if it exists, false if not.
      */
     boolean existsByUsername(String username);
-
-    @Query(value = "SELECT * FROM rijksoverheid.users",
-            countQuery = "SELECT * FROM rijksoverheid.users",
-            nativeQuery = true)
-    Page<User> getAllUsers(Pageable pageable);
 }

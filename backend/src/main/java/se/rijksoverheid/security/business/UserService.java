@@ -3,14 +3,12 @@ package se.rijksoverheid.security.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.mapper.Mapper;
-import se.rijksoverheid.security.dto.AccountResponseDTO;
+import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.dto.UserDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
@@ -65,17 +63,21 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByUsername(username);
     }
 
+    /**
+     * Function used for getting a list of all users and converting them to a DTO.
+     * @return UserResponseDTO.
+     */
     @Transactional
-    public List<AccountResponseDTO> getAccounts(Pageable pageable){
-        Page<User> userPage = userRepository.getAllUsers(pageable);
-        List<AccountResponseDTO> accounts = new ArrayList<>();
-        for(User user: userPage.getContent()) {
-            AccountResponseDTO accountDTO = new AccountResponseDTO();
-            accountDTO.setId(user.getId());
-            accountDTO.setUsername(user.getUsername());
-            accountDTO.setRole(user.getRole());
-            accounts.add(accountDTO);
+    public List<UserResponseDTO> getUsers(Pageable pageable){
+        Page<User> users = userRepository.findAll(pageable);
+        List<UserResponseDTO> UserResponseDTO = new ArrayList<>();
+        for(User user: users.getContent()) {
+            UserResponseDTO UserResDTO = new UserResponseDTO();
+            UserResDTO.setId(user.getId());
+            UserResDTO.setUsername(user.getUsername());
+            UserResDTO.setRole(user.getRole());
+            UserResponseDTO.add(UserResDTO);
         }
-        return accounts;
+        return UserResponseDTO;
     }
 }
