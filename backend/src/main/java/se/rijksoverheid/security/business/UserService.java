@@ -1,15 +1,21 @@
 package se.rijksoverheid.security.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.mapper.Mapper;
+import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.dto.UserDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * UserService classed is used for interacting with userdata.
@@ -55,5 +61,23 @@ public class UserService implements UserDetailsService {
      */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    /**
+     * Function used for getting a list of all users and converting them to a DTO.
+     * @return UserResponseDTO.
+     */
+    @Transactional
+    public List<UserResponseDTO> getUsers(Pageable pageable){
+        Page<User> users = userRepository.findAll(pageable);
+        List<UserResponseDTO> UserResponseDTO = new ArrayList<>();
+        for(User user: users.getContent()) {
+            UserResponseDTO UserResDTO = new UserResponseDTO();
+            UserResDTO.setId(user.getId());
+            UserResDTO.setUsername(user.getUsername());
+            UserResDTO.setRole(user.getRole());
+            UserResponseDTO.add(UserResDTO);
+        }
+        return UserResponseDTO;
     }
 }

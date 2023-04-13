@@ -1,5 +1,7 @@
 package se.rijksoverheid.security.model;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,13 @@ public interface UserRepository extends JpaRepository<User, String> {
      * @return          user
      */
     Optional<User> findUserByUsername(String username);
+
+    /**
+     * Retrieve all users.
+     * @param pageable  page information
+     * @return          All users
+     */
+    Page<User> findAll(Pageable pageable);
 
     /**
      * Checks if username already exists in the database.
