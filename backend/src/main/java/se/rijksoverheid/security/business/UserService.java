@@ -1,15 +1,23 @@
 package se.rijksoverheid.security.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.mapper.Mapper;
+import se.rijksoverheid.security.dto.AccountResponseDTO;
 import se.rijksoverheid.security.dto.UserDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * UserService classed is used for interacting with userdata.
@@ -55,5 +63,19 @@ public class UserService implements UserDetailsService {
      */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Transactional
+    public List<AccountResponseDTO> getAccounts(Pageable pageable){
+        Page<User> userPage = userRepository.getAllUsers(pageable);
+        List<AccountResponseDTO> accounts = new ArrayList<>();
+        for(User user: userPage.getContent()) {
+            AccountResponseDTO accountDTO = new AccountResponseDTO();
+            accountDTO.setId(user.getId());
+            accountDTO.setUsername(user.getUsername());
+            accountDTO.setRole(user.getRole());
+            accounts.add(accountDTO);
+        }
+        return accounts;
     }
 }

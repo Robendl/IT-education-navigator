@@ -1,7 +1,12 @@
 package se.rijksoverheid.security.model;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import se.rijksoverheid.model.Course;
 
 import java.util.Optional;
 
@@ -23,4 +28,9 @@ public interface UserRepository extends JpaRepository<User, String> {
      * @return          true if it exists, false if not.
      */
     boolean existsByUsername(String username);
+
+    @Query(value = "SELECT * FROM rijksoverheid.users",
+            countQuery = "SELECT * FROM rijksoverheid.users",
+            nativeQuery = true)
+    Page<User> getAllUsers(Pageable pageable);
 }
