@@ -22,6 +22,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: "cache dependencies"
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-backend-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-
+
       - name: "add executable permission to gradlew script"
         run: chmod +x ./gradlew
         working-directory: ./backend
@@ -29,3 +37,30 @@ jobs:
       - name: "build backend"
         run: ./gradlew :bootJar
         working-directory: ./backend
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "checkout repository"
+        uses: actions/checkout@v2
+
+      - name: "setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: "cache dependencies"
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: "install dependencies"
+        run: npm install
+        working-directory: ./frontend
+
+      - name: "build frontend"
+        run: npm run build
+        working-directory: ./frontend
