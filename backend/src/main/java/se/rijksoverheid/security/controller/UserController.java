@@ -14,7 +14,7 @@ import se.rijksoverheid.security.business.UserService;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/user")
-public class UserManagementController {
+public class UserController {
 
     private UserService userService;
 
@@ -26,10 +26,13 @@ public class UserManagementController {
      */
     @GetMapping("")
     public ResponseEntity<?> getUsers(
+            @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "50") int size
+            @RequestParam(required = false, defaultValue = "50") int size,
+            @RequestParam(value = "order-by", required = false, defaultValue = "username") String orderBy,
+            @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "username"));
-        return ResponseEntity.ok(userService.getUsers(pageable));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
+        return ResponseEntity.ok(userService.getUsers(search, pageable));
     }
 }
