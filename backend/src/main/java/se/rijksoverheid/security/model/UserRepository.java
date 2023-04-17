@@ -32,4 +32,6 @@ public interface UserRepository extends JpaRepository<User, String> {
      * @return          true if it exists, false if not.
      */
     boolean existsByUsername(String username);
+
+    Optional<User> findById(long id);
 }

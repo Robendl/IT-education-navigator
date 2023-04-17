@@ -7,6 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
+import se.rijksoverheid.security.dto.UserPermRequestDTO;
+import se.rijksoverheid.security.dto.UserResponseDTO;
+
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
 /**
  * Hold the endpoints related to user management
@@ -31,5 +36,26 @@ public class UserManagementController {
     ){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "username"));
         return ResponseEntity.ok(userService.getUsers(pageable));
+    }
+
+    /**
+     * Edit a user's permissions
+     * @param id            Id of user to be changed.
+     * @param userPermDTO   The info needed to change.
+     * @return              The user which was changed
+     */
+    @PutMapping("perm/{id}")
+    public ResponseEntity<UserResponseDTO> editUserPermissions(
+            @PathVariable long id,
+            @RequestBody @Valid UserPermRequestDTO userPermDTO
+    ){
+        try {
+            return ResponseEntity.ok(userService.changeUserPerms(id, userPermDTO));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 }
