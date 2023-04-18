@@ -24,12 +24,19 @@ public class User implements UserDetails {
     private long id;
     private String username;
     private String password;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public enum Role {
+        ADMIN,
+        DATA_MANAGER,
+        DATA_CONSUMER
+    }
 
     @Override
     public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role));
+        authorities.add(new SimpleGrantedAuthority(role.toString()));
         return authorities;
     }
 
