@@ -15,7 +15,4 @@ public class UserDTO {
     @NotNull
     @NotBlank
     private String password;
-
-    // temporary, since permission management is not yet implemented
-    private String role;
 }
