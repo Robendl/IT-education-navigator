@@ -58,6 +58,6 @@ public class AuthenticationController {
         }
         User user = userService.loadUserByUsername(userDTO.getUsername());
         String token = jwtTokenUtil.generateToken(user);
-        return ResponseEntity.ok(new JwtTokenDTO(token, user.getRole().toString()));
+        return ResponseEntity.ok(new JwtTokenDTO(token, user.getRole()));
     }
 }

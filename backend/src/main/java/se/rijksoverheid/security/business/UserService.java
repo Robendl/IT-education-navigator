@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(User.Role.DATA_CONSUMER);
+        user.setRole(userDTO.getRole());
         return Mapper.map(userRepository.save(user), UserDTO.class);
     }
 
