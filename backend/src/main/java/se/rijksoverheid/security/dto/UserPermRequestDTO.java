@@ -1,6 +1,7 @@
 package se.rijksoverheid.security.dto;
 
 import lombok.Data;
+import se.rijksoverheid.security.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,5 +13,5 @@ import javax.validation.constraints.NotNull;
 public class UserPermRequestDTO {
     @NotNull
     @NotBlank
-    private String role;
+    private User.Role role;
 }
