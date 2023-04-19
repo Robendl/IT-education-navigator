@@ -53,8 +53,6 @@ public class UserManagementController {
             return ResponseEntity.ok(userService.changeUserPerms(id, userPermDTO));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
         }
 
     }
