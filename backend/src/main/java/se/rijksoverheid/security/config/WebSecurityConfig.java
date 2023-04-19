@@ -74,6 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority("ADMIN", "DATA_MANAGER")
                 .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority("ADMIN", "DATA_MANAGER")
+                .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
