@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
-import se.rijksoverheid.security.dto.UserDTO;
+import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
@@ -48,12 +48,12 @@ public class UserService implements UserDetailsService {
      * @param userDTO   Data Transfer Object containing user info.
      * @return          Created user.
      */
-    public UserDTO save(UserDTO userDTO) {
+    public UserRequestDTO save(UserRequestDTO userDTO) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setRole(User.Role.DATA_CONSUMER);
-        return Mapper.map(userRepository.save(user), UserDTO.class);
+        return Mapper.map(userRepository.save(user), UserRequestDTO.class);
     }
 
     /**

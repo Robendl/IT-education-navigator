@@ -8,7 +8,7 @@ import lombok.Data;
  * Data Transfer Object used for registering and logging in.
  */
 @Data
-public class UserDTO {
+public class UserRequestDTO {
     @NotNull
     @NotBlank
     private String username;
