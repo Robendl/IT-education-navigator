@@ -13,6 +13,7 @@ import se.rijksoverheid.security.dto.UserResponseDTO;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
+
 /**
  * Hold the endpoints related to user management
  */
@@ -31,11 +32,14 @@ public class UserController {
      */
     @GetMapping("")
     public ResponseEntity<?> getUsers(
+            @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "50") int size
+            @RequestParam(required = false, defaultValue = "50") int size,
+            @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "username"));
-        return ResponseEntity.ok(userService.getUsers(pageable));
+        String orderBy = "username";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
+        return ResponseEntity.ok(userService.getUsers(search, pageable));
     }
 
     /**
@@ -54,6 +58,5 @@ public class UserController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-
     }
 }

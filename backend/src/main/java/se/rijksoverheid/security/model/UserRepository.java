@@ -26,6 +26,8 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     Page<User> findAll(Pageable pageable);
 
+    Page<User> findAllUserByUsername(String search, Pageable pageable);
+
     /**
      * Checks if username already exists in the database.
      * @param username  username

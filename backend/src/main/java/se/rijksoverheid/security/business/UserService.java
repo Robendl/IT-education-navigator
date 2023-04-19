@@ -71,8 +71,14 @@ public class UserService implements UserDetailsService {
      * @return          UserResponseDTO.
      */
     @Transactional
-    public List<UserResponseDTO> getUsers(Pageable pageable){
-        Page<User> users = userRepository.findAll(pageable);
+    public List<UserResponseDTO> getUsers(String search,Pageable pageable){
+        Page<User> users;
+        if(search.isEmpty()){
+            users = userRepository.findAll(pageable);
+        } else {
+            users = userRepository.findAllUserByUsername(search, pageable);
+        }
+
         List<UserResponseDTO> UserResponseDTO = new ArrayList<>();
         for(User user: users.getContent()) {
             UserResponseDTO UserResDTO = new UserResponseDTO();
