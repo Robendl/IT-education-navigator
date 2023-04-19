@@ -29,9 +29,9 @@ public class UserController {
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "50") int size,
-            @RequestParam(value = "order-by", required = false, defaultValue = "username") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ){
+        String orderBy = "username";
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
         return ResponseEntity.ok(userService.getUsers(search, pageable));
     }
