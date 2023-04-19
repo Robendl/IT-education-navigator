@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.JwtTokenDTO;
 import se.rijksoverheid.security.config.JwtTokenUtil;
-import se.rijksoverheid.security.dto.UserDTO;
+import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
 
 /**
@@ -31,7 +31,7 @@ public class AuthenticationController {
      * @return          Created user.
      */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Validated UserDTO userDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
 
         if(userService.existsByUsername(userDTO.getUsername())) {
             return ResponseEntity.badRequest().body("Username is already in use");
@@ -46,7 +46,7 @@ public class AuthenticationController {
      * @throws Exception
      */
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody @Validated UserDTO userDTO) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody @Validated UserRequestDTO userDTO) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword())

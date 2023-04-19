@@ -8,11 +8,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.mapper.Mapper;
+import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
-import se.rijksoverheid.security.dto.UserDTO;
+import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +48,12 @@ public class UserService implements UserDetailsService {
      * @param userDTO   Data Transfer Object containing user info.
      * @return          Created user.
      */
-    public UserDTO save(UserDTO userDTO) {
+    public UserRequestDTO save(UserRequestDTO userDTO) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setRole(User.Role.DATA_CONSUMER);
-        return Mapper.map(userRepository.save(user), UserDTO.class);
+        return Mapper.map(userRepository.save(user), UserRequestDTO.class);
     }
 
     /**
@@ -65,7 +67,8 @@ public class UserService implements UserDetailsService {
 
     /**
      * Function used for getting a list of all users and converting them to a DTO.
-     * @return UserResponseDTO.
+     * @param pageable  page for frontend
+     * @return          UserResponseDTO.
      */
     @Transactional
     public List<UserResponseDTO> getUsers(String search,Pageable pageable){
@@ -85,5 +88,23 @@ public class UserService implements UserDetailsService {
             UserResponseDTO.add(UserResDTO);
         }
         return UserResponseDTO;
+    }
+
+    /**
+     * Change a user's permissions.
+     * @param userId                    Id of user to change permissions for.
+     * @param userPermDTO               DTO for all data to be changed.
+     * @return                          The user which was changed.
+     * @throws EntityNotFoundException  No user with id was found.
+     * @throws Exception                Changed user to non-existing role.
+     */
+    @Transactional
+    public UserResponseDTO changeUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        Mapper.map(userPermDTO, user);
+        userRepository.save(user);
+        UserResponseDTO UserDTO = new UserResponseDTO();
+        Mapper.map(user, UserDTO);
+        return UserDTO;
     }
 }
