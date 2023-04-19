@@ -27,7 +27,7 @@ public class AuthenticationController {
 
     /**
      * Register a new user
-     * @param userDTO   Data Transfer Object conatining user info.
+     * @param userDTO   Data Transfer Object containing user info.
      * @return          Created user.
      */
     @PostMapping("/register")
@@ -42,7 +42,7 @@ public class AuthenticationController {
     /**
      * Login endpoint
      * @param userDTO   Data Transfer Object containing login info
-     * @return          Data Transfer Object conating JwtToken and role of user
+     * @return          Data Transfer Object containing JwtToken and role of user
      * @throws Exception
      */
     @PostMapping("/login")
