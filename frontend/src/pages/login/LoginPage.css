@@ -25,7 +25,7 @@
   color: #ffffff;
   padding: 5px 10px 5px 10px;
   font-size: 1.2rem;
-  width: 70px;
+  width: auto;
 }
 
 .login-form .login-form-footer {
@@ -35,7 +35,7 @@
   justify-content: space-between;
 }
 
-.login-form .login-form-footer .login-error-message {
+.login-form .login-error-message {
   color: rgb(182, 42, 42);
   font-size: 1rem;
   order: 1;
