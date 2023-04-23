@@ -37,6 +37,9 @@ public class AuthenticationController {
         if(userService.existsByUsername(userDTO.getUsername())) {
             return ResponseEntity.badRequest().body("Username is already in use");
         }
+        if(!userService.isValidEmailAddress(userDTO.getUsername())) {
+            return ResponseEntity.badRequest().body("Not a valid email address");
+        }
         userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
