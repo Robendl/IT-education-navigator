@@ -2,14 +2,16 @@ import ToolMenu from "./ToolMenu";
 import FilterMenu from "./FilterMenu";
 import ResultList from "./ResultList";
 import { useContext } from "react";
-import { UserContext } from "services/AuthService";
+import { UserContext, userRoles } from "services/AuthService";
 
+/* User panel component holding a list of courses and filtering options */
 export default function UserPanel() {
   const user = useContext(UserContext);
 
+  /* UserPanel body */
   return (
     <div className="user-panel page-wide">
-      {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && <ToolMenu />}
+      {(user.role >= userRoles.DATA_MANAGER) && <ToolMenu />}
       <div className="user-panel-body">
         <FilterMenu />
         <ResultList />

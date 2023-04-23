@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-
+/* Menu component holding the filters for the result list */
 export default function FilterMenu() {
   const filters = {
     "provincie": {
@@ -52,6 +52,7 @@ export default function FilterMenu() {
     }
   }
 
+  /* FilterMenu body */
   return (
     <div className="filter-menu">
       {Object.keys(filters).map(key => <Filter name={filters[key].name} filterKey={key} key={key} options={filters[key].options} />)}
@@ -59,6 +60,7 @@ export default function FilterMenu() {
   );
 }
 
+/* Filter component holding one type of filter with multiple options */
 function Filter({name, optionKey, options}) {
   return (
     <div className="filter">
@@ -72,10 +74,12 @@ function Filter({name, optionKey, options}) {
   );
 }
 
+/* FilterOption component that can be checked or unchecked */
 function FilterOption ({name, selected = false}) {
 
   const ref = useRef(null);
 
+  /* Function that is called when the user interacts with the option */
   function onChange(e) {
     switch (e.target.checked) {
       case true:
@@ -87,6 +91,7 @@ function FilterOption ({name, selected = false}) {
     }
   }
 
+  /* FilterOption body */
   return (
     <div className={`filter-option ${selected ? "checked" : ""}`} ref={ref}>
       <input type="checkbox" defaultChecked={selected} onChange={onChange} />

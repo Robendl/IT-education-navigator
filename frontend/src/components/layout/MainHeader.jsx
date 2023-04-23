@@ -1,10 +1,11 @@
 import { useContext, useState } from "react";
 import AuthService, { UserContext } from "services/AuthService";
 
+/* Header Component present on all user pages */
 export default function MainHeader() {
   const user = useContext(UserContext);
-  console.log(user);
 
+  /* MainHeader Body */
   return (
     <div className="main-header ignore-overlay">
       <div className="page-wide">
@@ -15,17 +16,21 @@ export default function MainHeader() {
   );
 }
 
+/* User information component showing the logged-in user */
 function UserOption({ user }) {
   const [toolTipOpen, setToolTipOpen] = useState(false);
 
+  /* Function that is called when the user starts hovering the component */
   function handleHover() {
     setToolTipOpen(true);
   }
 
+  /* Function that is called when the user stops hovering the component */
   function handleLeave() {
     setToolTipOpen(false);
   }
 
+  /* UserOption body */
   return (
     <div className="user-option" onMouseOver={handleHover} onMouseLeave={handleLeave}>
       <span>Ingelogd als {user.name}</span>
@@ -35,8 +40,8 @@ function UserOption({ user }) {
   );
 }
 
+/* Tooltip component that allows for interaction with user related options */
 function UserToolTip({ onClose }) {
-
   return(
     <div className="user-tooltip">
       <div className="user-tooltip-option">

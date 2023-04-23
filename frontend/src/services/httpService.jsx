@@ -1,6 +1,7 @@
 import axios from "axios";
 import AuthService from "./AuthService";
 
+/* Setup default axios configuration */
 axios.interceptors.request.use(
   (config) => {
     config.baseURL = "http://localhost:8081/rijksoverheid/api";
