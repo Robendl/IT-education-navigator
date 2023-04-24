@@ -17,10 +17,9 @@ function login(credentials) {
   return new Promise((resolve, reject) => {
     http.post('/auth/login', credentials)
       .then(response => {
-        if (response.data.token) {
+        if (response.data.role) {
           localStorage.setItem("user", JSON.stringify({
             role: response.data.role,
-            token: response.data.token,
             name: credentials.username
           }));
           resolve()
@@ -46,7 +45,7 @@ function logout() {
 
 function isLoggedIn() {
   let user = getUser();
-  if (user && user.token) {
+  if (user) {
     return true;
   } else {
     return false;
@@ -59,7 +58,7 @@ function getUser() {
 
 function getRole() {
   let user = getUser();
-  if (user && user.token) {
+  if (user) {
     return user.role;
   } else {
     return null;

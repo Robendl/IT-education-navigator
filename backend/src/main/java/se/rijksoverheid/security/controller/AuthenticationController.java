@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.JwtTokenDTO;
 import se.rijksoverheid.security.config.JwtTokenUtil;
+import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.net.http.HttpResponse;
 
 /**
  * Holds the endpoints related to authentication
@@ -46,7 +51,8 @@ public class AuthenticationController {
      * @throws Exception
      */
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody @Validated UserRequestDTO userDTO) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody @Validated UserRequestDTO userDTO,
+                                                       HttpServletResponse response) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword())
@@ -58,6 +64,11 @@ public class AuthenticationController {
         }
         User user = userService.loadUserByUsername(userDTO.getUsername());
         String token = jwtTokenUtil.generateToken(user);
-        return ResponseEntity.ok(new JwtTokenDTO(token, user.getRole().toString()));
+        Cookie cookie = new Cookie("jwt", "abcdef");
+//        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(1000000);
+        response.addCookie(cookie);
+        return ResponseEntity.ok(new UserPermRequestDTO(user.getRole()));
     }
 }
