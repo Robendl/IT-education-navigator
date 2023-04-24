@@ -18,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * UserService classed is used for interacting with userdata.
@@ -63,6 +64,16 @@ public class UserService implements UserDetailsService {
      */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    /**
+     * Checks if a given string is a valid email address
+     * @param email string to be checked
+     * @return      true if string is a valid email address, false otherwise
+     */
+    public boolean isValidEmailAddress(String email) {
+        String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+        return Pattern.compile(regexPattern).matcher(email).matches();
     }
 
     /**

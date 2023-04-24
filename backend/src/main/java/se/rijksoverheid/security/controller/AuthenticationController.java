@@ -1,6 +1,7 @@
 package se.rijksoverheid.security.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,8 +28,8 @@ public class AuthenticationController {
 
     /**
      * Register a new user
-     * @param userDTO   Data Transfer Object conatining user info.
-     * @return          Created user.
+     * @param userDTO   Data Transfer Object containing user info.
+     * @return          Created HTTP Status, or Bad Request HTTP Status if username is already in use.
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
@@ -36,13 +37,17 @@ public class AuthenticationController {
         if(userService.existsByUsername(userDTO.getUsername())) {
             return ResponseEntity.badRequest().body("Username is already in use");
         }
-        return ResponseEntity.ok(userService.save(userDTO));
+        if(!userService.isValidEmailAddress(userDTO.getUsername())) {
+            return ResponseEntity.badRequest().body("Not a valid email address");
+        }
+        userService.save(userDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * Login endpoint
      * @param userDTO   Data Transfer Object containing login info
-     * @return          Data Transfer Object conating JwtToken and role of user
+     * @return          Data Transfer Object containing JwtToken and role of user
      * @throws Exception
      */
     @PostMapping("/login")
