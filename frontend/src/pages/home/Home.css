@@ -235,17 +235,17 @@ button:hover {
   color: #9e9e9e;
 }
 
-.result-list .result-list-entries .result .result-head .archive-button:hover {
+.result-list .result-list-entries .result .result-head button:hover {
+  color: #5a5a5a;
+}
+
+.result-list .result-list-entries .result .result-head .red-hover-button:hover {
   color: #a82121;
 }
 
 .result-list .result-list-entries .result .result-head .archive-button .archive-icon {
   font-size: 1.2rem;
   transform: translateY(2px);
-}
-
-.result-list .result-list-entries .result .result-head .edit-button:hover {
-  color: #5a5a5a;
 }
 
 .result-list .result-list-entries .result .result-body {

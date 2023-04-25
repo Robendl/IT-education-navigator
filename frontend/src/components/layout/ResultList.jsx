@@ -47,18 +47,17 @@ function Result({entry}) {
     });
   }
 
-    function handleRestore(e) {
-        CourseLoader.restoreCourse(entry).then(() => {
-            window.location.reload();
-        });
-    }
+  function handleRestore(e) {
+    CourseLoader.restoreCourse(entry).then(() => {
+      window.location.reload();
+    });
+  }
 
-    function handleDelete(e) {
-        CourseLoader.deleteCourse(entry).then(() => {
-            window.location.reload();
-        });
-    }
-
+  function handleDelete(e) {
+    CourseLoader.deleteCourse(entry).then(() => {
+      window.location.reload();
+    });
+  }
 
   function handleEdit() {
     overlay.openEdit(entry);
@@ -70,9 +69,9 @@ function Result({entry}) {
         <span className="result-tag">{entry["level"]}</span>
         <Link to="#" className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
         {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && !entry["archived"] &&<button className="edit-button" onClick={handleEdit}><span className="material-symbols-outlined edit-icon">edit</span></button>}
-        {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && !entry["archived"] &&<button className="archive-button" onClick={handleArchive}><span className="material-symbols-outlined archive-icon">archive</span></button>}
+        {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && !entry["archived"] &&<button className="archive-button red-hover-button" onClick={handleArchive}><span className="material-symbols-outlined archive-icon">archive</span></button>}
         {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && entry["archived"]  &&<button className="unarchive-button" onClick={handleRestore}><span className="material-symbols-outlined unarchive-icon">unarchive</span></button>}
-        {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && entry["archived"]  &&<button className="delete-button" onClick={handleDelete}><span className="material-symbols-outlined delete-icon">delete</span></button>}
+        {(user.role === "DATA_MANAGER" || user.role === "ADMIN") && entry["archived"]  &&<button className="delete-button red-hover-button" onClick={handleDelete}><span className="material-symbols-outlined delete-icon">delete</span></button>}
         
       </div>
       <div className="result-body">
