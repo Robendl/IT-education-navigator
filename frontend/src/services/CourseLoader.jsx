@@ -53,6 +53,35 @@ const CourseLoader = {
         reject("Kon opleiding niet archiveren.")
       });
     });
+  },
+  restoreCourse: (course) => {
+    return new Promise((resolve, reject) => {
+      course.archived = false;
+      http.put(`/courses/${course.id}`, course, {
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => {
+        console.log(response);
+        resolve(response);
+      }, (error) => {
+        reject("Kon opleiding niet restoren.")
+      });
+    });
+  },
+  deleteCourse: (course) => {
+    return new Promise((resolve, reject) => {
+      http.delete(`/courses/${course.id}`, course, {
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => {
+        console.log(response);
+        resolve(response);
+      }, (error) => {
+        reject("Kon opleiding niet verwijderen.")
+      });
+    });
   }
 }
 
