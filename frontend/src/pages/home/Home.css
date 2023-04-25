@@ -122,6 +122,7 @@ button:hover {
   padding: 20px 0 20px 0;
   gap: 45px;
   width: 265px;
+  min-width: 265px;
 }
 
 .filter {

@@ -4,14 +4,19 @@ import FormEntry from 'components/forms/FormEntry/FormEntry';
 import './AddItemForm.css'
 import { useState } from 'react';
 
+/* Form component for adding new courses to the database */
 export default function AddItemForm({ onSubmit, onCancel }) {
+
+  /* Boolean state that is true when the form is submitted and being processed */
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* Function that is called when the form is closed */
   function handleCancel(e) {
     e.preventDefault();
     onCancel();
   }
 
+  /* Function that is called when the form is submitted */
   function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
@@ -26,6 +31,7 @@ export default function AddItemForm({ onSubmit, onCancel }) {
     });
   }
 
+  /* Form Body */
   return (
     <form className="add-item-form" onSubmit={handleSubmit}>
       <h2>Item toevoegen</h2>

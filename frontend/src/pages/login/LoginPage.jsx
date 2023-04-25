@@ -1,11 +1,11 @@
 import FormEntry from "components/forms/FormEntry/FormEntry";
 import AuthService, { errorCodes } from "services/AuthService";
 import { CircularProgress } from "@mui/material";
-
 import './LoginPage.css'
 import { useState } from "react";
 import {Link} from "react-router-dom";
 
+/* Main Login page component */
 export default function LoginPage() {
   return (
     <div className="login">
@@ -15,10 +15,12 @@ export default function LoginPage() {
   );
 }
 
+/* Form component for loggin in */
 function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  /* Function that is called when the form is submitted */
   function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
@@ -49,6 +51,7 @@ function LoginForm() {
     });
   }
 
+  /* LoginForm body */
   return (
     <form className="login-form" onSubmit={handleSubmit}>
         <h2>Opleidingsregister Login</h2>
