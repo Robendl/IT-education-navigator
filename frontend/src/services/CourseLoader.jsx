@@ -69,11 +69,50 @@ function archiveCourse(course) {
   });
 }
 
+/* Function for restoring a course
+ * Accepts an object with course properties (must include an "id" property)
+ * Returns a promise that, once resolved, returns the http response body */
+function restoreCourse(course) {
+  return new Promise((resolve, reject) => {
+    course.archived = false;
+    http.put(`/courses/${course.id}`, course, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }).then((response) => {
+      console.log(response);
+      resolve(response);
+    }, (error) => {
+      reject("Kon opleiding niet restoren.")
+    });
+  });
+}
+
+/* Function for deleting a course
+ * Accepts an object with course properties (must include an "id" property)
+ * Returns a promise that, once resolved, returns the http response body */
+function deleteCourse(course) {
+  return new Promise((resolve, reject) => {
+    http.delete(`/courses/${course.id}`, course, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }).then((response) => {
+      console.log(response);
+      resolve(response);
+    }, (error) => {
+      reject("Kon opleiding niet verwijderen.")
+    });
+  });
+}
+
 const CourseLoader = {
   loadCourses,
   addCourse,
   editCourse,
-  archiveCourse
+  archiveCourse,
+  restoreCourse,
+  deleteCourse
 }
 
 export default CourseLoader;

@@ -3,6 +3,7 @@ import AuthService, { errorCodes } from "services/AuthService";
 import { CircularProgress } from "@mui/material";
 import './LoginPage.css'
 import { useState } from "react";
+import {Link} from "react-router-dom";
 
 /* Main Login page component */
 export default function LoginPage() {
@@ -56,16 +57,18 @@ function LoginForm() {
         <h2>Opleidingsregister Login</h2>
         <FormEntry type="text" propertyName="Gebruikersnaam" propertyKey="username" required/>
         <FormEntry type="password" propertyName="Wachtwoord" propertyKey="password" required/>
-        <div className="login-form-footer">
+        <div>
+          <div className="login-form-footer">
+            <button type="submit">
+              {(isSubmitting &&
+                <CircularProgress className="submit-loading"/>) ||
+                <span>Login</span>
+              }
+            </button>
+            <Link to="/register" className="register-link">Registreer</Link>
+          </div>
           {errorMessage && <span className="login-error-message">{errorMessage}</span>}
-          <button type="submit">
-            {(isSubmitting && 
-              <CircularProgress className="submit-loading"/>) ||
-              <span>Login</span>
-            }
-          </button>
         </div>
-        
     </form>
   )
 }

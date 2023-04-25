@@ -6,8 +6,8 @@ import LoginPage from 'pages/login/LoginPage';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
-import RegisterPage from 'pages/testing/RegisterPage'
 import { useEffect, useState } from 'react';
+import RegisterPage from "./pages/register/RegisterPage";
 
 /* Main App component */
 export default function App() {
