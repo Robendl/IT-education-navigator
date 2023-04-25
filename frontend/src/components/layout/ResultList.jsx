@@ -5,10 +5,12 @@ import CourseLoader from 'services/CourseLoader';
 import { useContext } from 'react';
 import { OverlayContext } from './PageOverlay/PageOverlay';
 import { UserContext, userRoles } from 'services/AuthService';
+import { useRef } from 'react';
 
 /* ResultList component that shows all courses that fit the user's search and order preferences */
 export default function ResultList () {
   const [results, setResults] = useState([]);
+  const [resultCount, setResultCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const location = useLocation();
@@ -18,6 +20,7 @@ export default function ResultList () {
     setIsLoading(true);
     CourseLoader.loadCourses(location.search ? location.search : "").then((courses) => {
       setResults(courses);
+      setResultCount(courses.length);
       setIsLoading(false);
     });
   }, [location]);
@@ -26,35 +29,45 @@ export default function ResultList () {
   return (
     <div className="result-list">
       <div className="result-list-header">
-        <span><b>{results.length}</b> Resultaten</span>
+        <span><b>{resultCount}</b> Resultaten</span>
         <span className="material-symbols-outlined">sort</span>
       </div>
-      {isLoading &&
-        <LoadingMessage />
+      {(isLoading &&
+        <LoadingMessage />) ||
+        <div className="result-list-entries">
+        {results.map((result, idx) => <Result entry={result} key={idx} decrementCount={() => setResultCount(resultCount - 1)}/>)}
+        </div>
       }
-      <div className="result-list-entries">
-        {results.map((result, idx) => <Result entry={result} key={idx}/>)}
-      </div>
     </div>
   );
 }
 
 /* Result component that shows information on a course */
-function Result({entry}) {
+function Result({entry, decrementCount}) {
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
+
+  const resultElement = useRef();
 
   /* Function that is called when the course {entry} should be archived */
   function handleArchive(e) {
     CourseLoader.archiveCourse(entry).then(() => {
-      window.location.reload();
+      resultElement.current.classList.add("hide");
+      decrementCount();
+      setTimeout(() => {
+        resultElement.current?.remove();
+      }, 1500);
     });
   }
 
   /* Function that is called when the user wants to restore the course {entry} */
   function handleRestore(e) {
     CourseLoader.restoreCourse(entry).then(() => {
-      window.location.reload();
+      resultElement.current.classList.add("hide");
+      decrementCount();
+      setTimeout(() => {
+        resultElement.current?.remove();
+      }, 1500);
     });
   }
 
@@ -72,7 +85,7 @@ function Result({entry}) {
 
   /* Result body */
   return (
-    <div className="result">
+    <div className="result" ref={resultElement}>
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
         <Link to="#" className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
