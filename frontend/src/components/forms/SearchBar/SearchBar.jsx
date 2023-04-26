@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 /* Searchbar component */
 export default function SearchBar() {
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const setSearchParams = useSearchParams()[1];
   const searchInput = useRef();
 
   function handleSearch() {
