@@ -55,8 +55,7 @@ function editCourse(course) {
  * Returns a promise that, once resolved, returns the http response body */
 function archiveCourse(course) {
   return new Promise((resolve, reject) => {
-    course.archived = true;
-    http.put(`/courses/${course.id}`, course, {
+    http.put(`/courses/${course.id}`, {...course, archived: true}, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -74,8 +73,7 @@ function archiveCourse(course) {
  * Returns a promise that, once resolved, returns the http response body */
 function restoreCourse(course) {
   return new Promise((resolve, reject) => {
-    course.archived = false;
-    http.put(`/courses/${course.id}`, course, {
+    http.put(`/courses/${course.id}`, {...course, archived: false}, {
       headers: {
         'Content-type': 'application/json'
       }

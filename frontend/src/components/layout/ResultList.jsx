@@ -46,11 +46,16 @@ export default function ResultList () {
 function Result({entry, decrementCount}) {
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
+  const [isBeingChanged, setIsBeingChanged] = useState(false);
 
   const resultElement = useRef();
 
   /* Function that is called when the course {entry} should be archived */
   function handleArchive(e) {
+    if (isBeingChanged) {
+      return;
+    }
+    setIsBeingChanged(true);
     CourseLoader.archiveCourse(entry).then(() => {
       resultElement.current.classList.add("hide");
       decrementCount();
@@ -62,6 +67,10 @@ function Result({entry, decrementCount}) {
 
   /* Function that is called when the user wants to restore the course {entry} */
   function handleRestore(e) {
+    if (isBeingChanged) {
+      return;
+    }
+    setIsBeingChanged(true);
     CourseLoader.restoreCourse(entry).then(() => {
       resultElement.current.classList.add("hide");
       decrementCount();
@@ -73,6 +82,10 @@ function Result({entry, decrementCount}) {
 
   /* Function that is called when the user wants to delete the course {entry} */
   function handleDelete(e) {
+    if (isBeingChanged) {
+      return;
+    }
+    setIsBeingChanged(true);
     CourseLoader.deleteCourse(entry).then(() => {
       window.location.reload();
     });
