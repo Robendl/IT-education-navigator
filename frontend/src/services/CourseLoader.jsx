@@ -1,15 +1,36 @@
+import axios from "axios";
 import http from "./httpService";
+
+var loadController = new AbortController();
+
+/* Enum containing various error codes that can be returned */
+export const errorCodes = {
+  ERR_LOGIN_INVALID: 1,
+  ERR_NETWORK: 2,
+  ERR_CANCELED: 3,
+  ERR_OTHER: 4
+}
 
 /* Function for loading courses
  * Accepts a string that holds filters as search parameters (e.g. "?province=1&archived=1")
  * Returns a promise that, once resolved, returns an object with all courses that match the filters */
 function loadCourses(filters) {
+  loadController.abort();
+  loadController = new AbortController();
   return new Promise((resolve, reject) => {
-    http.get(`/courses${filters ? "/" + filters : ""}`).then((response) => {
+    http.get(`/courses${filters ? "/" + filters : ""}`, {signal: loadController.signal}).then((response) => {
       resolve(response.data);
     }, (error) => {
-      console.log(error);
-      reject("Kon opleidingen niet ophalen.");
+      if (axios.isCancel(error)) {
+        reject(errorCodes.ERR_CANCELED);
+      }
+      if (error.response && error.response.status === 401) {
+        reject(errorCodes.ERR_LOGIN_INVALID)
+      }
+      if (error.code === "ERR_NETWORK") {
+        reject(errorCodes.ERR_NETWORK)
+      }
+      reject(errorCodes.ERR_OTHER);
     });
   });
 }

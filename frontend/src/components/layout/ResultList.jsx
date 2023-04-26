@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
-import CourseLoader from 'services/CourseLoader';
+import CourseLoader, { errorCodes } from 'services/CourseLoader';
 import { useContext } from 'react';
 import { OverlayContext } from './PageOverlay/PageOverlay';
 import { UserContext, userRoles } from 'services/AuthService';
@@ -16,9 +16,21 @@ export default function ResultList () {
   useEffect(() => {
     /* Load courses on page navigate */
     setIsLoading(true);
+    setResults([]);
     CourseLoader.loadCourses(location.search ? location.search : "").then((courses) => {
       setResults(courses);
       setIsLoading(false);
+    }, (error) => {
+      switch (error) {
+        case errorCodes.ERR_NETWORK:
+          console.error("Kon niet verbinden met server.");
+          break;
+        case errorCodes.ERR_OTHER:
+          console.error("Kon opleidingen niet ophalen.");
+          break;
+        default:
+          break;
+      }
     });
   }, [location]);
 
