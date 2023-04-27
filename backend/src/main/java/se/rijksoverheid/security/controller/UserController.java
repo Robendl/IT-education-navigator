@@ -1,8 +1,6 @@
 package se.rijksoverheid.security.controller;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,7 +26,6 @@ import javax.validation.Valid;
 public class UserController {
     private AuthenticationManager authenticationManager;
     private UserService userService;
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     /**
      * Endpoint for retrieving users
@@ -78,9 +75,6 @@ public class UserController {
             @PathVariable long id,
             @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
     ) throws Exception {
-        logger.info("Test");
-        logger.info(userChangePasswordDTO.getPassword());
-        logger.info(userChangePasswordDTO.getNewPassword());
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userChangePasswordDTO.getUsername(), userChangePasswordDTO.getPassword())
