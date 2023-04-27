@@ -1,14 +1,19 @@
 package se.rijksoverheid.security.controller;
 
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
-import se.rijksoverheid.security.dto.UserPermRequestDTO;
-import se.rijksoverheid.security.dto.UserResponseDTO;
+import se.rijksoverheid.security.dto.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -21,8 +26,9 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
+    private AuthenticationManager authenticationManager;
     private UserService userService;
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     /**
      * Endpoint for retrieving users
@@ -44,17 +50,51 @@ public class UserController {
 
     /**
      * Edit a user's permissions
-     * @param id            Id of user to be changed.
+     * @param id            ID of user to be changed.
      * @param userPermDTO   The info needed to change.
-     * @return              The user which was changed
+     * @return              The user that was changed
      */
-    @PutMapping("perm/{id}")
+    @PutMapping("/perm/{id}")
     public ResponseEntity<UserResponseDTO> editUserPermissions(
             @PathVariable long id,
             @RequestBody @Valid UserPermRequestDTO userPermDTO
     ){
         try {
             return ResponseEntity.ok(userService.changeUserPerms(id, userPermDTO));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Change a user's password
+     * @param id                        ID of user to be changed.
+     * @param userChangePasswordDTO     The info needed to change.
+     * @return                          The user that was changed
+     * @throws Exception
+     */
+    @PutMapping("/password/{id}")
+    public ResponseEntity<?> changeUserPassword(
+            @PathVariable long id,
+            @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
+    ) throws Exception {
+        logger.info("Test");
+        logger.info(userChangePasswordDTO.getPassword());
+        logger.info(userChangePasswordDTO.getNewPassword());
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userChangePasswordDTO.getUsername(), userChangePasswordDTO.getPassword())
+            );
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+        UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setUsername(userChangePasswordDTO.getUsername());
+        userRequestDTO.setPassword(userChangePasswordDTO.getNewPassword());
+        try {
+            return ResponseEntity.ok(userService.changePassword(id, userRequestDTO));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

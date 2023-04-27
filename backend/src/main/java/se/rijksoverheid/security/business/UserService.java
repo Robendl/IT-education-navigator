@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * Finds a user by username.
-     * @param username the username identifying the user whose data is required.
+     * @param username  the username identifying the user whose data is required.
      * @return          the user.
      * @throws UsernameNotFoundException    when no user with the given username can be found.
      */
@@ -113,6 +113,23 @@ public class UserService implements UserDetailsService {
     public UserResponseDTO changeUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         Mapper.map(userPermDTO, user);
+        userRepository.save(user);
+        UserResponseDTO UserDTO = new UserResponseDTO();
+        Mapper.map(user, UserDTO);
+        return UserDTO;
+    }
+
+    /**
+     * Change a user's permissions.
+     * @param id                        ID of user to change permissions for.
+     * @param userRequestDTO            DTO for all data to be changed.
+     * @return                          The user which was changed.
+     * @throws EntityNotFoundException  No user with id was found.
+     */
+    @Transactional
+    public UserResponseDTO changePassword(long id, UserRequestDTO userRequestDTO) throws EntityNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Mapper.map(userRequestDTO, user);
         userRepository.save(user);
         UserResponseDTO UserDTO = new UserResponseDTO();
         Mapper.map(user, UserDTO);
