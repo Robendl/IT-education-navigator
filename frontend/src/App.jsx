@@ -42,7 +42,7 @@ export default function App() {
 function Layout() {
   return (
     <div>
-      {(AuthService.getRole() &&
+      {(AuthService.isLoggedIn() &&
         <div>
           <header className="logo-header ignore-overlay">
             <img src={logo} className="ro-logo" alt="logo" />
