@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import CourseLoader from 'services/CourseLoader';
 import { useContext } from 'react';
 import { OverlayContext } from './PageOverlay/PageOverlay';
@@ -35,7 +36,7 @@ export default function ResultList () {
       {(isLoading &&
         <LoadingMessage />) ||
         <div className="result-list-entries">
-        {results.map((result, idx) => <Result entry={result} key={idx} decrementCount={() => setResultCount(resultCount - 1)}/>)}
+        {results.map((result, idx) => <Result entry={result} key={idx} />)}
         </div>
       }
     </div>
@@ -43,7 +44,7 @@ export default function ResultList () {
 }
 
 /* Result component that shows information on a course */
-function Result({entry, decrementCount}) {
+function Result({ entry }) {
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
   const [isBeingChanged, setIsBeingChanged] = useState(false);
@@ -57,11 +58,9 @@ function Result({entry, decrementCount}) {
     }
     setIsBeingChanged(true);
     CourseLoader.archiveCourse(entry).then(() => {
-      resultElement.current.classList.add("hide");
-      decrementCount();
-      setTimeout(() => {
-        resultElement.current?.remove();
-      }, 1500);
+      entry.archived = true;
+      resultElement.current.classList.add("archived");
+      setIsBeingChanged(false);
     });
   }
 
@@ -72,11 +71,9 @@ function Result({entry, decrementCount}) {
     }
     setIsBeingChanged(true);
     CourseLoader.restoreCourse(entry).then(() => {
-      resultElement.current.classList.add("hide");
-      decrementCount();
-      setTimeout(() => {
-        resultElement.current?.remove();
-      }, 1500);
+      entry.archived = false;
+      resultElement.current.classList.remove("archived");
+      setIsBeingChanged(false);
     });
   }
 
@@ -87,7 +84,7 @@ function Result({entry, decrementCount}) {
     }
     setIsBeingChanged(true);
     CourseLoader.deleteCourse(entry).then(() => {
-      window.location.reload();
+      resultElement.current?.remove();
     });
   }
 
@@ -98,14 +95,27 @@ function Result({entry, decrementCount}) {
 
   /* Result body */
   return (
-    <div className="result" ref={resultElement}>
+    <div className={`result ${entry["archived"] ? "archived": ""}`} ref={resultElement}>
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
         <Link to="#" className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
-        {(user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&<button className="edit-button" onClick={handleEdit}><span className="material-symbols-outlined edit-icon">edit</span></button>}
-        {(user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&<button className="archive-button red-hover-button" onClick={handleArchive}><span className="material-symbols-outlined archive-icon">archive</span></button>}
-        {(user.role >= userRoles.DATA_MANAGER) && entry["archived"]  &&<button className="unarchive-button" onClick={handleRestore}><span className="material-symbols-outlined unarchive-icon">unarchive</span></button>}
-        {(user.role >= userRoles.DATA_MANAGER) && entry["archived"]  &&<button className="delete-button red-hover-button" onClick={handleDelete}><span className="material-symbols-outlined delete-icon">delete</span></button>}
+
+        { /* Edit button */
+          (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] && 
+          <ToolTipButton title="Bewerk" buttonClass="edit-button" iconClass="edit-icon" onClick={handleEdit} iconName="edit"/>
+        }
+        { /* Archive button */
+          (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] && 
+          <ToolTipButton title="Archiveer" buttonClass="archive-button" iconClass="archive-icon" onClick={handleArchive} iconName="archive" hasRedHover/>
+        }
+        { /* Restore button */
+          (user.role >= userRoles.DATA_MANAGER) && entry["archived"] && 
+          <ToolTipButton title="Terugzetten" buttonClass="unarchive-button" iconClass="unarchive-icon" onClick={handleRestore} iconName="unarchive"/>
+        }
+        { /* Delete button */
+          (user.role >= userRoles.ADMIN) && entry["archived"] && 
+          <ToolTipButton title="Verwijderen" buttonClass="delete-button" iconClass="delete-icon" onClick={handleDelete} iconName="delete" hasRedHover/>
+        }
         
       </div>
       <div className="result-body">
@@ -118,6 +128,14 @@ function Result({entry, decrementCount}) {
       </div>
     </div>
   );
+}
+
+function ToolTipButton({ title, buttonClass, iconClass, onClick, hasRedHover, iconName }) {
+  return (
+    <Tooltip title={title}>
+      <button className={`${buttonClass} ${hasRedHover ? "red-hover-button" : ""}`} onClick={onClick}><span className={`material-symbols-outlined ${iconClass}`}>{iconName}</span></button>
+    </Tooltip>
+  )
 }
 
 /* Property component that shows information about the course for a specific property */

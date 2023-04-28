@@ -197,39 +197,23 @@ button:hover {
 }
 
 .result-list .result-list-entries {
-  display: flex;
-  flex-direction: column;
   padding: 15px 0 15px 0;
-  gap: 30px;
 }
 
 .result-list .result-list-entries .result {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-bottom: 30px;
   max-height: 100vh; /* For the collapse animation */
 }
 
-.result-list .result-list-entries .result.hide {
-  animation: result-hide .5s linear 0s 1 normal forwards;
+.result-list .result-list-entries .result.archived {
+  color: rgba(0, 0, 0, 0.4);
 }
 
-@keyframes result-hide {
-
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0;
-  }
-
-  100% {
-    max-height: 0;
-    opacity: 0;
-    visibility: none;
-    margin-top: -30px;
-  }
+.result-list .result-list-entries .result.archived .result-name {
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .result-list .result-list-entries .result .result-head {
@@ -267,6 +251,11 @@ button:hover {
 }
 
 .result-list .result-list-entries .result .result-head .archive-button .archive-icon {
+  font-size: 1.2rem;
+  transform: translateY(2px);
+}
+
+.result-list .result-list-entries .result .result-head .unarchive-button .unarchive-icon {
   font-size: 1.2rem;
   transform: translateY(2px);
 }
