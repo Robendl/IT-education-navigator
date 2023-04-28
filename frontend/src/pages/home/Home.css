@@ -225,6 +225,7 @@ button:hover {
 .result-list .result-list-entries .result .result-head .result-tag {
   padding: 2px 6px 2px 6px;
   background-color: #DFDFDF;
+  text-transform: uppercase;
 }
 
 .result-list .result-list-entries .result .result-head .result-name {

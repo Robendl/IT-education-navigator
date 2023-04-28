@@ -45,7 +45,6 @@ function addCourse(course) {
         'Content-type': 'application/json'
       }
     }).then((response) => {
-      console.log(response);
       resolve(response);
     }, (error) => {
       reject("Kon opleiding niet toevoegen.")
@@ -63,7 +62,6 @@ function editCourse(course) {
         'Content-type': 'application/json'
       }
     }).then((response) => {
-      console.log(response);
       resolve(response);
     }, (error) => {
       reject("Kon opleiding niet bewerken.")
@@ -81,7 +79,6 @@ function archiveCourse(course) {
         'Content-type': 'application/json'
       }
     }).then((response) => {
-      console.log(response);
       resolve(response);
     }, (error) => {
       reject("Kon opleiding niet archiveren.")
@@ -99,7 +96,6 @@ function restoreCourse(course) {
         'Content-type': 'application/json'
       }
     }).then((response) => {
-      console.log(response);
       resolve(response);
     }, (error) => {
       reject("Kon opleiding niet restoren.")
@@ -117,7 +113,6 @@ function deleteCourse(course) {
         'Content-type': 'application/json'
       }
     }).then((response) => {
-      console.log(response);
       resolve(response);
     }, (error) => {
       reject("Kon opleiding niet verwijderen.")

@@ -12,7 +12,6 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
   /* Function that is called when the form is closed */
   function handleCancel(e) {
     e.preventDefault();
-    console.log(entry);
     onCancel();
   }
 

@@ -7,7 +7,8 @@ export default function SearchBar() {
   const setSearchParams = useSearchParams()[1];
   const searchInput = useRef();
 
-  function handleSearch() {
+  function handleSearch(e) {
+    e.preventDefault();
     setSearchParams(prevParams => {
       prevParams.set("search", searchInput.current.value);
       return prevParams
@@ -15,9 +16,9 @@ export default function SearchBar() {
   }
 
   return (
-    <div className="search-bar">
+    <form className="search-bar" onSubmit={handleSearch}>
       <input type="search" placeholder="Zoek op opleidingstitel, institutienaam, beschrijving..." ref={searchInput}/>
-      <button onClick={handleSearch}><span className="material-symbols-outlined">search</span></button>
-    </div>
+      <button type="submit"><span className="material-symbols-outlined">search</span></button>
+    </form>
   ); 
 }
