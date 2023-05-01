@@ -35,10 +35,10 @@ public class AuthenticationController {
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
 
         if(userService.existsByUsername(userDTO.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already in use");
+            return ResponseEntity.badRequest().body("Emailadres wordt al gebruikt");
         }
         if(!userService.isValidEmailAddress(userDTO.getUsername())) {
-            return ResponseEntity.badRequest().body("Not a valid email address");
+            return ResponseEntity.badRequest().body("Geen geldig emailadres ingevoerd");
         }
         userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
