@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { OverlayContext } from './PageOverlay/PageOverlay';
 import { UserContext, userRoles } from 'services/AuthService';
 import { useRef } from 'react';
+import { propertyTranslations } from 'config/translations';
 
 /* ResultList component that shows all courses that fit the user's search and order preferences */
 export default function ResultList () {
@@ -134,7 +135,7 @@ function Result({ entry }) {
         {
           // Return a span for the remaining tags
           Object.keys(entry)
-            .filter(key => !["level", "name"].includes(key))
+            .filter(key => !["level", "name", "id", "archived"].includes(key))
             .map(key => <ResultProperty key={key} keyName={key} value={entry[key]}/>)
         }
       </div>
@@ -155,8 +156,8 @@ function ResultProperty({ keyName, value }) {
   return (
     <span className="result-property">
     {(keyName === "province" &&
-      <><b>{keyName}: </b>{value["name"]}</>) ||
-      <><b>{keyName}: </b>{value}</>
+      <><b>{propertyTranslations[keyName]}: </b>{value["name"]}</>) ||
+      <><b>{propertyTranslations[keyName]}: </b>{value}</>
     }
     </span>
   )
