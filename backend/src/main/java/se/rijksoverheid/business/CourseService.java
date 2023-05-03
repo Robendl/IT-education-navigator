@@ -37,8 +37,8 @@ public class CourseService {
      * @return              List of courses
      */
     @Transactional
-    public List<CourseResponseDTO> getCourses(String search, boolean archived, Pageable pageable ) {
-        Page<Course> coursePage = courseRepository.searchAllFields(search, archived, pageable);
+    public List<CourseResponseDTO> getCourses(String search, boolean archived, String level, String region, long categoryId, Pageable pageable ) {
+        Page<Course> coursePage = courseRepository.searchAllFields(search, archived, level, region, categoryId, pageable);
         List<CourseResponseDTO> courses = new ArrayList<>();
         for(Course course: coursePage.getContent()) {
             ProvinceDTO provinceDTO = Mapper.map(course.getProvince(), ProvinceDTO.class);

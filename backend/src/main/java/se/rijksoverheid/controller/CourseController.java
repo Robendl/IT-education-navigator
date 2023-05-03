@@ -46,13 +46,16 @@ public class CourseController {
     public ResponseEntity<List<CourseResponseDTO>> getCourses(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
+            @RequestParam(required = false, defaultValue = "") String level,
+            @RequestParam(required = false, defaultValue = "") String region,
+            @RequestParam(value = "category-id", required = false, defaultValue = "0") long categoryId,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "500") int size,
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, pageable));
+        return ResponseEntity.ok(courseService.getCourses(search, archived, level, region, categoryId, pageable));
     }
 
     /**

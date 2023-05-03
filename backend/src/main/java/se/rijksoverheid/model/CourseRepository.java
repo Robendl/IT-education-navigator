@@ -40,5 +40,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "",
             countQuery = "SELECT COUNT(*) FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived",
             nativeQuery = true)
-    Page<Course> searchAllFields(@Param("search") String search, @Param("archived") boolean archived, String level, Pageable pageable);
+    Page<Course> searchAllFields(@Param("search") String search, @Param("archived") boolean archived, String level, String region, long categoryId, Pageable pageable);
 }
