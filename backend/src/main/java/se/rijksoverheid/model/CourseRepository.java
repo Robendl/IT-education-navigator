@@ -33,8 +33,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      * @param pageable      page specification.
      * @return              Page of courses.
      */
-    @Query(value = "SELECT * FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived",
+    @Query(value = "SELECT * FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived " +
+            "AND (:level = '' OR c.level = :level) " +
+            "AND ( :provinceId = 0 OR c.province_id = :provinceId) " +
+            "AND ( :region = '' OR c.region = :region) " +
+            "",
             countQuery = "SELECT COUNT(*) FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived",
             nativeQuery = true)
-    Page<Course> searchAllFields(@Param("search") String search, @Param("archived") boolean archived, Pageable pageable);
+    Page<Course> searchAllFields(@Param("search") String search, @Param("archived") boolean archived, String level, Pageable pageable);
 }
