@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +33,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private Environment env;
+
     /**
      * Handles filtering of request based on valid JwtTokens.
      * @param request           incoming request.
@@ -43,7 +47,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        if(request.getRequestURI().startsWith("/rijksoverheid/api/auth")) {
+
+        if(request.getRequestURI().startsWith(env.getProperty("server.servlet.context-path") + "/auth")) {
             chain.doFilter(request, response);
             return;
         }

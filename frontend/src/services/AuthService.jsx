@@ -34,7 +34,7 @@ function login(credentials) {
             reject(errorCodes.ERR_INVALID_ROLE);
           }
           localStorage.setItem("user", JSON.stringify({
-            role: response.data.role,
+            role: userRoles[response.data.role],
             name: credentials.username
           }));
           resolve()
