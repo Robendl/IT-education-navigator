@@ -33,7 +33,6 @@ public class AuthenticationController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
-
         if(userService.existsByUsername(userDTO.getUsername())) {
             return ResponseEntity.badRequest().body("Emailadres wordt al gebruikt");
         }
