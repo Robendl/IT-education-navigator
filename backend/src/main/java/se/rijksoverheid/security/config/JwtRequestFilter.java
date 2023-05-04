@@ -43,7 +43,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
+        if(request.getRequestURI().startsWith("/rijksoverheid/api/auth")) {
+            chain.doFilter(request, response);
+            return;
+        }
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
         if (cookies != null) {
@@ -57,7 +60,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         if (jwtToken != null) {
             try {
-                logger.info(jwtToken);
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
@@ -78,6 +80,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+
         chain.doFilter(request, response);
     }
 }

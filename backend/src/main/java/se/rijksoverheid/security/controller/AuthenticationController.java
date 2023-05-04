@@ -64,10 +64,11 @@ public class AuthenticationController {
         }
         User user = userService.loadUserByUsername(userDTO.getUsername());
         String token = jwtTokenUtil.generateToken(user);
-        Cookie cookie = new Cookie("jwt", "abcdef");
-//        cookie.setHttpOnly(true);
+        Cookie cookie = new Cookie("jwt", token);
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(1000000);
+        cookie.setMaxAge(3 * 60 * 60);
+        cookie.setPath("/");
         response.addCookie(cookie);
         return ResponseEntity.ok(new UserPermRequestDTO(user.getRole()));
     }

@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Component
 public class JwtTokenUtil {
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = 3 * 60 * 60;
 
     private static final SecretKey secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
