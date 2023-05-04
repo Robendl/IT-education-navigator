@@ -79,16 +79,11 @@ public class UserController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userChangePasswordDTO.getUsername(), userChangePasswordDTO.getPassword())
             );
+            return ResponseEntity.ok(userService.changePassword(id, userChangePasswordDTO));
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
-        }
-        UserRequestDTO userRequestDTO = new UserRequestDTO();
-        userRequestDTO.setUsername(userChangePasswordDTO.getUsername());
-        userRequestDTO.setPassword(userChangePasswordDTO.getNewPassword());
-        try {
-            return ResponseEntity.ok(userService.changePassword(id, userRequestDTO));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

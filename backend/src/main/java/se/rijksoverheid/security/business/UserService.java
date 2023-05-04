@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.mapper.Mapper;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
@@ -122,18 +123,15 @@ public class UserService implements UserDetailsService {
     /**
      * Change a user's permissions.
      * @param id                        ID of user to change permissions for.
-     * @param userRequestDTO            DTO for all data to be changed.
+     * @param userDTO                   DTO for all data to be changed.
      * @return                          The user which was changed.
      * @throws EntityNotFoundException  No user with id was found.
      */
     @Transactional
-    public UserResponseDTO changePassword(long id, UserRequestDTO userRequestDTO) throws EntityNotFoundException {
+    public UserResponseDTO changePassword(long id, UserChangePasswordRequestDTO userDTO) throws EntityNotFoundException {
         User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-        Mapper.map(userRequestDTO, user);
+        user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
         userRepository.save(user);
-        UserResponseDTO UserDTO = new UserResponseDTO();
-        Mapper.map(user, UserDTO);
-        return UserDTO;
+        return Mapper.map(user, UserResponseDTO.class);
     }
 }
