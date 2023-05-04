@@ -3,14 +3,14 @@ package se.rijksoverheid.business;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.ResponseEntity;
+import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
+import se.rijksoverheid.dto.ProvinceDTO;
+import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
 import se.rijksoverheid.model.Province;
@@ -18,59 +18,76 @@ import se.rijksoverheid.model.ProvinceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CourseServiceTest {
-    @Mock
-    private CourseRepository courseRepository;
-    @Mock
-    private ProvinceRepository provinceRepository;
-
-    @InjectMocks
+    private CourseRepository mockCourseRepository;
+    private ProvinceRepository mockProvinceRepository;
+    private Course mockCourse;
+    private Province mockProvince;
+    private List<Course> courseList;
+    private Page<Course> coursePage;
     private CourseService courseService;
 
-    private Course setCourse() {
-        Course course = new Course();
-        course.setId(0);
-        course.setArchived(false);
-        course.setName("name0");
-        course.setInstitution("in0");
-        course.setLocation("loc");
-        Province province = new Province();
-        course.setProvince(province);
-        course.setLevel("lev0");
-        course.setCourseType("type0");
-        course.setHousekeepingRelated(false);
-        course.setTimeOccupation("timeOc0");
-        course.setRegion("reg0");
-        course.setCollaboration(false);
-        course.setResponsibleTaskForce("resF0");
-        course.setProfessor("prof0");
-        course.setContact("con0");
-        course.setWeb("web0");
-        course.setExplanation("ex0");
-        return course;
-    }
-
     @BeforeEach
-    void setMockOutput() {
-        List<Course> courseList = new ArrayList<>();
-        Course course = setCourse();
-        courseList.add(course);
-        Page<Course> coursePage = new PageImpl<>(courseList);
-        when(courseRepository.searchAllFields(anyString(),anyBoolean(),any(Pageable.class))).thenReturn(coursePage);
+    void setUp() {
+        mockCourseRepository = mock(CourseRepository.class);
+        mockProvinceRepository = mock(ProvinceRepository.class);
+        mockCourse = mock(Course.class);
+        mockProvince = mock(Province.class);
+        courseService = new CourseService(mockCourseRepository, mockProvinceRepository);
+        courseList = new ArrayList<>();
+        courseList.add(mockCourse);
+        coursePage = new PageImpl<>(courseList);
     }
 
     @Test
     void testGetAllCourses() {
-        List<CourseResponseDTO> courseList = courseService.getCourses("", false, PageRequest.of(0,500));
-        assertEquals(1, courseList.size());
-        assertEquals(0, courseList.get(0).getId(), 0);
-        assertEquals(false, courseList.get(0).getArchived());
-        assertEquals("in0", courseList.get(0).getInstitution());
+        String search = "search";
+        boolean archived = true;
+        Pageable mockPageable = mock(Pageable.class);
+        when(mockCourse.getProvince()).thenReturn(mockProvince);
+        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
+            // set up desired Mapper behaviour
+            ProvinceDTO mockProvinceDTO = mock(ProvinceDTO.class);
+            mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
+            CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
+            mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
+
+            when(mockCourseRepository.searchAllFields(search, archived, mockPageable)).thenReturn(coursePage);
+
+            List<CourseResponseDTO> courses = courseService.getCourses(search, archived, mockPageable);
+            verify(mockCourseDTO).setProvince(mockProvinceDTO);
+            assertEquals(courses.size(), courseList.size());
+            assertEquals(courses.get(0), mockCourseDTO);
+        }
+    }
+
+    @Test
+    void testSaveSuccessful() {
+        CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
+        long provinceId = 1;
+        when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
+        when(mockProvinceRepository.findById(provinceId)).thenReturn(Optional.of(mockProvince));
+        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
+            mockMapper.when(() -> Mapper.map(mockCourseRequest, Course.class)).thenReturn(mockCourse);
+            doNothing().when(mockCourse).setProvince(mockProvince);
+            when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
+            assertEquals(mockCourse, courseService.save(mockCourseRequest));
+        }
+    }
+
+    @Test
+    void testSaveIncorrectProvinceId() {
+        CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
+        long provinceId = 1;
+        when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
+        when(mockProvinceRepository.findById(provinceId)).thenReturn(Optional.empty());
+        assertThrows(IllegalArgumentException.class, () -> courseService.save(mockCourseRequest));
     }
 }
