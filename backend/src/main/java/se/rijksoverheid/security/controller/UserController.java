@@ -68,7 +68,7 @@ public class UserController {
      * @param id                        ID of user to be changed.
      * @param userChangePasswordDTO     The info needed to change.
      * @return                          The user that was changed
-     * @throws Exception
+     * @throws Exception                Wrong password or user not found
      */
     @PutMapping("/password/{id}")
     public ResponseEntity<?> changeUserPassword(
