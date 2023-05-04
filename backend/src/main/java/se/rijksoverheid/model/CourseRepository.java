@@ -35,10 +35,17 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      */
     @Query(value = "SELECT * FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived " +
             "AND (:level = '' OR c.level = :level) " +
-            "AND ( :provinceId = 0 OR c.province_id = :provinceId) " +
-            "AND ( :region = '' OR c.region = :region) " +
-            "",
-            countQuery = "SELECT COUNT(*) FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived",
+            "AND (:provinceId = 0 OR c.province_id = :provinceId) " +
+            "AND (:region = '' OR c.region = :region) ",
+            countQuery = "SELECT COUNT(*) FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived " +
+                    "AND (:level = '' OR c.level = :level) " +
+                    "AND (:provinceId = 0 OR c.province_id = :provinceId) " +
+                    "AND (:region = '' OR c.region = :region) ",
             nativeQuery = true)
-    Page<Course> searchAllFields(@Param("search") String search, @Param("archived") boolean archived, String level, String region, long categoryId, Pageable pageable);
+    Page<Course> searchAndFilterAndOrderCourses(@Param("search") String search,
+                                                @Param("archived") boolean archived,
+                                                @Param("level") String level,
+                                                @Param("region") String region,
+                                                @Param("provinceId") long provinceId,
+                                                Pageable pageable);
 }
