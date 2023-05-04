@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.mapper.Mapper;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
@@ -18,6 +19,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * UserService classed is used for interacting with userdata.
@@ -32,7 +34,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * Finds a user by username.
-     * @param username the username identifying the user whose data is required.
+     * @param username  the username identifying the user whose data is required.
      * @return          the user.
      * @throws UsernameNotFoundException    when no user with the given username can be found.
      */
@@ -62,6 +64,16 @@ public class UserService implements UserDetailsService {
      */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    /**
+     * Checks if a given string is a valid email address
+     * @param email string to be checked
+     * @return      true if string is a valid email address, false otherwise
+     */
+    public boolean isValidEmailAddress(String email) {
+        String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+        return Pattern.compile(regexPattern).matcher(email).matches();
     }
 
     /**
@@ -105,5 +117,19 @@ public class UserService implements UserDetailsService {
         UserResponseDTO UserDTO = new UserResponseDTO();
         Mapper.map(user, UserDTO);
         return UserDTO;
+    }
+
+    /**
+     * Change a user's permissions.
+     * @param id                        ID of user to change permissions for.
+     * @param userDTO                   DTO for all data to be changed.
+     * @return                          The user that was changed.
+     * @throws EntityNotFoundException  No user with id was found.
+     */
+    public UserResponseDTO changePassword(long id, UserChangePasswordRequestDTO userDTO) throws EntityNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
+        userRepository.save(user);
+        return Mapper.map(user, UserResponseDTO.class);
     }
 }

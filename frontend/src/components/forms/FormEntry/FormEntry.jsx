@@ -1,5 +1,6 @@
 import './FormEntry.css'
 
+/* General component for a form input that covers multiple input types */
 export default function FormEntry({ type, propertyName, propertyKey, required }) {
   return (
     <label>
