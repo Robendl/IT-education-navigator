@@ -1,8 +1,9 @@
 import ToolMenu from "./ToolMenu";
 import { useContext } from "react";
 import { UserContext } from "services/AuthService";
+import UserList from "./UserList";
 
-export default function UserPanel() {
+export default function Management() {
   const user = useContext(UserContext);
 
   return (

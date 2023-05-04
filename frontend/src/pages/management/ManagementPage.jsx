@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
-import UserLoader from 'services/UserLoader';
-import { useContext } from 'react';
-import { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
-import { UserContext } from 'services/AuthService';
-import ChangePermissionsPopup from 'components/popups/ChangePermissionsPopup';
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import UserLoader from "services/UserLoader";
+import Management from "components/layout/Management"
+import { useContext } from "react";
+import PageOverlay, { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
+import { UserContext } from "services/AuthService";
+import ChangePermissionsPopup from "components/popups/ChangePermissionsPopup";
 
 export default function ManagementPage () {
   const [isEditing, setIsEditing] = useState(false);
@@ -25,7 +26,7 @@ export default function ManagementPage () {
       <OverlayContext.Provider value={{
         openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry
         }} >
-        <UserPanel />
+        <Management/>
         <PageOverlay isOpen={isEditing} onClose={() => setIsEditing(false)}>
           <ChangePermissionsPopup />
         </PageOverlay>

@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
 import { UserContext } from 'services/AuthService';
 
-export default function ManagementPage () {
+export default function UserList () {
     const [results, setResults] = useState([]);
 
     UserLoader.loadUsers().then((users) => {

@@ -36,9 +36,6 @@ export default function ChangePermissionsForm({ onSubmit, onCancel, entry }) {
     Object.keys(entry).forEach(key => {
       let inputElement = document.querySelector(`.edit-item-form input[name=${key}]`);
       let value = entry[key];
-      if (key === "province") {
-        value = value.id;
-      }
       if (inputElement && inputElement.getAttribute("type") === "checkbox") {
         inputElement?.setAttribute("checked", value);
       }
