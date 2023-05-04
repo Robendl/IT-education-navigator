@@ -127,7 +127,6 @@ public class UserService implements UserDetailsService {
      * @return                          The user that was changed.
      * @throws EntityNotFoundException  No user with id was found.
      */
-    @Transactional
     public UserResponseDTO changePassword(long id, UserChangePasswordRequestDTO userDTO) throws EntityNotFoundException {
         User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
