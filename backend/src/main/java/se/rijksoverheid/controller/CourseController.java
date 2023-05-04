@@ -19,6 +19,7 @@ import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
 
+import java.net.URI;
 import java.util.List;
 
 /**

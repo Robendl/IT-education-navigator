@@ -29,13 +29,12 @@ function login(credentials) {
   return new Promise((resolve, reject) => {
     http.post('/auth/login', credentials)
       .then(response => {
-        if (response.data.token) {
+        if (response.data.role) {
           if (!userRoles.hasOwnProperty(response.data.role)) {
             reject(errorCodes.ERR_INVALID_ROLE);
           }
           localStorage.setItem("user", JSON.stringify({
-            role: userRoles[response.data.role],
-            token: response.data.token,
+            role: response.data.role,
             name: credentials.username
           }));
           resolve()
@@ -63,7 +62,7 @@ function logout() {
 /* Function for checking if the user is logged in; returns a boolean */
 function isLoggedIn() {
   let user = getUser();
-  if (user && user.token) {
+  if (user) {
     return true;
   } else {
     return false;
@@ -78,7 +77,7 @@ function getUser() {
 /* Function for getting the role of the current user */
 function getRole() {
   let user = getUser();
-  if (user && user.token) {
+  if (user) {
     return user.role;
   } else {
     return null;
