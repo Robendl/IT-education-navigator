@@ -8,6 +8,7 @@ import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
 import { useEffect, useState } from 'react';
 import RegisterPage from "./pages/register/RegisterPage";
+import ManagementPage from 'pages/management/ManagementPage';
 
 export default function App() {
   const [userInfo, setUserInfo] = useState({});
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />}></Route>
             <Route path="kaart" element={<Map />}></Route>
+            <Route path="/users" element={<ManagementPage />} />
           </Route>
         </Routes>
       </UserContext.Provider>

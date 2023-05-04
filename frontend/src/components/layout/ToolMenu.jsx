@@ -23,12 +23,17 @@ export default function ToolMenu() {
     setSelected("archive");
   }
 
+  function handleOpenAccountManagement() {
+    navigate("/users");
+    setSelected("Accountbeheer")
+  }
+
   return (
     <div className="tool-menu">
       {user.loggedIn && (user.role === "DATA_MANAGER" || user.role === "ADMIN") && <ToolOption name="Nieuw Item" icon="post_add" action={overlay.openAdd}/>}
       {user.loggedIn && <ToolOption name="Overzicht" icon="list" selected={selected === "overview"} action={handleOpenOverview}/>}
       {user.loggedIn && (user.role === "DATA_MANAGER" || user.role === "ADMIN") && <ToolOption name="Archief" icon="inventory_2" selected={selected === "archive"} action={handleOpenArchive} />}
-      {user.loggedIn && user.role === "ADMIN" && <ToolOption name="Accountbeheer" icon="manage_accounts"/>}
+      {user.loggedIn && user.role === "ADMIN" && <ToolOption name="Accountbeheer" icon="manage_accounts" action={handleOpenAccountManagement}/>}
     </div>
   );
 }
