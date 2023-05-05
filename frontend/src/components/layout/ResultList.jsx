@@ -132,12 +132,9 @@ function Result({ entry }) {
         
       </div>
       <div className="result-body">
-        {
-          // Return a span for the remaining tags
-          Object.keys(entry)
-            .filter(key => !["level", "name", "id", "archived"].includes(key))
-            .map(key => <ResultProperty key={key} keyName={key} value={entry[key]}/>)
-        }
+        <ResultProperty keyName="courseType" value={entry["courseType"]}/>
+        <ResultProperty keyName="location" value={`${entry["location"]}, ${entry["province"].name}`}/>
+        <ResultProperty keyName="institution" value={entry["institution"]}/>
       </div>
     </div>
   );
