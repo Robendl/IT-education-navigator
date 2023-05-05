@@ -104,6 +104,7 @@ function Result({ entry }) {
   /* Function that is called when the user wants to edit the course {entry} */
   function handleEdit() {
     overlay.openEdit(entry);
+    console.log(entry.province.id < 12);
   }
 
   /* Result body */
@@ -133,7 +134,7 @@ function Result({ entry }) {
       </div>
       <div className="result-body">
         <ResultProperty keyName="courseType" value={entry["courseType"]}/>
-        <ResultProperty keyName="location" value={`${entry["location"]}, ${entry["province"].name}`}/>
+        <ResultProperty keyName="location" value={entry["location"] + ((entry["province"].id < 12) ? `, ${entry["province"].name}` : "")}/>
         <ResultProperty keyName="institution" value={entry["institution"]}/>
       </div>
     </div>
