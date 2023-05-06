@@ -206,9 +206,37 @@ button:hover {
 .result-list .result-list-header {
   display: flex;
   align-items: center;
+  justify-content: stretch;
   border-bottom: 1px solid rgba(0,0,0,0.2);
   padding-bottom: 8px;
-  gap: 10px;
+  gap: 15px;
+  height: 25px;
+}
+
+.result-list .result-list-header .result-list-search-tag {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 10px;
+  padding: 0px 8px 0px 8px;
+}
+
+.result-list .result-list-header .result-list-search-tag .close-icon {
+  font-size: 1.3em;
+  color: #5a5a5a;
+  display: none;
+}
+
+.result-list .result-list-header .result-list-search-tag:hover .close-icon  {
+  display: block;
+}
+
+.result-list .result-list-header .sort-icon {
+  margin-left: auto;
 }
 
 .result-list .result-list-entries {

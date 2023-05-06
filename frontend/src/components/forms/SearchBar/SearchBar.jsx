@@ -9,10 +9,22 @@ export default function SearchBar() {
 
   function handleSearch(e) {
     e.preventDefault();
-    setSearchParams(prevParams => {
-      prevParams.set("search", searchInput.current.value);
-      return prevParams
-    });
+    if (!searchInput.current) {
+      return;
+    }
+    searchInput.current.value = searchInput.current.value.replace(/\s+/, "");
+    if (searchInput.current.value === "") {
+      setSearchParams(prevParams => {
+        prevParams.delete("search");
+        return prevParams;
+      });
+    } else {
+      setSearchParams(prevParams => {
+        prevParams.set("search", searchInput.current.value);
+        return prevParams;
+      });
+    }
+    
   }
 
   return (

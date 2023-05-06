@@ -1,6 +1,6 @@
 /* Dummy object for API response */
 const filters = {
-  "province": {
+  "provinceId": {
     "options": {
       0: {
         "name": "Noord-Brabant"

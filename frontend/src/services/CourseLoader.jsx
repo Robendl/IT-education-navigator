@@ -12,7 +12,7 @@ export const errorCodes = {
 }
 
 /* Function for loading courses
- * Accepts a string that holds filters as search parameters (e.g. "?province=1&archived=1")
+ * Accepts a string that holds filters as search parameters (e.g. "?provinceId=1&archived=1")
  * Returns a promise that, once resolved, returns an object with all courses that match the filters */
 function loadCourses(filters) {
   loadController.abort();
