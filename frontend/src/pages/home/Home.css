@@ -171,6 +171,21 @@ button:hover {
   color: #154273;
 }
 
+.filter .filter-expand {
+  padding-top: 15px;
+}
+
+.filter .filter-expand .filter-expand-button {
+  display: flex;
+  align-items: center;
+  color: #154273;
+  font-size: 1.1em;
+  font-family: 'Roboto';
+  font-weight: 500;
+  border: none;
+  background: none;
+}
+
 .result-list {
   display: flex;
   flex-direction: column;
