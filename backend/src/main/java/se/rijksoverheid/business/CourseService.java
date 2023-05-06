@@ -3,22 +3,15 @@ package se.rijksoverheid.business;
 import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.rijksoverheid.dto.CourseRequestDTO;
-import se.rijksoverheid.dto.CourseResponseDTO;
-import se.rijksoverheid.dto.ProvinceDTO;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
 import se.rijksoverheid.model.Province;
 import se.rijksoverheid.model.ProvinceRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Responsible for all business logic regarding the courses.
@@ -36,17 +29,9 @@ public class CourseService {
      * @param pageable      Pageable object that contains information on which page of what size to retrieve in what order
      * @return              List of courses
      */
-    @Transactional
-    public List<CourseResponseDTO> getCourses(String search, boolean archived, Pageable pageable ) {
-        Page<Course> coursePage = courseRepository.searchAllFields(search, archived, pageable);
-        List<CourseResponseDTO> courses = new ArrayList<>();
-        for(Course course: coursePage.getContent()) {
-            ProvinceDTO provinceDTO = Mapper.map(course.getProvince(), ProvinceDTO.class);
-            CourseResponseDTO courseDTO = Mapper.map(course, CourseResponseDTO.class);
-            courseDTO.setProvince(provinceDTO);
-            courses.add(courseDTO);
-        }
-        return courses;
+
+    public Page<Course> getCourses(String search, boolean archived, String level, String region, long provinceId, Pageable pageable ) {
+        return courseRepository.searchAndFilterAndOrderCourses(search, archived, level, region, provinceId, pageable);
     }
 
     /**

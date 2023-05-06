@@ -41,7 +41,7 @@ function RegisterForm() {
         }, (errorCode) => {
             switch (errorCode) {
                 case errorCodes.ERR_LOGIN_INVALID:
-                    setErrorMessage("Gebruikersnaam / wachtwoord is onjuist");
+                    setErrorMessage("Emailadres / wachtwoord is onjuist");
                     setIsSubmitting(false);
                     break;
 
@@ -61,7 +61,7 @@ function RegisterForm() {
     return (
         <form className="login-form" onSubmit={handleSubmit}>
             <h2>Opleidingsregister Registreren</h2>
-            <FormEntry type="text" propertyName="Gebruikersnaam" propertyKey="username" required/>
+            <FormEntry type="text" propertyName="Emailadres" propertyKey="username" required/>
             <FormEntry type="password" propertyName="Wachtwoord" propertyKey="password" required/>
             <FormEntry type="password" propertyName="Herhaal Wachtwoord" propertyKey="confirmPassword" required/>
             <div>

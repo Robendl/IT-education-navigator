@@ -31,9 +31,9 @@ export default function ResultList () {
     /* Load courses on page navigate */
     setIsLoading(true);
     setResults([]);
-    CourseLoader.loadCourses(location.search ? location.search : "").then((courses) => {
-      setResults(courses);
-      setResultCount(courses.length);
+    CourseLoader.loadCourses(location.search ? location.search : "").then((response) => {
+      setResults(response.content);
+      setResultCount(response.totalElements);
       setIsLoading(false);
     }, (error) => {
       switch (error) {
