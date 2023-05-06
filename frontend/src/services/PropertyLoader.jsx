@@ -1,3 +1,4 @@
+/* Dummy object for API response */
 const filters = {
   "province": {
     "options": {

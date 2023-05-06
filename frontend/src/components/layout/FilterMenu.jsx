@@ -10,6 +10,7 @@ export default function FilterMenu() {
   const [filters, setFilters] = useState({});
   
   useEffect(() => {
+    /* Load available filter properties on page load */
     PropertyLoader.loadProperties().then(results => {
       setFilters(results);
     });
@@ -18,6 +19,7 @@ export default function FilterMenu() {
   /* FilterMenu body */
   return (
     <div className="filter-menu">
+      {/* Create a filter component for every filter */}
       {Object.keys(filters).map(key => <Filter name={propertyTranslations[key]} filterKey={key} key={key} options={filters[key].options} />)}
     </div>
   );
@@ -32,16 +34,22 @@ function Filter({name, filterKey, options}) {
   const minItemCount = 3;
   const [searchParams, setSearchParams] = useSearchParams();
 
+  /* Function that is called when the options list of the filter must be expanded */
   function expandOptions() {
     setItemCount(Object.keys(options).length);
     setExpanded(true);
   }
 
+  /* Function that is called when the options list of the filter must be collapsed */
   function collapseOptions() {
     setItemCount(minItemCount);
     setExpanded(false);
   }
 
+  /* Function for setting the filter to a value {opt}.
+   * This value must be a value key that is recognized by the courses API (example for courseType filter: opt = 'associateDegree')
+   * Currently, a filter can be set to only one value.
+   */
   function setOption(opt) {
     setSearchParams(prevParams => {
       prevParams.set(filterKey, opt);
@@ -49,6 +57,9 @@ function Filter({name, filterKey, options}) {
     })
   }
 
+  /* Function for clearing the filter
+   * Should multivalue filters be introduced, this function can be rewritten so that it clears just one option {opt} 
+   */
   function clearOption() {
     setSearchParams(prevParams => {
       prevParams.delete(filterKey);
@@ -57,10 +68,12 @@ function Filter({name, filterKey, options}) {
   }
 
   useEffect(() => {
+    /* Update the selected options based on the url search parameters */
     setSelectedOptions(
       Object.keys(options)
         .filter(opt => searchParams.get(filterKey) === opt)
     );
+    /* Update the remaining unselected options and limit the number of options based on expand status */
     setUnselectedOptions(
       Object.keys(options)
         .filter(opt => searchParams.get(filterKey) !== opt)
@@ -68,6 +81,7 @@ function Filter({name, filterKey, options}) {
     );
   }, [options, itemCount, filterKey, searchParams])
 
+  /* Filter body */
   return (
     <div className="filter">
       <h2>{name}</h2>
