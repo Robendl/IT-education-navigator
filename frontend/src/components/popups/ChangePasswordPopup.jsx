@@ -8,12 +8,12 @@ export default function ChangePasswordPopup() {
 
     /* Function that is called when the popup is accepted */
     function handleSubmit() {
-        overlay.closeAdd();
+        overlay.closeChangePassword();
     }
 
     /* Function that is called when the popup is closed */
     function handleClose() {
-        overlay.closeAdd();
+        overlay.closeChangePassword();
     }
 
     return (

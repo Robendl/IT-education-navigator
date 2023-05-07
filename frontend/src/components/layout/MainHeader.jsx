@@ -56,7 +56,7 @@ function UserToolTip({ onClose }) {
         <span onClick={() => {setChangingPassword(true)}}>Verander wachtwoord</span>
       </div>
       <OverlayContext.Provider value={{
-        openAdd: () => setChangingPassword(true), closeAdd: () => setChangingPassword(false)
+        closeChangePassword: () => setChangingPassword(false)
       }} >
         <PageOverlay isOpen={changingPassword}>
           <ChangePasswordPopup />

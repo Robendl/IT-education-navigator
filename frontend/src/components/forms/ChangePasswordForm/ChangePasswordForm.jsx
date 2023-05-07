@@ -53,8 +53,8 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
 
   /* Form Body */
   return (
-    <form className="add-item-form" onSubmit={handleSubmit}>
-      <h2>Wachtwoord veranderen</h2>
+    <form className="change-password-form" onSubmit={handleSubmit}>
+      <h2 className="change-password-form" color={"black"}>Wachtwoord veranderen</h2>
       <div>
           <FormEntry type="text" propertyName="Huidig wacthtwoord" propertyKey="password" required />
           <FormEntry type="text" propertyName="Nieuw wachtwoord" propertyKey="newPassword" required />
