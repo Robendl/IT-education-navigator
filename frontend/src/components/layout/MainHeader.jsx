@@ -1,5 +1,8 @@
 import { useContext, useState } from "react";
 import AuthService, { UserContext } from "services/AuthService";
+import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
+import ChangePasswordPopup from "../popups/ChangePasswordPopup";
+import PageOverlay from "./PageOverlay/PageOverlay";
 
 /* Header Component present on all user pages */
 export default function MainHeader() {
@@ -42,11 +45,23 @@ function UserOption({ user }) {
 
 /* Tooltip component that allows for interaction with user related options */
 function UserToolTip({ onClose }) {
+  const [changingPassword, setChangingPassword] = useState(false);
+
   return(
     <div className="user-tooltip">
       <div className="user-tooltip-option">
         <span onClick={() => {AuthService.logout()}}>Logout</span>
       </div>
+      <div>
+        <span onClick={() => {setChangingPassword(true)}}>Verander wachtwoord</span>
+      </div>
+      <OverlayContext.Provider value={{
+        openAdd: () => setChangingPassword(true), closeAdd: () => setChangingPassword(false)
+      }} >
+        <PageOverlay isOpen={changingPassword}>
+          <ChangePasswordPopup />
+        </PageOverlay>
+      </OverlayContext.Provider>
     </div>
   )
 }

@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.*;
@@ -70,21 +71,20 @@ public class UserController {
      * @return                          The user that was changed
      * @throws Exception                Wrong password or user not found
      */
-    @PutMapping("/password/{id}")
+    @PutMapping("/password")
     public ResponseEntity<?> changeUserPassword(
-            @PathVariable long id,
             @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
     ) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userChangePasswordDTO.getUsername(), userChangePasswordDTO.getPassword())
             );
-            return ResponseEntity.ok(userService.changePassword(id, userChangePasswordDTO));
+            return ResponseEntity.ok(userService.changePassword(userChangePasswordDTO));
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
-        } catch (EntityNotFoundException e) {
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
