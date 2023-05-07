@@ -70,7 +70,7 @@ class CourseServiceTest {
     }
 
     @Test
-    void testSaveSuccessful() {
+    void testSave_Successful() {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         long provinceId = 1;
         when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
@@ -84,7 +84,7 @@ class CourseServiceTest {
     }
 
     @Test
-    void testSaveIncorrectProvinceId() {
+    void testSave_IncorrectProvinceId() {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         long provinceId = 1;
         when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
