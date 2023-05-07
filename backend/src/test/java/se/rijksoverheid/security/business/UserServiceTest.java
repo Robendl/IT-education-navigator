@@ -10,18 +10,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import se.rijksoverheid.dto.ProvinceDTO;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
-import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -111,13 +107,13 @@ public class UserServiceTest {
     }
 
     @Test
-    void testChangeUserPerms() {
+    void testEditUserPerms() {
         long userId = 1;
         User mockUser = mock(User.class);
         UserPermRequestDTO mockUserRequest = mock(UserPermRequestDTO.class);
         when(mockUserRepository.findById(userId)).thenReturn(Optional.of(mockUser));
         assertDoesNotThrow(() -> {
-            userService.changeUserPerms(userId,mockUserRequest);
+            userService.editUserPerms(userId,mockUserRequest);
         });
     }
 }

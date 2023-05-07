@@ -110,7 +110,7 @@ public class UserService implements UserDetailsService {
      * @throws Exception                Changed user to non-existing role.
      */
     @Transactional
-    public UserResponseDTO changeUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
+    public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         Mapper.map(userPermDTO, user);
         userRepository.save(user);
