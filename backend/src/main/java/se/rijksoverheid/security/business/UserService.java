@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 @Service
 public class UserService implements UserDetailsService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Finds a user by username.

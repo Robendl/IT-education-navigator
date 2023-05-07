@@ -18,7 +18,6 @@ import se.rijksoverheid.model.ProvinceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -116,7 +115,7 @@ class CourseServiceTest {
     }
 
     @Test
-    void testEditCourseDifferentProvince() {
+    void testEditCourse_DifferentProvince() {
         long courseId = 1;
         long provinceId = 1, newProvinceId = 2;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
