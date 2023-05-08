@@ -11,6 +11,10 @@
   width: 1150px;
 }
 
+button {
+  font-family: inherit;
+}
+
 .ignore-overlay {
   position: relative;
   z-index: 1;

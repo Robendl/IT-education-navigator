@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { OverlayContext } from "./PageOverlay/PageOverlay";
 import { UserContext, userRoles } from "services/AuthService";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
 /* Enum containing possible tab options */
@@ -18,19 +18,23 @@ export default function ToolMenu() {
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
   
-  const [searchParams] = useSearchParams();
-
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   /* Function that is called when the course overview is opened */
   function handleOpenOverview() {
-    navigate("/");
+    setSearchParams(s => {
+      s.delete("archived");
+      return s;
+    })
     setSelected(tabOption.OVERVIEW);
   }
 
   /* Function that is called when the course archive is opened */
   function handleOpenArchive() {
-    navigate("/?archived=1");
+    setSearchParams(s => {
+      s.set("archived", "1");
+      return s;
+    })
     setSelected(tabOption.ARCHIVE);
   }
 

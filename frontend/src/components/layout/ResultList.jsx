@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import CourseLoader, { errorCodes } from 'services/CourseLoader';
@@ -7,14 +7,25 @@ import { useContext } from 'react';
 import { OverlayContext } from './PageOverlay/PageOverlay';
 import { UserContext, userRoles } from 'services/AuthService';
 import { useRef } from 'react';
+import { propertyTranslations } from 'config/translations';
+import CloseIcon from '@mui/icons-material/Close';
+import SortIcon from '@mui/icons-material/Sort';
 
 /* ResultList component that shows all courses that fit the user's search and order preferences */
 export default function ResultList () {
   const [results, setResults] = useState([]);
   const [resultCount, setResultCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const location = useLocation();
+
+  function handleRemoveSearch() {
+    setSearchParams(s => {
+      s.delete("search");
+      return s;
+    });
+  }
 
   useEffect(() => {
     /* Load courses on page navigate */
@@ -43,7 +54,10 @@ export default function ResultList () {
     <div className="result-list">
       <div className="result-list-header">
         <span><b>{resultCount}</b> Resultaten</span>
-        <span className="material-symbols-outlined">sort</span>
+        {searchParams.has("search") &&
+          <button className="result-list-search-tag" onClick={handleRemoveSearch}>Zoekterm: {searchParams.get("search")} <CloseIcon className="close-icon"/></button>
+        }
+        <SortIcon className="sort-icon" />
       </div>
       {(isLoading &&
         <LoadingMessage />) ||
@@ -131,12 +145,9 @@ function Result({ entry }) {
         
       </div>
       <div className="result-body">
-        {
-          // Return a span for the remaining tags
-          Object.keys(entry)
-            .filter(key => !["level", "name"].includes(key))
-            .map(key => <ResultProperty key={key} keyName={key} value={entry[key]}/>)
-        }
+        <ResultProperty keyName="courseType" value={entry["courseType"]}/>
+        <ResultProperty keyName="location" value={entry["location"] + ((entry["province"].id < 12) ? `, ${entry["province"].name}` : "")}/>
+        <ResultProperty keyName="institution" value={entry["institution"]}/>
       </div>
     </div>
   );
@@ -155,8 +166,8 @@ function ResultProperty({ keyName, value }) {
   return (
     <span className="result-property">
     {(keyName === "province" &&
-      <><b>{keyName}: </b>{value["name"]}</>) ||
-      <><b>{keyName}: </b>{value}</>
+      <><b>{propertyTranslations[keyName]}: </b>{value["name"]}</>) ||
+      <><b>{propertyTranslations[keyName]}: </b>{value}</>
     }
     </span>
   )
