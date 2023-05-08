@@ -90,7 +90,7 @@ function Filter({name, filterKey, options}) {
           selectedOptions.map(opt => <FilterOption name={options[opt].name} key={opt} selected setOption={() => setOption(opt)} clearOption={clearOption} />)
         }
         {
-          unselectedOptions.filter(opt => searchParams.get(filterKey) !== opt).map(opt => <FilterOption name={options[opt].name} key={opt} setOption={() => setOption(opt)} clearOption={clearOption} />)
+          unselectedOptions.map(opt => <FilterOption name={options[opt].name} key={opt} setOption={() => setOption(opt)} clearOption={clearOption} />)
         }
         {Object.keys(options).length > 3 && 
           <div className="filter-expand">

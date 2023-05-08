@@ -1,7 +1,7 @@
 export const propertyTranslations = {
     "institution": "Instelling",
     "location": "Locatie",
-    "provinceId": "Provincie",
+    "province-id": "Provincie",
     "courseType": "Type",
     "housekeepingRelated": "Informatie Huishouding gerelateerd",
     "level": "Niveau",

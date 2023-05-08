@@ -1,6 +1,6 @@
 /* Dummy object for API response */
 const filters = {
-  "provinceId": {
+  "province-id": {
     "options": {
       0: {
         "name": "Noord-Brabant"
@@ -58,17 +58,33 @@ const filters = {
   },
   "courseType": {
     "options": {
+      "associateDegree": {
+        "name": "Associate Degree"
+      },
       "bachelor": {
         "name": "Bachelor"
-      },
-      "associateDegree": {
-        "name": "Associate Degree (AD)"
       },
       "kenniscentrum": {
         "name": "Kenniscentrum"
       },
+      "lectoraat": {
+        "name": "Lectoraat"
+      },
       "master": {
         "name": "Master"
+      }
+    }
+  },
+  "region": {
+    "options": {
+      "midden": {
+        "name": "Midden"
+      },
+      "oost": {
+        "name": "Oost"
+      },
+      "west": {
+        "name": "West"
       }
     }
   }
