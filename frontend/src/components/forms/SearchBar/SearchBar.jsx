@@ -12,7 +12,7 @@ export default function SearchBar() {
     if (!searchInput.current) {
       return;
     }
-    searchInput.current.value = searchInput.current.value.replace(/\s+/, "");
+    searchInput.current.value = searchInput.current.value.replace(/^\s+/, "");
     if (searchInput.current.value === "") {
       setSearchParams(prevParams => {
         prevParams.delete("search");
