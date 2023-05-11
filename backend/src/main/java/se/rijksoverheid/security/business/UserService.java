@@ -120,8 +120,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Change a user's permissions.
-     * @param id                        ID of user to change permissions for.
+     * Change a user's password.
+     * @param id                        ID of user to change password for.
      * @param userDTO                   DTO for all data to be changed.
      * @return                          The user that was changed.
      * @throws EntityNotFoundException  No user with id was found.
