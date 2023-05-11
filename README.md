@@ -1,41 +1,28 @@
 # Rijksoverheid
 
-
-Run database met docker:
+## Quick guide
+### DB
+Installeer en open docker.
+In een terminal, run:
+```
 docker run --rm -p 5432:5432 -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_USER=postgres" -e "POSTGRES_DB=postgres" postgres
-
-Run backend vanuit IntelliJ IDEA, wanneer je het project laad zou automatisch BackendApplication run configurations geladen moeten worden. Als die niet gebeurt kun je in backend/src/main/java/se/rijksoverheid het bestand BackendApplication vinden en hem via daar runnen.
-
-base url:
-http://localhost:8081/rijksoverheid/api
-
-Om alle courses te krijgen, moet je een GET request doen op ``http://localhost:8081/rijksoverheid/api/courses``.
-
-Om een nieuwe course toe te voegen, moet je een POST request doen op ``http://localhost:8081/rijksoverheid/api/courses``. Hieronder vind je een voorbeeld van de body van zo'n POST request die een nieuwe course toevoegt:
 ```
-{
-    "name": "Introduction to Computer Science",
-    "institution": "Rijksuniversiteit Groningen",
-    "location": "Groningen",
-    "level": "wo",
-    "courseType": "Bachelor",
-    "housekeepingRelated": false,
-    "timeOccupation": "voltijd",
-    "region": "oost",
-    "collaboration": true,
-    "responsibleTaskForce": "Cees",
-    "professor": "John Smith",
-    "contact": "csdept@rug.nl",
-    "web": "https://www.rug.nl",
-    "explanation": "This course covers the fundamentals of computer science, including programming, algorithms, and data structures."
-}
-```
+### Backend
+Open het project in IntelliJ IDEA. De ``BackendApplication`` Run Configuration zou automatisch geladen moeten worden. 
+Als dit niet gebeurt kun je in ``backend/src/main/java/se/rijksoverheid`` het bestand ``BackendApplication`` vinden en hem via daar runnen.
 
-Run frontend met node in /frontend:
+### Frontend
+In een terminal, navigeer naar de directory ``/frontend`` en run:
 ```
-npm install (alleen eerste keer)
+npm install
+```
+Om de ``npm`` te installeren. Run hierna:
+```
 npm start
 ```
 
-De pagina wordt automatisch geopend (http://localhost:3000)  
-Het testen van de login kan op http://localhost:3000/logintest
+De applicatie wordt automatisch geopend (http://localhost:3000).
+
+### API
+Root URL:
+http://localhost:8081/rijksoverheid/api
