@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.mapper.Mapper;
-import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
-import se.rijksoverheid.security.dto.UserPermRequestDTO;
-import se.rijksoverheid.security.dto.UserResponseDTO;
-import se.rijksoverheid.security.dto.UserRequestDTO;
+import se.rijksoverheid.security.dto.*;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
@@ -19,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -31,6 +29,8 @@ public class UserService implements UserDetailsService {
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    private static final int NEW_RANDOM_PASSWORD_LENGTH = 12;
 
     /**
      * Finds a user by username.
@@ -131,5 +131,46 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
         userRepository.save(user);
         return Mapper.map(user, UserResponseDTO.class);
+    }
+
+    /**
+     * Reset a user's password.
+     * @param id                        ID of user to change password for.
+     * @return                          The user that was changed.
+     * @throws EntityNotFoundException  No user with id was found.
+     */
+    public UserResetPasswordResponseDTO resetPassword(long id) throws EntityNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        String newPassword = alphaNumericString(NEW_RANDOM_PASSWORD_LENGTH);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        UserResetPasswordResponseDTO UserDTO = new UserResetPasswordResponseDTO();
+        Mapper.map(user, UserDTO);
+        /*
+         * To prioritise work on other features, we have decided to return the password in plaintext.
+         * We are aware that this is a security vulnerability, if time allows it we intend to change
+         * this implementation to email the user a link (with a token) to a change password form,
+         * allowing the user to change their own password.
+         * However, given time constraints and our client's low priority for security,
+         * we rather implement a non-secure feature than not having this feature at all in the final product.
+         */
+        UserDTO.setPassword(newPassword);
+        return UserDTO;
+    }
+
+    /**
+     * Helper function that generates a random alphanumeric string
+     * @param length    Desired length of the string
+     * @return          Random alphanumeric string
+     */
+    private static String alphaNumericString(int length) {
+        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 }
