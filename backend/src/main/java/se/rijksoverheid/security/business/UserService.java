@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
 @Service
 public class UserService implements UserDetailsService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Finds a user by username.
@@ -110,7 +110,7 @@ public class UserService implements UserDetailsService {
      * @throws Exception                Changed user to non-existing role.
      */
     @Transactional
-    public UserResponseDTO changeUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
+    public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         Mapper.map(userPermDTO, user);
         userRepository.save(user);

@@ -15,6 +15,7 @@ import se.rijksoverheid.security.dto.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.util.List;
 
 
 /**
@@ -34,7 +35,7 @@ public class UserController {
      * @return              List of users
      */
     @GetMapping("")
-    public ResponseEntity<?> getUsers(
+    public ResponseEntity<List<UserResponseDTO>> getUsers(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "50") int size,
@@ -57,7 +58,7 @@ public class UserController {
             @RequestBody @Valid UserPermRequestDTO userPermDTO
     ){
         try {
-            return ResponseEntity.ok(userService.changeUserPerms(id, userPermDTO));
+            return ResponseEntity.ok(userService.editUserPerms(id, userPermDTO));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
