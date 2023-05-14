@@ -70,18 +70,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable()
-                .authorizeRequests().anyRequest().permitAll();//.antMatchers("/auth/**").permitAll()
-//                .antMatchers(HttpMethod.PUT, "/user/password/**").permitAll()
-//                .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority("ADMIN")
-//                .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN")
-//                .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority("ADMIN")
-//                .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority("ADMIN", "DATA_MANAGER")
-//                .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority("ADMIN", "DATA_MANAGER")
-//                .anyRequest().authenticated().and()
-//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .authorizeRequests().antMatchers("/auth/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/user/password/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority("ADMIN", "DATA_MANAGER")
+                .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority("ADMIN", "DATA_MANAGER")
+                .anyRequest().authenticated().and()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-//        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
