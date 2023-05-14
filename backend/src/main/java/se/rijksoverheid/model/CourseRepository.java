@@ -37,7 +37,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      */
     @Query("select c from Course c where " +
             "LOWER(CONCAT_WS(c.name, c.province.name, c.contact, c.courseType, c.explanation, c.institution, c.level, " +
-            "c.location, c.professor, c.region, c.responsibleTaskForce, c.timeOccupation, c.web)) like %LOWER(:search)% " +
+            "c.location, c.professor, c.region, c.responsibleTaskForce, c.timeOccupation, c.web)) like LOWER(CONCAT('%', :search, '%')) " +
             "and c.archived = :archived " +
             "and (COALESCE(:levels, NULL) IS NULL or (c.level in :levels)) " +
             "and (COALESCE(:regions, NULL) IS NULL or (c.region in :regions)) " +
