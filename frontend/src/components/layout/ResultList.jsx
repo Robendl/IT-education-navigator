@@ -53,7 +53,7 @@ export default function ResultList () {
   return (
     <div className="result-list">
       <div className="result-list-header">
-        <span><b>{resultCount}</b> Resultaten</span>
+        <span><b>{resultCount}</b> {getResultText(resultCount)}</span>
         {searchParams.has("search") &&
           <button className="result-list-search-tag" onClick={handleRemoveSearch}>Zoekterm: {searchParams.get("search")} <CloseIcon className="close-icon"/></button>
         }
@@ -67,6 +67,14 @@ export default function ResultList () {
       }
     </div>
   );
+}
+
+function getResultText(resultCount) {
+  if(resultCount === 1) {
+    return "Resultaat"
+  } else {
+    return "Resultaten"
+  }
 }
 
 /* Result component that shows information on a course */
