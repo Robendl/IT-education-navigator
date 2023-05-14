@@ -60,7 +60,7 @@ class CourseRepositoryTest {
     @Test
     void testSearchAllFields() {
         Pageable pageable = PageRequest.of(0, 500, Sort.by("ASC", "name"));
-        Page<Course> coursePage = courseRepository.searchAllFields("name0",false,pageable);
+        Page<Course> coursePage = courseRepository.searchAndFilterAndOrderCourses("name0",false, "level", "region", 2, pageable);
         assertEquals(1,coursePage.getContent().size());
         assertEquals(0, coursePage.getContent().get(0).getId());
         assertEquals(false, coursePage.getContent().get(0).getArchived());
