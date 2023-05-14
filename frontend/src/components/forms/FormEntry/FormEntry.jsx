@@ -17,6 +17,9 @@ export default function FormEntry({ type, propertyName, propertyKey, required })
             (type === "password" &&
               <input type="password" name={propertyKey} required={required}/>
             ) ||
+              (type === "email" &&
+              <input type="email" pattern="^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$" name={propertyKey} required={required}/>
+            ) ||
             <input type="text" name={propertyKey} required={required}/>
           }
           {

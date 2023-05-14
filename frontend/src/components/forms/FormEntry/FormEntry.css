@@ -16,7 +16,7 @@
   padding-left: 5px;
 }
 
-.form-entry .form-input input[type="text"], .form-entry .form-input input[type="password"] {
+.form-entry .form-input input[type="text"], .form-entry .form-input input[type="password"], .form-entry .form-input input[type="email"] {
   flex-grow: 1;
   outline: none;
   border: none;
