@@ -1,6 +1,6 @@
 /* Dummy object for API response */
 const filters = {
-  "province-id": {
+  "province-ids": {
     "options": {
       0: {
         "name": "Noord-Brabant"
@@ -43,7 +43,7 @@ const filters = {
       },
     }
   },
-  "level": {
+  "levels": {
     "options": {
       "hbo": {
         "name": "HBO"
@@ -75,7 +75,7 @@ const filters = {
       }
     }
   },
-  "region": {
+  "regions": {
     "options": {
       "midden": {
         "name": "Midden"

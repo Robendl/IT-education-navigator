@@ -46,9 +46,9 @@ class CourseControllerTest {
         boolean archived = false;
         int page = 0,size = 500;
         String orderBy = "name";
-        String level = "level";
-        String region = "region";
-        long provinceId = 2;
+        List<String> levels = List.of("level");
+        List<String> regions = List.of("region");
+        List<Long> provinceIds = List.of(2L);
         Sort.Direction direction = Sort.Direction.ASC;
         Course mockCourse = mock(Course.class);
         List<Course> courses = new ArrayList<>();
@@ -58,17 +58,17 @@ class CourseControllerTest {
         when(courseService.getCourses(
                 eq(search),
                 eq(archived),
-                eq(level),
-                eq(region),
-                eq(provinceId),
+                eq(levels),
+                eq(regions),
+                eq(provinceIds),
                 any(PageRequest.class)))
                 .thenReturn(coursePage);
         assertEquals(coursePage, courseController.getCourses(
                 search,
                 archived,
-                level,
-                region,
-                provinceId,
+                levels,
+                regions,
+                provinceIds,
                 page,
                 size,
                 orderBy,
