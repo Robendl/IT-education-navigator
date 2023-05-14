@@ -50,13 +50,13 @@ class CourseServiceTest {
     void testGetAllCourses() {
         String search = "search";
         boolean archived = true;
-        String level =  "level";
-        String region = "region";
-        long provinceId = 2;
+        List<String> levels = List.of("level");
+        List<String> regions = List.of("region");
+        List<Long> provinceIds = List.of(2L);
         Pageable mockPageable = mock(Pageable.class);
-        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, level, region, provinceId, mockPageable)).thenReturn(coursePage);
+        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, mockPageable)).thenReturn(coursePage);
 
-        Page<Course> courses = courseService.getCourses(search, archived, level, region, provinceId, mockPageable);
+        Page<Course> courses = courseService.getCourses(search, archived, levels, regions, provinceIds, mockPageable);
         assertEquals(courses, coursePage);
     }
 

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 /**
  * Repository used for interacting with course data from the database.
  */
@@ -33,19 +35,17 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      * @param pageable      page specification.
      * @return              Page of courses.
      */
-    @Query(value = "SELECT * FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived " +
-            "AND (:level = '' OR c.level = :level) " +
-            "AND (:provinceId = 0 OR c.province_id = :provinceId) " +
-            "AND (:region = '' OR c.region = :region) ",
-            countQuery = "SELECT COUNT(*) FROM rijksoverheid.courses c WHERE CONCAT_WS(' ', c.*) ILIKE %:search% AND c.archived = :archived " +
-                    "AND (:level = '' OR c.level = :level) " +
-                    "AND (:provinceId = 0 OR c.province_id = :provinceId) " +
-                    "AND (:region = '' OR c.region = :region) ",
-            nativeQuery = true)
+    @Query("select c from Course c where " +
+            "LOWER(CONCAT_WS(c.name, c.province.name, c.contact, c.courseType, c.explanation, c.institution, c.level, " +
+            "c.location, c.professor, c.region, c.responsibleTaskForce, c.timeOccupation, c.web)) like %LOWER(:search)% " +
+            "and c.archived = :archived " +
+            "and (COALESCE(:levels, NULL) IS NULL or (c.level in :levels)) " +
+            "and (COALESCE(:regions, NULL) IS NULL or (c.region in :regions)) " +
+            "and (COALESCE(:provinceIds, NULL) IS NULL or (c.province.id in :provinceIds)) ")
     Page<Course> searchAndFilterAndOrderCourses(@Param("search") String search,
                                                 @Param("archived") boolean archived,
-                                                @Param("level") String level,
-                                                @Param("region") String region,
-                                                @Param("provinceId") long provinceId,
+                                                @Param("levels") Collection<String> levels,
+                                                @Param("regions") Collection<String> regions,
+                                                @Param("provinceIds") Collection<Long> provinceIds,
                                                 Pageable pageable);
 }

@@ -14,10 +14,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
-import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.model.Course;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -46,16 +44,16 @@ public class CourseController {
     public ResponseEntity<Page<Course>> getCourses(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
-            @RequestParam(required = false, defaultValue = "") String level,
-            @RequestParam(required = false, defaultValue = "") String region,
-            @RequestParam(value = "province-id", required = false, defaultValue = "0") long provinceId,
+            @RequestParam(required = false, defaultValue = "") List<String> levels,
+            @RequestParam(required = false, defaultValue = "") List<String> regions,
+            @RequestParam(value = "province-ids", required = false, defaultValue = "") List<Long> provinceIds,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "200") int size,
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, level, region, provinceId, pageable));
+        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, pageable));
     }
 
     /**

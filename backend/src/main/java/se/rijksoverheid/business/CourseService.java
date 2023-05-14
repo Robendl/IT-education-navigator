@@ -13,6 +13,8 @@ import se.rijksoverheid.model.CourseRepository;
 import se.rijksoverheid.model.Province;
 import se.rijksoverheid.model.ProvinceRepository;
 
+import java.util.List;
+
 /**
  * Responsible for all business logic regarding the courses.
  */
@@ -30,8 +32,11 @@ public class CourseService {
      * @return              List of courses
      */
 
-    public Page<Course> getCourses(String search, boolean archived, String level, String region, long provinceId, Pageable pageable ) {
-        return courseRepository.searchAndFilterAndOrderCourses(search, archived, level, region, provinceId, pageable);
+    public Page<Course> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, Pageable pageable ) {
+//        return courseRepository.findByLevelIn(levels, pageable);
+//        return courseRepository.searchAndFilterAndOrderCourses(search, levels, pageable);
+        return courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, pageable);
+
     }
 
     /**
