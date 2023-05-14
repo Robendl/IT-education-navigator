@@ -8,6 +8,7 @@ export default function ChangePasswordPopup() {
 
     /* Function that is called when the popup is accepted */
     function handleSubmit() {
+        console.log("closing..")
         overlay.closeChangePassword();
     }
 

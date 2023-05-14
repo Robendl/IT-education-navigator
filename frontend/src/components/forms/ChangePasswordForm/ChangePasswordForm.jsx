@@ -10,6 +10,7 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
   /* Boolean state that is true when the form is submitted and being processed */
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   /* Function that is called when the form is closed */
   function handleCancel(e) {
@@ -21,11 +22,13 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
   function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
+    setSuccess(false);
     const formData = new FormData(e.target);
     const userInfo = Object.fromEntries(formData.entries());
 
     if (userInfo.newPassword !== userInfo.confirmNewPassword) {
-      setErrorMessage("Wachtwoorden zijn niet gelijk")
+      setErrorMessage("Wachtwoorden komen niet overeen")
       setIsSubmitting(false);
       return;
     }
@@ -33,8 +36,8 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
     authService.changePassword(userInfo).then(() => {
       setTimeout(() => {
         setIsSubmitting(false);
-        onSubmit();
-        window.location.reload();
+        // onSubmit();
+        setSuccess(true);
       }, 1500);
     }, (errorCode) => {
         switch (errorCode) {
@@ -54,19 +57,22 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
   /* Form Body */
   return (
     <form className="change-password-form" onSubmit={handleSubmit}>
-      <h2 className="change-password-form">Wachtwoord veranderen</h2>
+      <h2>Wachtwoord veranderen</h2>
       <div>
-          <FormEntry type="text" propertyName="Huidig wacthtwoord" propertyKey="password" required />
-          <FormEntry type="text" propertyName="Nieuw wachtwoord" propertyKey="newPassword" required />
-          <FormEntry type="text" propertyName="Herhaal nieuw wachtwoord" propertyKey="confirmNewPassword" required />
+          <FormEntry type="password" propertyName="Huidig wacthtwoord" propertyKey="password" required />
+          <FormEntry type="password" propertyName="Nieuw wachtwoord" propertyKey="newPassword" required />
+          <FormEntry type="password" propertyName="Herhaal nieuw wachtwoord" propertyKey="confirmNewPassword" required />
       </div>
-      <div className="form-actions">
-        <button className="save-button" type="submit">
-          {(isSubmitting && <CircularProgress className="submit-loading" />) || <span>Opslaan</span>}
-        </button>
-        <button className="cancel-button" onClick={handleCancel}>Annuleren</button>
+      <div className="form-footer">
+        {errorMessage && <span className="error-message">{errorMessage}</span>}
+        {success && <span className="success-message">Wachtwoord verandert</span>}
+        <div className="form-actions">
+          <button className="save-button" type="submit">
+            {(isSubmitting && <CircularProgress className="submit-loading" />) || <span>Verander</span>}
+          </button>
+          <button className="cancel-button" onClick={handleCancel}>Annuleren</button>
+        </div>
       </div>
-      {errorMessage && <span className="login-error-message">Wachtwoorden zijn niet gelijk</span>}
     </form>
   );
 }

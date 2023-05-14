@@ -106,11 +106,17 @@ function register(userInfo) {
 
 function changePassword(userInfo) {
   userInfo.username = getUsername();
-  return http
-    .put('/user/password', userInfo)
-      .then(response => {
-        console.log(response);
-      })
+  return new Promise((resolve, reject) => {
+    http.put('/user/password', userInfo)
+        .then(response => {
+          console.log(response);
+          resolve()
+        }, (error) => {
+          if (error.response && error.response.status === 401) {
+            reject(errorCodes.ERR_LOGIN_INVALID)
+          }
+        })
+  });
 }
 
 const AuthService = {
