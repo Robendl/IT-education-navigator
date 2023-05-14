@@ -33,8 +33,6 @@ public class CourseService {
      */
 
     public Page<Course> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, Pageable pageable ) {
-//        return courseRepository.findByLevelIn(levels, pageable);
-//        return courseRepository.searchAndFilterAndOrderCourses(search, levels, pageable);
         return courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, pageable);
 
     }
