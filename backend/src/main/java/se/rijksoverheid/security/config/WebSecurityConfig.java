@@ -71,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/user/password/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority("ADMIN")
@@ -86,10 +87,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/", "http://127.0.0.1:3000/"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Credentials", "authorization", "content-type", "x-auth-token"));
         configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

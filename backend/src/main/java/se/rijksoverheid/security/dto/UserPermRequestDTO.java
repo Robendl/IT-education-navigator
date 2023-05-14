@@ -12,5 +12,5 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserPermRequestDTO {
     @NotNull
-    private User.Role role;
+    private final User.Role role;
 }

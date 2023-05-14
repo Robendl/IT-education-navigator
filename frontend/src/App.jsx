@@ -10,10 +10,12 @@ import { useEffect, useState } from 'react';
 import RegisterPage from "./pages/register/RegisterPage";
 import ManagementPage from 'pages/management/ManagementPage';
 
+/* Main App component */
 export default function App() {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
+    /* Fetch user info on page load */
     setUserInfo({
       name: AuthService.getUser()?.name,
       loggedIn: AuthService.isLoggedIn(),
@@ -21,6 +23,7 @@ export default function App() {
     })
   }, []);
 
+  /* App body with routing to different pages */
   return (
     <div className="App">
       <UserContext.Provider value={userInfo}>
@@ -37,10 +40,11 @@ export default function App() {
   );
 }
 
+/* Layout component that holds all pages for logged in users and a page where users can log in */
 function Layout() {
   return (
     <div>
-      {(AuthService.getRole() &&
+      {(AuthService.isLoggedIn() &&
         <div>
           <header className="logo-header ignore-overlay">
             <img src={logo} className="ro-logo" alt="logo" />

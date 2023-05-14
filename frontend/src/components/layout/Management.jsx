@@ -1,6 +1,6 @@
 import ToolMenu from "./ToolMenu";
 import { useContext } from "react";
-import { UserContext } from "services/AuthService";
+import { UserContext, userRoles } from "services/AuthService";
 import UserList from "./UserList";
 
 export default function Management() {
@@ -8,7 +8,7 @@ export default function Management() {
 
   return (
     <div className="user-panel page-wide">
-      {(user.role === "ADMIN") && <ToolMenu />}
+      {(user.role >= userRoles.ADMIN) && <ToolMenu />}
       <div className="user-panel-body">
         <UserList/>
       </div>

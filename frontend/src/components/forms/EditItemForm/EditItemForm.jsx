@@ -5,15 +5,17 @@ import './EditItemForm.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
 
+/* Form component for editing a course */
 export default function EditItemForm({ onSubmit, onCancel, entry }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* Function that is called when the form is closed */
   function handleCancel(e) {
     e.preventDefault();
-    console.log(entry);
     onCancel();
   }
 
+  /* Function that is called when the form is submitted */
   function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
@@ -33,6 +35,7 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
     populate();
   });
 
+  /* Function for filling in the form with the course data */
   function populate() {
     Object.keys(entry).forEach(key => {
       let inputElement = document.querySelector(`.edit-item-form input[name=${key}]`);
@@ -47,6 +50,7 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
     });
   }
 
+  /* Form body */
   return (
     <form className="edit-item-form" onSubmit={handleSubmit}>
       <h2>Item bewerken</h2>

@@ -4,11 +4,11 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +16,8 @@ import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.model.Course;
-import se.rijksoverheid.model.CourseRepository;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -43,16 +43,19 @@ public class CourseController {
      */
     @Transactional
     @GetMapping("")
-    public ResponseEntity<List<CourseResponseDTO>> getCourses(
+    public ResponseEntity<Page<Course>> getCourses(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
+            @RequestParam(required = false, defaultValue = "") String level,
+            @RequestParam(required = false, defaultValue = "") String region,
+            @RequestParam(value = "province-id", required = false, defaultValue = "0") long provinceId,
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "500") int size,
+            @RequestParam(required = false, defaultValue = "200") int size,
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, pageable));
+        return ResponseEntity.ok(courseService.getCourses(search, archived, level, region, provinceId, pageable));
     }
 
     /**

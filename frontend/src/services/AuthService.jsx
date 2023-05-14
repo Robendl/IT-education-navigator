@@ -1,26 +1,40 @@
 import { createContext } from "react";
 import http from "./httpService";
 
+/* Context for logged-in user information */
 export const UserContext = createContext({
   name: null,
   loggedIn: false,
   role: null
 })
 
+/* Enum containing the possible roles a user can have */
+export const userRoles = {
+  DATA_CONSUMER: 0,
+  DATA_MANAGER: 1,
+  ADMIN: 2
+}
+
+/* Enum containing various error codes that can be returned */
 export const errorCodes = {
   ERR_LOGIN_INVALID: 1,
   ERR_NETWORK: 2,
-  ERR_USERNAME_DUPLICATE: 3
+  ERR_USERNAME_DUPLICATE: 3,
+  ERR_INVALID_ROLE: 4
 }
 
+/* Function for loggin in that accepts an object containing a "username" and "password" */
+/* Currently login information is stored in localStorage, which should be changed for security purposes */
 function login(credentials) {
   return new Promise((resolve, reject) => {
     http.post('/auth/login', credentials)
       .then(response => {
-        if (response.data.token) {
+        if (response.data.role) {
+          if (!userRoles.hasOwnProperty(response.data.role)) {
+            reject(errorCodes.ERR_INVALID_ROLE);
+          }
           localStorage.setItem("user", JSON.stringify({
-            role: response.data.role,
-            token: response.data.token,
+            role: userRoles[response.data.role],
             name: credentials.username
           }));
           resolve()
@@ -39,33 +53,38 @@ function login(credentials) {
     
 }
 
+/* Function for loggin out */
 function logout() {
   localStorage.removeItem("user");
   window.location.reload();
 }
 
+/* Function for checking if the user is logged in; returns a boolean */
 function isLoggedIn() {
   let user = getUser();
-  if (user && user.token) {
+  if (user) {
     return true;
   } else {
     return false;
   }
 }
 
+/* Function for getting the user object from localStorage */
 function getUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
 
+/* Function for getting the role of the current user */
 function getRole() {
   let user = getUser();
-  if (user && user.token) {
+  if (user) {
     return user.role;
   } else {
     return null;
   }
 }
 
+/* Function for registering a user */
 function register(userInfo) {
   return http
     .post('/auth/register', userInfo)
@@ -73,7 +92,6 @@ function register(userInfo) {
         console.log(response);
     });
 }
-
 
 const AuthService = {
   login,
