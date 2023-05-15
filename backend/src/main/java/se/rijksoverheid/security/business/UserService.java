@@ -145,14 +145,6 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         UserResetPasswordResponseDTO UserDTO = new UserResetPasswordResponseDTO();
-        /*
-         * To prioritise work on other features, we have decided to return the password in plaintext.
-         * We are aware that this is a security vulnerability, if time allows it we intend to change
-         * this implementation to email the user a link (with a token) to a change password form,
-         * allowing the user to change their own password.
-         * However, given time constraints and our client's low priority for security,
-         * we rather implement a non-secure feature than not having this feature at all in the final product.
-         */
         UserDTO.setPassword(newPassword);
         return UserDTO;
     }
