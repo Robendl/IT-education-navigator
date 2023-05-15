@@ -145,7 +145,6 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         UserResetPasswordResponseDTO UserDTO = new UserResetPasswordResponseDTO();
-        Mapper.map(user, UserDTO);
         /*
          * To prioritise work on other features, we have decided to return the password in plaintext.
          * We are aware that this is a security vulnerability, if time allows it we intend to change
