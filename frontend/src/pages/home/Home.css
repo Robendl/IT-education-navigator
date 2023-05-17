@@ -131,10 +131,30 @@ button:hover {
   gap: 10px;
 }
 
-.filter h2 {
-  font-size: 1.9rem;
+.filter .filter-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
   border-bottom: 1px solid rgba(0,0,0,0.2);
   padding-bottom: 5px;
+}
+
+.filter .filter-header h2 {
+  font-size: 1.9rem;
+}
+
+.filter .filter-header .filter-reset-button {
+  appearance: none;
+  border: none;
+  background: none;
+  height: fit-content;
+  color: #154273;
+  font-size: 0.95em;
+}
+
+.filter .filter-header .filter-reset-button:hover {
+  text-decoration: underline;
 }
 
 .filter .filter-option-list {
@@ -156,6 +176,11 @@ button:hover {
   border-radius: 0;
   width: 17px;
   height: 20px;
+}
+
+.filter .filter-option.single input {
+  border-radius: 50%;
+  height: 17px;
 }
 
 .filter .filter-option span {

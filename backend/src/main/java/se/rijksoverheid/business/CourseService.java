@@ -32,8 +32,8 @@ public class CourseService {
      * @return              List of courses
      */
 
-    public Page<Course> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, Pageable pageable ) {
-        return courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, pageable);
+    public Page<Course> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, List<String> courseTypes, Pageable pageable ) {
+        return courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable);
 
     }
 
