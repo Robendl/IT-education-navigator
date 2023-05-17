@@ -50,22 +50,14 @@ class CourseServiceTest {
     void testGetAllCourses() {
         String search = "search";
         boolean archived = true;
+        List<String> levels = List.of("level");
+        List<String> regions = List.of("region");
+        List<Long> provinceIds = List.of(2L);
         Pageable mockPageable = mock(Pageable.class);
-        when(mockCourse.getProvince()).thenReturn(mockProvince);
-        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
-            // set up desired Mapper behaviour
-            ProvinceDTO mockProvinceDTO = mock(ProvinceDTO.class);
-            mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
-            CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
-            mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
+        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, mockPageable)).thenReturn(coursePage);
 
-            when(mockCourseRepository.searchAllFields(search, archived, mockPageable)).thenReturn(coursePage);
-
-            List<CourseResponseDTO> courses = courseService.getCourses(search, archived, mockPageable);
-            verify(mockCourseDTO).setProvince(mockProvinceDTO);
-            assertEquals(courses.size(), courseList.size());
-            assertEquals(courses.get(0), mockCourseDTO);
-        }
+        Page<Course> courses = courseService.getCourses(search, archived, levels, regions, provinceIds, mockPageable);
+        assertEquals(courses, coursePage);
     }
 
     @Test

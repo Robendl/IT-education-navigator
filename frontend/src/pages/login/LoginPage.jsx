@@ -55,7 +55,7 @@ function LoginForm() {
   return (
     <form className="login-form" onSubmit={handleSubmit}>
         <h2>Opleidingsregister Login</h2>
-        <FormEntry type="text" propertyName="Emailadres" propertyKey="username" required/>
+        <FormEntry type="email" propertyName="Emailadres" propertyKey="username" required/>
         <FormEntry type="password" propertyName="Wachtwoord" propertyKey="password" required/>
         <div>
           <div className="login-form-footer">

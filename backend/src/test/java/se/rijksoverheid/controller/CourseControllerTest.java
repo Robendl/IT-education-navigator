@@ -1,37 +1,26 @@
 package se.rijksoverheid.controller;
 
 import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
-import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.model.Course;
 
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -53,19 +42,37 @@ class CourseControllerTest {
 
     @Test
     public void testGetCourses() {
-        String search = "";
+        String search = "search";
         boolean archived = false;
         int page = 0,size = 500;
         String orderBy = "name";
+        List<String> levels = List.of("level");
+        List<String> regions = List.of("region");
+        List<Long> provinceIds = List.of(2L);
         Sort.Direction direction = Sort.Direction.ASC;
-        CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
-        List<CourseResponseDTO> courses = new ArrayList<>();
-        courses.add(mockCourseDTO);
+        Course mockCourse = mock(Course.class);
+        List<Course> courses = new ArrayList<>();
+        courses.add(mockCourse);
+        Page<Course> coursePage = new PageImpl<>(courses);
 
-        when(courseService.getCourses(anyString(),anyBoolean(),any(Pageable.class))).thenReturn(courses);
-
-        assertEquals(courses, courseController.getCourses(search, archived, page, size, orderBy, direction).getBody());
-
+        when(courseService.getCourses(
+                eq(search),
+                eq(archived),
+                eq(levels),
+                eq(regions),
+                eq(provinceIds),
+                any(PageRequest.class)))
+                .thenReturn(coursePage);
+        assertEquals(coursePage, courseController.getCourses(
+                search,
+                archived,
+                levels,
+                regions,
+                provinceIds,
+                page,
+                size,
+                orderBy,
+                direction).getBody());
     }
 
     @Test
