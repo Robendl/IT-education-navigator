@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { OverlayContext } from "./PageOverlay/PageOverlay";
+import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { UserContext, userRoles } from "services/AuthService";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState } from "react";

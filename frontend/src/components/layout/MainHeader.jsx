@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthService, { UserContext } from "services/AuthService";
 
 /* Header Component present on all user pages */
@@ -42,10 +43,18 @@ function UserOption({ user }) {
 
 /* Tooltip component that allows for interaction with user related options */
 function UserToolTip({ onClose }) {
-  return(
+
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    navigate("/");
+    AuthService.logout();
+  }
+
+  return (
     <div className="user-tooltip">
       <div className="user-tooltip-option">
-        <span onClick={() => {AuthService.logout()}}>Logout</span>
+        <span onClick={handleLogout}>Logout</span>
       </div>
     </div>
   )

@@ -1,15 +1,38 @@
-import { userRoles } from "./AuthService";
+import axios from "axios";
 import http from "./httpService";
 
+var loadController = new AbortController();
+
+/* Enum containing various error codes that can be returned */
+export const errorCodes = {
+  ERR_LOGIN_INVALID: 1,
+  ERR_NETWORK: 2,
+  ERR_CANCELED: 3,
+  ERR_OTHER: 4
+}
+
+function handleHttpError(error, reject) {
+  if (axios.isCancel(error)) {
+    reject(errorCodes.ERR_CANCELED);
+  }
+  if (error.response && error.response.status === 401) {
+    reject(errorCodes.ERR_LOGIN_INVALID)
+  }
+  if (error.code === "ERR_NETWORK") {
+    reject(errorCodes.ERR_NETWORK)
+  }
+  reject(errorCodes.ERR_OTHER);
+}
 
 function loadUsers() {
+  loadController.abort();
+  loadController = new AbortController();
   return new Promise((resolve, reject) => {
-    http.get(`/user`).then((response) => {
+    http.get(`/user`, { signal: loadController.signal }).then((response) => {
       resolve(response.data);
     }, (error) => {
-      console.log(error);
-      reject("Kon gebruikers niet ophalen.");
-    });
+      handleHttpError(error, reject);
+    })
   });
 }
 
@@ -25,15 +48,25 @@ function changeUserPermissions(userId, newRole) {
     }).then((response) => {
       resolve(response.data);
     }, (error) => {
-      console.log(error);
-      reject("Kon rechten niet aanpassen");
+      handleHttpError(error, reject);
     })
-  })
+  });
+}
+
+function resetUserPassword(userId) {
+  return new Promise((resolve, reject) => {
+    http.put(`/user/password/${userId}/reset`).then((response) => {
+      resolve(response.data);
+    }, (error) => {
+      handleHttpError(error, reject);
+    })
+  });
 }
 
 const UserLoader = {
   loadUsers,
-  changeUserPermissions
+  changeUserPermissions,
+  resetUserPassword
 }
 
 export default UserLoader;

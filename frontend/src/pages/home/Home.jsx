@@ -1,5 +1,5 @@
-import Search from "components/layout/Search";
-import UserPanel from "components/layout/UserPanel";
+import Search from "components/layout/home/Search";
+import UserPanel from "components/layout/home/UserPanel";
 import PageOverlay, { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import AddItemPopup from "components/popups/AddItemPopup";
 import EditItemPopup from "components/popups/EditItemPopup";
@@ -17,14 +17,14 @@ function Home() {
     setIsEditing(true);
     setEditEntry(entry);
   }
-  
+
   /* Home body */
   return (
     <div className="page-wrap">
       <Search />
       <OverlayContext.Provider value={{
         openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry
-        }} >
+      }} >
         <UserPanel />
         <PageOverlay isOpen={isAdding}>
           <AddItemPopup />

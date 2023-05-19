@@ -3,11 +3,12 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 
-import UserLoader from 'services/UserLoader';
+import UserLoader, { errorCodes } from 'services/UserLoader';
 import { UserContext, userRoles } from 'services/AuthService';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Tooltip } from '@mui/material';
+import { OverlayContext } from '../PageOverlay/PageOverlay';
 
 export default function AccountList() {
   const [results, setResults] = useState([]);
@@ -15,6 +16,17 @@ export default function AccountList() {
   useEffect(() => {
     UserLoader.loadUsers().then((users) => {
       setResults(users);
+    }, (error) => {
+      switch (error) {
+        case errorCodes.ERR_NETWORK:
+          console.error("Kon niet verbinden met server.");
+          break;
+        case errorCodes.ERR_OTHER:
+          console.error("Kon gebruikers niet ophalen.");
+          break;
+        default:
+          break;
+      }
     })
   }, []);
 
@@ -40,6 +52,7 @@ function AccountResult({ entry }) {
   const roleSelect = useRef();
 
   const user = useContext(UserContext);
+  const overlay = useContext(OverlayContext);
 
   function handleSaveRole() {
     setIsSavingRole(true);
@@ -48,6 +61,17 @@ function AccountResult({ entry }) {
       entry["role"] = newRole;
       setIsEditingRole(false);
       setIsSavingRole(false);
+    }, (error) => {
+      switch (error) {
+        case errorCodes.ERR_NETWORK:
+          console.error("Kon niet verbinden met server.");
+          break;
+        case errorCodes.ERR_OTHER:
+          console.error("Er is iets misgegaan bij het bewerken van de gebruiker.");
+          break;
+        default:
+          break;
+      }
     })
   }
 
@@ -57,6 +81,10 @@ function AccountResult({ entry }) {
 
   function handleCancelEditRole() {
     setIsEditingRole(false);
+  }
+
+  function handlePasswordReset() {
+    overlay.showNewPassword(entry);
   }
 
   return (
@@ -98,7 +126,7 @@ function AccountResult({ entry }) {
       </td>
       <td>
         <div className="options-col">
-          <ToolTipButton title="Wachtwoord resetten" onClick={() => { return }}>
+          <ToolTipButton title="Wachtwoord resetten" onClick={handlePasswordReset}>
             <LockResetIcon />
           </ToolTipButton>
           {(user.name !== entry["username"]) &&
