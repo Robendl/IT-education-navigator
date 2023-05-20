@@ -18,7 +18,7 @@ export default function PasswordPopup({ user }) {
     overlay.closeNewPassword();
   }
 
-
+  /* PasswordPopup body */
   return (
     <FocusTrap open>
       <div className="new-pass pop-up ignore-overlay" tabIndex={-1}>
@@ -29,6 +29,7 @@ export default function PasswordPopup({ user }) {
   );
 }
 
+/* Component that shows a new password to the user. The user has already accepted the reset */
 function ResetPassword({ user, newPass, handleClose }) {
   return (
     <>
@@ -41,10 +42,14 @@ function ResetPassword({ user, newPass, handleClose }) {
   );
 }
 
+/* Component that asks the user for confirmation to reset a password */
 function ConfirmResetPassword({ user, setAccepted, setNewPass, handleClose }) {
   const [isAccepting, setIsAccepting] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  /* Function that resets the user's password
+   * It is communicated to the parent popup component that
+   * the new password should be displayed */
   function handleResetPassword() {
     setIsAccepting(true);
     UserLoader.resetUserPassword(user.id).then((response) => {
@@ -66,6 +71,7 @@ function ConfirmResetPassword({ user, setAccepted, setNewPass, handleClose }) {
     });
   }
 
+  /* ConfirmResetPassword body */
   return (
     <>
       <span>Wachtwoord resetten voor <b>{user.username}</b>?</span>
@@ -81,14 +87,17 @@ function ConfirmResetPassword({ user, setAccepted, setNewPass, handleClose }) {
   );
 }
 
+/* CopyText component that shows a text with a button that copies the text to the clipboard */
 function CopyText({ text }) {
   const [copied, setCopied] = useState(false);
 
+  /* Function for copying the text to clipboard */
   function handleCopy() {
     setCopied(true);
     navigator.clipboard.writeText(text);
   }
 
+  /* CopyText body */
   return (
     <div className="copy-text">
       <input type="text" readOnly value={text} />

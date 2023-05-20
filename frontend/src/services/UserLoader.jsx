@@ -11,6 +11,7 @@ export const errorCodes = {
   ERR_OTHER: 4
 }
 
+/* Function that rejects a http error with a corresponding error code */
 function handleHttpError(error, reject) {
   if (axios.isCancel(error)) {
     reject(errorCodes.ERR_CANCELED);
@@ -24,6 +25,8 @@ function handleHttpError(error, reject) {
   reject(errorCodes.ERR_OTHER);
 }
 
+/* Function for loading users
+ * Returns a promise that, once resolved, returns an object with all users */
 function loadUsers() {
   loadController.abort();
   loadController = new AbortController();
@@ -53,6 +56,9 @@ function changeUserPermissions(userId, newRole) {
   });
 }
 
+/* Function for resetting the password for a user
+ * Accepts a userId.
+ * Returns a promise that, once resolved, returns an object with the newly generated password */
 function resetUserPassword(userId) {
   return new Promise((resolve, reject) => {
     http.put(`/user/password/${userId}/reset`).then((response) => {

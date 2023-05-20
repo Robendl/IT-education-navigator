@@ -10,9 +10,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Tooltip } from '@mui/material';
 import { OverlayContext } from '../PageOverlay/PageOverlay';
 
+/* AccountList component that displays a table with all users and corresponding actions */
 export default function AccountList() {
   const [results, setResults] = useState([]);
 
+  /* Load the users when the account list is opened */
   useEffect(() => {
     UserLoader.loadUsers().then((users) => {
       setResults(users);
@@ -30,6 +32,7 @@ export default function AccountList() {
     })
   }, []);
 
+  /* AccountList component */
   return (
     <table className="account-table">
       <thead>

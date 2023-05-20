@@ -1,18 +1,12 @@
-import { useContext } from "react";
-import { UserContext, userRoles } from "services/AuthService";
 import AccountList from "components/layout/admin_panel/AccountList";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import "./AccountManagement.css";
 
+/* AccountManagement component */
 export default function AccountManagement() {
-  const user = useContext(UserContext);
-
-  if (user.role < userRoles.ADMIN) {
-    return;
-  }
-
+  /* AccountManagement body */
   return (
     <div className="account-management page-wide">
       <div className="account-management-sidebar">
