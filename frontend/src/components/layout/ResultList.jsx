@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, ClickAwayListener, IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import CourseLoader, { errorCodes } from 'services/CourseLoader';
 import { useContext } from 'react';
@@ -17,6 +17,7 @@ export default function ResultList () {
   const [resultCount, setResultCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [sortByOpen, setSortByOpen] = useState(false);
 
   const location = useLocation();
 
@@ -49,6 +50,18 @@ export default function ResultList () {
     });
   }, [location]);
 
+  function handleSortByOpen() {
+    if (sortByOpen) {
+      handleSortByClose();
+      return;
+    }
+    setSortByOpen(true);
+  }
+
+  function handleSortByClose() {
+    setSortByOpen(false);
+  }
+
   /* ResultList body */
   return (
     <div className="result-list">
@@ -57,7 +70,30 @@ export default function ResultList () {
         {searchParams.has("search") &&
           <button className="result-list-search-tag" onClick={handleRemoveSearch}>Zoekterm: {searchParams.get("search")} <CloseIcon className="close-icon"/></button>
         }
-        <SortIcon className="sort-icon" />
+        <ClickAwayListener onClickAway={handleSortByClose} >
+          <div className="sort-button">
+            <Tooltip title={<SortBy />}
+              PopperProps={{disablePortal: false}}
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    padding: 0,
+                    background: "none"
+                  }
+                }
+              }}
+              onClose={handleSortByClose}
+              open={sortByOpen}
+              placement="bottom-end"
+              disableHoverListener
+              disableFocusListener
+              disableTouchListener
+              >
+              <IconButton onClick={handleSortByOpen}><SortIcon className="sort-icon" /></IconButton>
+            </Tooltip>
+          </div>
+        </ClickAwayListener>
+        
       </div>
       {(isLoading &&
         <LoadingMessage />) ||
@@ -75,6 +111,79 @@ function getResultText(resultCount) {
   } else {
     return "Resultaten"
   }
+}
+
+function SortBy() {
+  const [sortIndex, setSortIndex] = useState(null);
+
+  return (
+    <div className="sort-by">
+      <h3 className="sort-by-title">Sorteren op:</h3>
+      <SortByEntry keyName="name" name="Naam" sort={sortIndex === 0} sortIndex={0} setSortIndex={setSortIndex} />
+      <SortByEntry keyName="location" name="Locatie" sort={sortIndex === 1} sortIndex={1} setSortIndex={setSortIndex} />
+      <SortByEntry keyName="institution" name="Instelling" sort={sortIndex === 2} sortIndex={2} setSortIndex={setSortIndex} />
+    </div>
+  )
+}
+
+function SortByEntry({ keyName, name, sort, sortIndex, setSortIndex }) {
+  const [sortMode, setSortMode] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("order-by") === keyName && searchParams.has("direction")) {
+      setSortIndex(sortIndex);
+      setSortMode(searchParams.get("direction"));
+    }
+  }, [sortIndex, searchParams, keyName, setSortIndex])
+
+  function updateOrderByUrl(dir) {
+    setSearchParams(prevParams => {
+      if (dir === null) {
+        prevParams.delete("order-by");
+        prevParams.delete("direction");
+      } else {
+        prevParams.set("order-by", keyName);
+        prevParams.set("direction", dir);
+      }
+      return prevParams;
+    })
+  }
+
+  function handleSort() {
+    if (!sort) {
+      setSortIndex(sortIndex);
+      setSortMode("ASC");
+      updateOrderByUrl("ASC");
+      return;
+    }
+    switch (sortMode) {
+      case null:
+        setSortMode("ASC");
+        updateOrderByUrl("ASC");
+        break;
+      case "ASC":
+        setSortMode("DESC");
+        updateOrderByUrl("DESC");
+        break;
+      default:
+        setSortMode(null);
+        setSortIndex(null);
+        updateOrderByUrl(null);
+        break;
+    }
+  }
+
+  return (
+    <button className={`sort-by-entry ${sort ? "selected" : ""}`} onClick={handleSort}>
+      <span>{name}</span>
+      {sort && (
+        ((sortMode === "ASC") && <span>A-Z</span>)
+        ||
+        ((sortMode === "DESC") && <span>Z-A</span>)
+      )}
+    </button>
+  )
 }
 
 /* Result component that shows information on a course */
