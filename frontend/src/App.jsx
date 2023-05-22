@@ -12,8 +12,8 @@ import AdminPanel from 'pages/admin_panel/AdminPanel';
 import AccountManagement from 'components/layout/admin_panel/AccountManagement';
 import CoursePage from 'pages/course/CoursePage';
 import PageOverlay, { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
-import AddItemPopup from 'components/popups/AddItemPopup';
-import EditItemPopup from 'components/popups/EditItemPopup';
+import AddItemPopup from 'components/popups/AddItemPopup/AddItemPopup';
+import EditItemPopup from 'components/popups/EditItemPopup/EditItemPopup';
 
 /* Main App component */
 export default function App() {
