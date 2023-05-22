@@ -32,6 +32,10 @@ export default function CoursePage() {
     overlay.openDeleteCourse(course);
   }
 
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   /* CoursePage body */
   return (
     <div className="course-page">
@@ -41,17 +45,20 @@ export default function CoursePage() {
           {course.archived && <span className="archived-tag">(Gearchiveerd)</span>}
         </div>
       </div>
-      <div className="course-page-body page-wide">
-        <h3>Gegevens:</h3>
-        {Object.keys(course).filter(key => !(["name", "id", "archived", "province"].includes(key)))
-          .map(key => <CourseProperty keyName={key} key={key} course={course} value={course[key]} />)}
-        <div className="course-actions">
-          {user.role >= userRoles.DATA_MANAGER &&
-            <button className="edit-course-button" onClick={handleEdit}>Bewerk</button>
-          }
-          {user.role >= userRoles.ADMIN &&
-            <button className="delete-course-button" onClick={handleDelete}>Verwijder</button>
-          }
+      <div className="layout">
+        <button className="back-button" onClick={handleGoBack}>Ga terug</button>
+        <div className="course-page-body page-wide">
+          <h3>Gegevens:</h3>
+          {Object.keys(course).filter(key => !(["name", "id", "archived", "province"].includes(key)))
+            .map(key => <CourseProperty keyName={key} key={key} course={course} value={course[key]} />)}
+          <div className="course-actions">
+            {user.role >= userRoles.DATA_MANAGER &&
+              <button className="edit-course-button" onClick={handleEdit}>Bewerk</button>
+            }
+            {user.role >= userRoles.ADMIN &&
+              <button className="delete-course-button" onClick={handleDelete}>Verwijder</button>
+            }
+          </div>
         </div>
       </div>
     </div>
