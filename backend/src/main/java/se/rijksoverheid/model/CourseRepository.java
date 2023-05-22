@@ -26,7 +26,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      * @param course must not be {@literal null}.   course to be saved
      * @return saved course
      */
-    Course save( Course course);
+    Course save(Course course);
 
     Optional<Course> findById(long id);
 
