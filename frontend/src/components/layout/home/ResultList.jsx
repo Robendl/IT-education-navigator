@@ -4,7 +4,7 @@ import { CircularProgress, ClickAwayListener, IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import CourseLoader, { errorCodes } from 'services/CourseLoader';
 import { useContext } from 'react';
-import { OverlayContext } from './PageOverlay/PageOverlay';
+import { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
 import { UserContext, userRoles } from 'services/AuthService';
 import { useRef } from 'react';
 import { propertyTranslations } from 'config/translations';
@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import SortIcon from '@mui/icons-material/Sort';
 
 /* ResultList component that shows all courses that fit the user's search and order preferences */
-export default function ResultList () {
+export default function ResultList() {
   const [results, setResults] = useState([]);
   const [resultCount, setResultCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +68,7 @@ export default function ResultList () {
       <div className="result-list-header">
         <span><b>{resultCount}</b> {getResultText(resultCount)}</span>
         {searchParams.has("search") &&
-          <button className="result-list-search-tag" onClick={handleRemoveSearch}>Zoekterm: {searchParams.get("search")} <CloseIcon className="close-icon"/></button>
+          <button className="result-list-search-tag" onClick={handleRemoveSearch}>Zoekterm: {searchParams.get("search")} <CloseIcon className="close-icon" /></button>
         }
         <ClickAwayListener onClickAway={handleSortByClose} >
           <div className="sort-button">
@@ -98,7 +98,7 @@ export default function ResultList () {
       {(isLoading &&
         <LoadingMessage />) ||
         <div className="result-list-entries">
-        {results.map((result, idx) => <Result entry={result} key={idx} />)}
+          {results.map((result, idx) => <Result entry={result} key={idx} />)}
         </div>
       }
     </div>
@@ -106,7 +106,7 @@ export default function ResultList () {
 }
 
 function getResultText(resultCount) {
-  if(resultCount === 1) {
+  if (resultCount === 1) {
     return "Resultaat"
   } else {
     return "Resultaten"
@@ -238,33 +238,33 @@ function Result({ entry }) {
 
   /* Result body */
   return (
-    <div className={`result ${entry["archived"] ? "archived": ""}`} ref={resultElement}>
+    <div className={`result ${entry["archived"] ? "archived" : ""}`} ref={resultElement}>
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
         <Link to="#" className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
 
         { /* Edit button */
-          (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] && 
-          <ToolTipButton title="Bewerk" buttonClass="edit-button" iconClass="edit-icon" onClick={handleEdit} iconName="edit"/>
+          (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&
+          <ToolTipButton title="Bewerk" buttonClass="edit-button" iconClass="edit-icon" onClick={handleEdit} iconName="edit" />
         }
         { /* Archive button */
-          (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] && 
-          <ToolTipButton title="Archiveer" buttonClass="archive-button" iconClass="archive-icon" onClick={handleArchive} iconName="archive" hasRedHover/>
+          (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&
+          <ToolTipButton title="Archiveer" buttonClass="archive-button" iconClass="archive-icon" onClick={handleArchive} iconName="archive" hasRedHover />
         }
         { /* Restore button */
-          (user.role >= userRoles.DATA_MANAGER) && entry["archived"] && 
-          <ToolTipButton title="Terugzetten" buttonClass="unarchive-button" iconClass="unarchive-icon" onClick={handleRestore} iconName="unarchive"/>
+          (user.role >= userRoles.DATA_MANAGER) && entry["archived"] &&
+          <ToolTipButton title="Terugzetten" buttonClass="unarchive-button" iconClass="unarchive-icon" onClick={handleRestore} iconName="unarchive" />
         }
         { /* Delete button */
-          (user.role >= userRoles.ADMIN) && entry["archived"] && 
-          <ToolTipButton title="Verwijderen" buttonClass="delete-button" iconClass="delete-icon" onClick={handleDelete} iconName="delete" hasRedHover/>
+          (user.role >= userRoles.ADMIN) && entry["archived"] &&
+          <ToolTipButton title="Verwijderen" buttonClass="delete-button" iconClass="delete-icon" onClick={handleDelete} iconName="delete" hasRedHover />
         }
-        
+
       </div>
       <div className="result-body">
-        <ResultProperty keyName="courseType" value={entry["courseType"]}/>
-        <ResultProperty keyName="location" value={entry["location"] + ((entry["province"].id < 12) ? `, ${entry["province"].name}` : "")}/>
-        <ResultProperty keyName="institution" value={entry["institution"]}/>
+        <ResultProperty keyName="courseType" value={entry["courseType"]} />
+        <ResultProperty keyName="location" value={entry["location"] + ((entry["province"].id < 12) ? `, ${entry["province"].name}` : "")} />
+        <ResultProperty keyName="institution" value={entry["institution"]} />
       </div>
     </div>
   );
@@ -282,10 +282,10 @@ function ToolTipButton({ title, buttonClass, iconClass, onClick, hasRedHover, ic
 function ResultProperty({ keyName, value }) {
   return (
     <span className="result-property">
-    {(keyName === "province" &&
-      <><b>{propertyTranslations[keyName]}: </b>{value["name"]}</>) ||
-      <><b>{propertyTranslations[keyName]}: </b>{value}</>
-    }
+      {(keyName === "province" &&
+        <><b>{propertyTranslations[keyName]}: </b>{value["name"]}</>) ||
+        <><b>{propertyTranslations[keyName]}: </b>{value}</>
+      }
     </span>
   )
 }
