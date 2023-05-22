@@ -88,12 +88,21 @@ button:hover {
   margin: 5px;
 }
 
+.tool-menu .account-management-tab {
+  margin: 5px 0 5px auto;
+  padding: 2px 5px 2px 5px;
+}
+
 .tool-menu button:hover {
   outline: 1px solid rgb(219, 219, 219);
 }
 
 .tool-menu button:first-of-type:hover {
   background-color: #154273;
+}
+
+.tool-menu .account-management-tab:hover {
+  background-color: #e7e7e7;
 }
 
 .tool-menu button.selected {

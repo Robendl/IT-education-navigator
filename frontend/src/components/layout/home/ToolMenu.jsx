@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
-import { OverlayContext } from "./PageOverlay/PageOverlay";
+import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { UserContext, userRoles } from "services/AuthService";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 /* Enum containing possible tab options */
@@ -17,8 +17,9 @@ export default function ToolMenu() {
 
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
-  
+
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   /* Function that is called when the course overview is opened */
   function handleOpenOverview() {
@@ -38,6 +39,11 @@ export default function ToolMenu() {
     setSelected(tabOption.ARCHIVE);
   }
 
+  function handleOpenAccountManagement() {
+    navigate("/admin/accounts");
+    setSelected("Accountbeheer")
+  }
+
   useEffect(() => {
     /* Load tab selection state from url search parameters */
     if (searchParams.get("archived") === "1") {
@@ -50,16 +56,16 @@ export default function ToolMenu() {
   /* ToolMenu body */
   return (
     <div className="tool-menu">
-      {user.loggedIn && (user.role >= userRoles.DATA_MANAGER) && <ToolOption name="Nieuw Item" icon="post_add" action={overlay.openAdd}/>}
-      {user.loggedIn && <ToolOption name="Overzicht" icon="list" selected={selected === tabOption.OVERVIEW} action={handleOpenOverview}/>}
+      {user.loggedIn && (user.role >= userRoles.DATA_MANAGER) && <ToolOption name="Nieuw Item" icon="post_add" action={overlay.openAdd} />}
+      {user.loggedIn && <ToolOption name="Overzicht" icon="list" selected={selected === tabOption.OVERVIEW} action={handleOpenOverview} />}
       {user.loggedIn && (user.role >= userRoles.DATA_MANAGER) && <ToolOption name="Archief" icon="inventory_2" selected={selected === tabOption.ARCHIVE} action={handleOpenArchive} />}
-      {user.loggedIn && (user.role >= userRoles.ADMIN) && <ToolOption name="Accountbeheer" icon="manage_accounts"/>}
+      {user.loggedIn && (user.role >= userRoles.ADMIN) && <ToolOption className="account-management-tab" name="Accountbeheer" icon="manage_accounts" action={handleOpenAccountManagement} />}
     </div>
   );
 }
 
 /* ToolOption component for the ToolMenu */
-function ToolOption({name, icon, action, selected}) {
+function ToolOption({ className = "", name, icon, action, selected }) {
 
   /* Function that is called when clicking on the tool option */
   function handleClick(e) {
@@ -69,7 +75,7 @@ function ToolOption({name, icon, action, selected}) {
 
   /* ToolOption body */
   return (
-    <button onClick={handleClick} className={selected ? "selected" : ""}>
+    <button onClick={handleClick} className={`${className} ${selected ? "selected" : ""}`}>
       <span className="material-symbols-outlined tool-icon">{icon}</span>
       <span className="tool-name">{name}</span>
     </button>

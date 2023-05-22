@@ -25,7 +25,6 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/courses")
-@CrossOrigin
 public class CourseController {
     private CourseService courseService;
 
@@ -55,6 +54,11 @@ public class CourseController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
         return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCourseById(@PathVariable long id) {
+        return ResponseEntity.of(courseService.getCourseById(id));
     }
 
     /**
