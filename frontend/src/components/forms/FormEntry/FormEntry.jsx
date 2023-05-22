@@ -10,17 +10,17 @@ export default function FormEntry({ type, propertyName, propertyKey, required })
           {
             (type === "checkbox" &&
               <>
-                <input type="checkbox" name={propertyKey} value="true" required={required}/>
-                <input type="hidden" name={propertyKey} value="false" required={required}/>
+                <input type="hidden" name={propertyKey} value="false" required={required} />
+                <input type="checkbox" name={propertyKey} value="true" required={required} />
               </>
             ) ||
             (type === "password" &&
-              <input type="password" name={propertyKey} required={required}/>
+              <input type="password" name={propertyKey} required={required} />
             ) ||
-              (type === "email" &&
-              <input type="email" pattern="^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$" name={propertyKey} required={required}/>
+            (type === "email" &&
+              <input type="email" pattern="^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$" name={propertyKey} required={required} />
             ) ||
-            <input type="text" name={propertyKey} required={required}/>
+            <input type="text" name={propertyKey} required={required} />
           }
           {
             (type === "dropdown" &&
@@ -34,7 +34,7 @@ export default function FormEntry({ type, propertyName, propertyKey, required })
               </div>
             )
           }
-          
+
         </div>
       </div>
     </label>

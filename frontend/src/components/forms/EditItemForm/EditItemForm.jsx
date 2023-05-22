@@ -31,20 +31,20 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
     });
   }
 
-  useEffect(() => {
-    populate();
-  });
+  useEffect(populate, [entry]);
 
   /* Function for filling in the form with the course data */
   function populate() {
     Object.keys(entry).forEach(key => {
-      let inputElement = document.querySelector(`.edit-item-form input[name=${key}]`);
-      let value = entry[key];
+      let inputElement = document.querySelectorAll(`.edit-item-form input[name=${key}]`);
+      inputElement = inputElement[inputElement.length - 1];
+      let value = (entry[key] === "null") ? "" : entry[key];
       if (key === "province") {
         value = value.id;
       }
       if (inputElement && inputElement.getAttribute("type") === "checkbox") {
-        inputElement?.setAttribute("checked", value);
+        inputElement.checked = value;
+        return;
       }
       inputElement?.setAttribute("value", value);
     });
