@@ -14,6 +14,7 @@ import se.rijksoverheid.model.Province;
 import se.rijksoverheid.model.ProvinceRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Responsible for all business logic regarding the courses.
@@ -34,7 +35,10 @@ public class CourseService {
 
     public Page<Course> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, Pageable pageable ) {
         return courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, pageable);
+    }
 
+    public Optional<Course> getCourseById(long id) {
+        return courseRepository.findById(id);
     }
 
     /**
@@ -61,7 +65,7 @@ public class CourseService {
      */
     @Transactional
     public Course edit(Long courseId, CourseRequestDTO courseDTO) throws EntityNotFoundException, IllegalArgumentException {
-        Course course = courseRepository.findById(courseId).orElseThrow(EntityNotFoundException::new);
+        Course course = getCourseById(courseId).orElseThrow(EntityNotFoundException::new);
         Mapper.map(courseDTO, course);
         if(courseDTO.getProvinceId() != course.getProvince().getId()) {
             Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);

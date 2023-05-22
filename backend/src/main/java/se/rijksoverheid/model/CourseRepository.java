@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Repository used for interacting with course data from the database.
@@ -26,6 +27,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      * @return saved course
      */
     Course save( Course course);
+
+    Optional<Course> findById(long id);
 
     /**
      * Method used for retrieving courses from the databse, a search can be performed and desired results can be further
