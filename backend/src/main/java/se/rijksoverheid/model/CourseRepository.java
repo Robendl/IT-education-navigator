@@ -44,11 +44,13 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "and c.archived = :archived " +
             "and (COALESCE(:levels, NULL) IS NULL or (c.level in :levels)) " +
             "and (COALESCE(:regions, NULL) IS NULL or (c.region in :regions)) " +
-            "and (COALESCE(:provinceIds, NULL) IS NULL or (c.province.id in :provinceIds)) ")
+            "and (COALESCE(:provinceIds, NULL) IS NULL or (c.province.id in :provinceIds)) " +
+            "and (COALESCE(:courseTypes, NULL) IS NULL or (LOWER(c.courseType) in :courseTypes)) ")
     Page<Course> searchAndFilterAndOrderCourses(@Param("search") String search,
                                                 @Param("archived") boolean archived,
                                                 @Param("levels") Collection<String> levels,
                                                 @Param("regions") Collection<String> regions,
                                                 @Param("provinceIds") Collection<Long> provinceIds,
+                                                @Param("courseTypes") Collection<String> courseTypes,
                                                 Pageable pageable);
 }
