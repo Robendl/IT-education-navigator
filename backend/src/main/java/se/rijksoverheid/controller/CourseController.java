@@ -9,14 +9,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
+import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.model.Course;
+import se.rijksoverheid.security.model.User;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Holds endpoints to which the course data can be accessed/altered from the outside world.
@@ -40,7 +47,8 @@ public class CourseController {
      */
     @Transactional
     @GetMapping("")
-    public ResponseEntity<Page<Course>> getCourses(
+    public ResponseEntity<CoursePageDTO> getCourses(
+            Authentication authentication,
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
             @RequestParam(required = false, defaultValue = "") List<String> levels,
@@ -53,12 +61,28 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable));
+        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable, authentication));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable long id) {
-        return ResponseEntity.of(courseService.getCourseById(id));
+    public ResponseEntity<?> getCourseById(@PathVariable long id, Authentication authentication) {
+        try {
+            return ResponseEntity.ok(courseService.getCourseById(id, authentication));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private void censorCourseIfNeeded(Course course, Authentication authentication) {
+        Collection<?> authorities = authentication.getAuthorities();
+        if(!(authorities.contains(new SimpleGrantedAuthority(User.Role.ADMIN.toString()))
+                || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_CONSUMER.toString()))
+                || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_MANAGER.toString())))) {
+            String UNAUTHORIZED = "UNAUTHORIZED";
+            course.setResponsibleTaskForce(UNAUTHORIZED);
+            course.setContact(UNAUTHORIZED);
+            course.setProfessor(UNAUTHORIZED);
+        }
     }
 
     /**

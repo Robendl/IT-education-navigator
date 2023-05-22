@@ -10,9 +10,10 @@ export const UserContext = createContext({
 
 /* Enum containing the possible roles a user can have */
 export const userRoles = {
-  DATA_CONSUMER: 0,
-  DATA_MANAGER: 1,
-  ADMIN: 2
+  LIM_DATA_CONSUMER: 0,
+  DATA_CONSUMER: 1,
+  DATA_MANAGER: 2,
+  ADMIN: 3
 }
 
 /* Enum containing various error codes that can be returned */

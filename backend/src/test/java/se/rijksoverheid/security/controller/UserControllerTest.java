@@ -7,13 +7,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import se.rijksoverheid.dto.CourseRequestDTO;
-import se.rijksoverheid.dto.CourseResponseDTO;
-import se.rijksoverheid.model.Course;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
-import se.rijksoverheid.security.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

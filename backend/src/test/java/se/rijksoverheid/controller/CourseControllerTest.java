@@ -13,7 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import se.rijksoverheid.business.CourseService;
+import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.model.Course;
 
@@ -51,10 +53,11 @@ class CourseControllerTest {
         List<Long> provinceIds = List.of(2L);
         List<String> courseTypes = List.of("courseType");
         Sort.Direction direction = Sort.Direction.ASC;
-        Course mockCourse = mock(Course.class);
-        List<Course> courses = new ArrayList<>();
-        courses.add(mockCourse);
-        Page<Course> coursePage = new PageImpl<>(courses);
+//        Course mockCourse = mock(Course.class);
+//        List<Course> courses = new ArrayList<>();
+//        courses.add(mockCourse);
+        CoursePageDTO coursePage = mock(CoursePageDTO.class);
+        Authentication authentication = mock(Authentication.class);
 
         when(courseService.getCourses(
                 eq(search),
@@ -63,9 +66,11 @@ class CourseControllerTest {
                 eq(regions),
                 eq(provinceIds),
                 eq(courseTypes),
-                any(PageRequest.class)))
+                any(PageRequest.class),
+                any(Authentication.class)))
                 .thenReturn(coursePage);
         assertEquals(coursePage, courseController.getCourses(
+                authentication,
                 search,
                 archived,
                 levels,

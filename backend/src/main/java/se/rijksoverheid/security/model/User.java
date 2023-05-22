@@ -30,7 +30,8 @@ public class User implements UserDetails {
     public enum Role {
         ADMIN,
         DATA_MANAGER,
-        DATA_CONSUMER
+        DATA_CONSUMER,
+        LIM_DATA_CONSUMER
     }
 
     @Override
