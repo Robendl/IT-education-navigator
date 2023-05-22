@@ -8,7 +8,6 @@ export default function Search() {
       <div>
         <h2>Zoek in het register</h2>
         <SearchBar />
-        <Link to="/kaart">Of zoek op de kaart</Link>
       </div>
     </div>
   );

@@ -15,8 +15,6 @@ export default function CoursePage() {
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
 
-  const navigate = useNavigate();
-
   /* Get the course information on page load */
   useEffect(() => {
     CourseLoader.loadCourse(courseId).then((response) => {

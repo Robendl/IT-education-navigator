@@ -6,7 +6,7 @@ import FocusTrap from '@mui/base/FocusTrap';
 
 import "./DeleteItemPopup.css";
 import CourseLoader from "services/CourseLoader";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 /* Popup component for showing a new password to an admin */
 export default function DeleteCoursePopup() {
