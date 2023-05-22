@@ -1,6 +1,8 @@
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { useContext } from "react";
-import ChangePasswordForm from "../forms/ChangePasswordForm/ChangePasswordForm";
+import ChangePasswordForm from "../../forms/ChangePasswordForm/ChangePasswordForm";
+
+import "./ChangePasswordPopup.css";
 
 /* Popup component for adding courses */
 export default function ChangePasswordPopup() {

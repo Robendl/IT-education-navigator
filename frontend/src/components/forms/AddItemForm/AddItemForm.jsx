@@ -2,10 +2,12 @@ import { CircularProgress } from '@mui/material';
 import CourseLoader from 'services/CourseLoader';
 import FormEntry from 'components/forms/FormEntry/FormEntry';
 import './AddItemForm.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ProvinceLoader from 'services/ProvinceLoader';
 
 /* Form component for adding new courses to the database */
 export default function AddItemForm({ onSubmit, onCancel }) {
+  const [provinces, setProvinces] = useState(null);
 
   /* Boolean state that is true when the form is submitted and being processed */
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,23 +33,29 @@ export default function AddItemForm({ onSubmit, onCancel }) {
     });
   }
 
+  useEffect(() => {
+    ProvinceLoader.loadProvinces().then((response) => {
+      setProvinces(response);
+    });
+  }, []);
+
   /* Form Body */
   return (
     <form className="add-item-form" onSubmit={handleSubmit}>
       <h2>Item toevoegen</h2>
       <div>
         <FormEntry type="text" propertyName="Naam" propertyKey="name" required />
-        <FormEntry type="browse" propertyName="Instelling" propertyKey="institution" required />
+        <FormEntry type="text" propertyName="Instelling" propertyKey="institution" required />
       </div>
       <div>
         <FormEntry type="text" propertyName="Locatie" propertyKey="location" required />
-        <FormEntry type="dropdown" propertyName="Provincie" propertyKey="province" />
+        <FormEntry type="dropdown" propertyName="Provincie" propertyKey="province" options={provinces} />
         <FormEntry type="dropdown" propertyName="Regio" propertyKey="region" />
       </div>
       <div>
-        <FormEntry type="browse" propertyName="Niveau" propertyKey="level" />
-        <FormEntry type="browse" propertyName="Type" propertyKey="courseType" />
-        <FormEntry type="browse" propertyName="Tijd" propertyKey="timeOccupation" />
+        <FormEntry type="text" propertyName="Niveau" propertyKey="level" />
+        <FormEntry type="text" propertyName="Type" propertyKey="courseType" />
+        <FormEntry type="text" propertyName="Tijd" propertyKey="timeOccupation" />
         <FormEntry type="checkbox" propertyName="Informatiehuishouding Gerelateerd" propertyKey="housekeepingRelated" />
         <FormEntry type="checkbox" propertyName="Samenwerking" propertyKey="collaboration" />
       </div>

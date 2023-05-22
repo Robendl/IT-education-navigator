@@ -3,7 +3,7 @@
   justify-content: center;
   position: absolute;
   width: 100%;
-  padding-top: 30px;
+	top: 0;
 }
 
 .page-overlay .page-overlay-back {

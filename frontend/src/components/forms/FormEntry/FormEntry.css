@@ -16,10 +16,11 @@
   padding-left: 5px;
 }
 
-.form-entry .form-input input[type="text"], .form-entry .form-input input[type="password"], .form-entry .form-input input[type="email"] {
+.form-entry .form-input input[type="text"], .form-entry .form-input input[type="password"], .form-entry .form-input input[type="email"], .form-entry .form-input select {
   flex-grow: 1;
   outline: none;
   border: none;
+  background: none;
 }
 
 .form-entry-checkbox .form-entry-name {

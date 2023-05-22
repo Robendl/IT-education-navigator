@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthService, { UserContext } from "services/AuthService";
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
-import ChangePasswordPopup from "../popups/ChangePasswordPopup";
+import ChangePasswordPopup from "../popups/ChangePasswordPopup/ChangePasswordPopup";
 import PageOverlay from "./PageOverlay/PageOverlay";
 
 /* Header Component present on all user pages */

@@ -10,6 +10,10 @@ import { useEffect, useState } from 'react';
 import RegisterPage from "./pages/register/RegisterPage";
 import AdminPanel from 'pages/admin_panel/AdminPanel';
 import AccountManagement from 'components/layout/admin_panel/AccountManagement';
+import CoursePage from 'pages/course/CoursePage';
+import PageOverlay, { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
+import AddItemPopup from 'components/popups/AddItemPopup/AddItemPopup';
+import EditItemPopup from 'components/popups/EditItemPopup/EditItemPopup';
 
 /* Main App component */
 export default function App() {
@@ -32,6 +36,7 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="course/:courseId" element={<CoursePage />}></Route>
             <Route path="kaart" element={<Map />} />
             <Route path="admin" element={<AdminPanel />}>
               <Route path="accounts" element={<AccountManagement />} />
@@ -45,15 +50,35 @@ export default function App() {
 
 /* Layout component that holds all pages for logged in users and a page where users can log in */
 function Layout() {
+  const [isAdding, setIsAdding] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editEntry, setEditEntry] = useState({});
+
+  /* Function that is called when the user starts editing a course */
+  function handleOpenEdit(entry) {
+    setIsEditing(true);
+    setEditEntry(entry);
+  }
+
   return (
     <div>
       {(AuthService.isLoggedIn() &&
         <div>
-          <header className="logo-header ignore-overlay">
-            <img src={logo} className="ro-logo" alt="logo" />
-          </header>
-          <MainHeader />
-          <Outlet />
+          <OverlayContext.Provider value={{
+            openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry
+          }} >
+            <header className="logo-header ignore-overlay">
+              <img src={logo} className="ro-logo" alt="logo" />
+            </header>
+            <MainHeader />
+            <Outlet />
+            <PageOverlay isOpen={isAdding}>
+              <AddItemPopup />
+            </PageOverlay>
+            <PageOverlay isOpen={isEditing}>
+              <EditItemPopup />
+            </PageOverlay>
+          </OverlayContext.Provider>
         </div>)
         ||
         <LoginPage />
