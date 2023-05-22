@@ -18,7 +18,31 @@ function loadCourses(filters) {
   loadController.abort();
   loadController = new AbortController();
   return new Promise((resolve, reject) => {
-    http.get(`/courses${filters ? "/" + filters : ""}`, {signal: loadController.signal}).then((response) => {
+    http.get(`/courses${filters ? "/" + filters : ""}`, { signal: loadController.signal }).then((response) => {
+      resolve(response.data);
+    }, (error) => {
+      if (axios.isCancel(error)) {
+        reject(errorCodes.ERR_CANCELED);
+      }
+      if (error.response && error.response.status === 401) {
+        reject(errorCodes.ERR_LOGIN_INVALID)
+      }
+      if (error.code === "ERR_NETWORK") {
+        reject(errorCodes.ERR_NETWORK)
+      }
+      reject(errorCodes.ERR_OTHER);
+    });
+  });
+}
+
+/* Function for loading a single course
+ * Accepts a courseId.
+ * Returns a promise that, once resolved, returns a course object */
+function loadCourse(courseId) {
+  loadController.abort();
+  loadController = new AbortController();
+  return new Promise((resolve, reject) => {
+    http.get(`/courses/${courseId}`, { signal: loadController.signal }).then((response) => {
       resolve(response.data);
     }, (error) => {
       if (axios.isCancel(error)) {
@@ -74,7 +98,7 @@ function editCourse(course) {
  * Returns a promise that, once resolved, returns the http response body */
 function archiveCourse(course) {
   return new Promise((resolve, reject) => {
-    http.put(`/courses/${course.id}`, {...course, archived: true}, {
+    http.put(`/courses/${course.id}`, { ...course, archived: true }, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -91,7 +115,7 @@ function archiveCourse(course) {
  * Returns a promise that, once resolved, returns the http response body */
 function restoreCourse(course) {
   return new Promise((resolve, reject) => {
-    http.put(`/courses/${course.id}`, {...course, archived: false}, {
+    http.put(`/courses/${course.id}`, { ...course, archived: false }, {
       headers: {
         'Content-type': 'application/json'
       }
@@ -122,6 +146,7 @@ function deleteCourse(course) {
 
 const CourseLoader = {
   loadCourses,
+  loadCourse,
   addCourse,
   editCourse,
   archiveCourse,

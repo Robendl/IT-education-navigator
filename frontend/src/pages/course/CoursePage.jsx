@@ -17,10 +17,7 @@ export default function CoursePage() {
 
   /* Get the course information on page load */
   useEffect(() => {
-    // CourseLoader.getCourse(courseId).then((response) => {
-    //   setCourse(response);
-    // });
-    mockGetCourse(courseId).then((response) => {
+    CourseLoader.loadCourse(courseId).then((response) => {
       setCourse(response);
     });
   }, [courseId]);
@@ -76,31 +73,4 @@ function CourseProperty({ keyName, value, course }) {
       }
     </span>
   )
-}
-
-function mockGetCourse(courseId) {
-  return new Promise((resolve, reject) => {
-    resolve({
-      "id": 105,
-      "archived": true,
-      "name": "Adaptive Robotics",
-      "institution": "Fontys Hogescholen",
-      "location": "Eindhoven",
-      "province": {
-        "id": 0,
-        "name": "Noord-Brabant"
-      },
-      "level": "hbo",
-      "courseType": "Minor",
-      "housekeepingRelated": false,
-      "timeOccupation": null,
-      "region": "midden",
-      "collaboration": false,
-      "responsibleTaskForce": "Cees",
-      "professor": null,
-      "contact": null,
-      "web": null,
-      "explanation": null
-    });
-  })
 }
