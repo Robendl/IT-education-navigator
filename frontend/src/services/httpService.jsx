@@ -11,8 +11,8 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => response,
   error => {
-    if (error.response.status === 401) {
-      console.log(error.config.uri);
+    if (error.response.status === 401 && !error.config.url.startsWith('/auth')) {
+      console.log(error.config.url);
       AuthService.logout();
     }
     return Promise.reject(error);
