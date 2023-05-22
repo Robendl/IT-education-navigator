@@ -1,0 +1,127 @@
+.account-management {
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+  margin-top: 30px;
+}
+
+.account-management .account-management-sidebar .back-button {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  text-decoration: none;
+  margin-top: 10px;
+  color: #154273;
+}
+
+.account-management .account-management-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 30px;
+  flex-grow: 1;
+}
+
+.account-management .account-management-header {
+  border-bottom: 1px solid rgb(214, 214, 214);
+}
+
+.account-management .account-management-header h2 {
+  font-size: 1.9rem;
+  padding-bottom: 10px;
+}
+
+.account-management .account-management-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.account-management .account-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.account-management .account-table .account-row {
+  height: 0px;
+  max-height: 20px;
+}
+
+.account-management .account-table .account-row:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+.account-management .account-table th, .account-management .account-table td {
+  text-align: left;
+  border: 1px solid #dddddd;
+  padding: 6px 10px 6px 10px;
+}
+
+.account-management .account-table .role-col {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  max-height: 30px;
+}
+
+.account-management .account-table .role-col .saving {
+  color: #7a7a7a;
+}
+
+.account-management .account-table .role-action-button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  color: #9e9e9e;
+  align-self: stretch;
+}
+
+.account-management .account-table .role-action-button.outlined {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.3);
+  padding: 1px;
+}
+
+.account-management .account-table .role-col select {
+  flex-grow: 1;
+  font-size: 1rem;
+  border: 1px solid rgba(0,0,0,0.3);
+  background-color: #ffffff;
+  padding: 5px 8px 5px 8px;
+}
+
+.account-management .account-table .role-save-icon:hover {
+  color: #5a5a5a;
+  border-color: #5a5a5a;
+}
+
+.account-management .account-table .role-close-icon:hover {
+  color: #a82121;
+  border-color: #a82121;
+}
+
+.account-management .account-table .options-col {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.account-management .account-table .options-col button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  color: #9e9e9e;
+}
+
+.account-management .account-table .options-col button > svg {
+  font-size: 2em;
+}
+
+.account-management .account-table .options-col button:hover {
+  color: #a82121;
+}

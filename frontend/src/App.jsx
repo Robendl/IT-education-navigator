@@ -8,6 +8,8 @@ import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
 import { useEffect, useState } from 'react';
 import RegisterPage from "./pages/register/RegisterPage";
+import AdminPanel from 'pages/admin_panel/AdminPanel';
+import AccountManagement from 'components/layout/admin_panel/AccountManagement';
 
 /* Main App component */
 export default function App() {
@@ -29,8 +31,11 @@ export default function App() {
         <Routes>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<Layout />}>
-            <Route index element={<Home />}></Route>
-            <Route path="kaart" element={<Map />}></Route>
+            <Route index element={<Home />} />
+            <Route path="kaart" element={<Map />} />
+            <Route path="admin" element={<AdminPanel />}>
+              <Route path="accounts" element={<AccountManagement />} />
+            </Route>
           </Route>
         </Routes>
       </UserContext.Provider>
@@ -53,7 +58,7 @@ function Layout() {
         ||
         <LoginPage />
       }
-      
+
     </div>
   );
 }

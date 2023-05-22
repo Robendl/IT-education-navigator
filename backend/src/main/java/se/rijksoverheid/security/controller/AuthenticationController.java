@@ -13,6 +13,7 @@ import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
+import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.Cookie;
@@ -68,6 +69,8 @@ public class AuthenticationController {
         String token = jwtTokenUtil.generateToken(user);
         response.addHeader("Set-Cookie", "jwt=" + token + "; Path=/; Secure; HttpOnly; SameSite=strict");
 
-        return ResponseEntity.ok(new UserPermRequestDTO(user.getRole()));
+        UserResponseDTO userResponse = new UserResponseDTO();
+        userResponse.setRole(user.getRole());
+        return ResponseEntity.ok(userResponse);
     }
 }

@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthService, { UserContext } from "services/AuthService";
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import ChangePasswordPopup from "../popups/ChangePasswordPopup";
@@ -54,6 +55,12 @@ function UserOption({ user }) {
 /* Tooltip component that allows for interaction with user related options */
 function UserToolTip({ onClose, setLock }) {
   const [changingPassword, setChangingPassword] = useState(false);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    navigate("/");
+    AuthService.logout();
+  }
 
   function handleChangePassword() {
     setChangingPassword(true);
@@ -63,7 +70,7 @@ function UserToolTip({ onClose, setLock }) {
   return (
     <div className="user-tooltip">
       <div className="user-tooltip-option">
-        <span onClick={() => { AuthService.logout() }}>Logout</span>
+        <span onClick={handleLogout}>Logout</span>
       </div>
       <div>
         <span onClick={handleChangePassword}>Verander wachtwoord</span>
