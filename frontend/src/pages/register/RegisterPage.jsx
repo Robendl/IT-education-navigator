@@ -29,7 +29,7 @@ function RegisterForm() {
         const userInfo = Object.fromEntries(formData.entries());
 
         if (userInfo.password !== userInfo.confirmPassword) {
-            setErrorMessage("Wachtwoorden zijn niet gelijk");
+            setErrorMessage("Wachtwoorden komen niet overeen");
             setIsSubmitting(false);
             return;
         }
