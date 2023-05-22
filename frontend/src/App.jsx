@@ -14,6 +14,7 @@ import CoursePage from 'pages/course/CoursePage';
 import PageOverlay, { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
 import AddItemPopup from 'components/popups/AddItemPopup/AddItemPopup';
 import EditItemPopup from 'components/popups/EditItemPopup/EditItemPopup';
+import DeleteCoursePopup from 'components/popups/DeleteItemPopups/DeleteCoursePopup';
 
 /* Main App component */
 export default function App() {
@@ -52,7 +53,9 @@ export default function App() {
 function Layout() {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeletingCourse, setIsDeletingCourse] = useState(false);
   const [editEntry, setEditEntry] = useState({});
+  const [deleteEntry, setDeleteEntry] = useState({});
 
   /* Function that is called when the user starts editing a course */
   function handleOpenEdit(entry) {
@@ -60,12 +63,18 @@ function Layout() {
     setEditEntry(entry);
   }
 
+  /* Function that is called when the user starts deleting a course */
+  function handleOpenDeleteCourse(entry) {
+    setIsDeletingCourse(true);
+    setDeleteEntry(entry);
+  }
+
   return (
     <div>
       {(AuthService.isLoggedIn() &&
         <div>
           <OverlayContext.Provider value={{
-            openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry
+            openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry, openDeleteCourse: handleOpenDeleteCourse, closeDeleteCourse: () => setIsDeletingCourse(false), deleteEntry: deleteEntry
           }} >
             <header className="logo-header ignore-overlay">
               <img src={logo} className="ro-logo" alt="logo" />
@@ -77,6 +86,9 @@ function Layout() {
             </PageOverlay>
             <PageOverlay isOpen={isEditing}>
               <EditItemPopup />
+            </PageOverlay>
+            <PageOverlay isOpen={isDeletingCourse}>
+              <DeleteCoursePopup />
             </PageOverlay>
           </OverlayContext.Provider>
         </div>)

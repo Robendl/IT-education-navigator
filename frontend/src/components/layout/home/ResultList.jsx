@@ -73,7 +73,7 @@ export default function ResultList() {
         <ClickAwayListener onClickAway={handleSortByClose} >
           <div className="sort-button">
             <Tooltip title={<SortBy />}
-              PopperProps={{disablePortal: false}}
+              PopperProps={{ disablePortal: false }}
               componentsProps={{
                 tooltip: {
                   sx: {
@@ -88,12 +88,12 @@ export default function ResultList() {
               disableHoverListener
               disableFocusListener
               disableTouchListener
-              >
+            >
               <IconButton onClick={handleSortByOpen}><SortIcon className="sort-icon" /></IconButton>
             </Tooltip>
           </div>
         </ClickAwayListener>
-        
+
       </div>
       {(isLoading &&
         <LoadingMessage />) ||
@@ -222,13 +222,7 @@ function Result({ entry }) {
 
   /* Function that is called when the user wants to delete the course {entry} */
   function handleDelete(e) {
-    if (isBeingChanged) {
-      return;
-    }
-    setIsBeingChanged(true);
-    CourseLoader.deleteCourse(entry).then(() => {
-      resultElement.current?.remove();
-    });
+    overlay.openDeleteCourse(entry);
   }
 
   /* Function that is called when the user wants to edit the course {entry} */
