@@ -7,6 +7,8 @@ axios.interceptors.request.use(
     return config;
 });
 
+axios.interceptors.response.
+
 axios.defaults.withCredentials = true;
 
 const http = {
