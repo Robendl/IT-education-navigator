@@ -2,7 +2,7 @@ import { CircularProgress } from '@mui/material';
 import FormEntry from 'components/forms/FormEntry/FormEntry';
 import './ChangePasswordForm.css'
 import { useState } from 'react';
-import authService, {errorCodes} from "../../../services/AuthService";
+import authService, { errorCodes } from "../../../services/AuthService";
 
 /* Form component for adding new courses to the database */
 export default function ChangePasswordForm({ onSubmit, onCancel }) {
@@ -40,17 +40,17 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
         setSuccess(true);
       }, 1500);
     }, (errorCode) => {
-        switch (errorCode) {
-            case errorCodes.ERR_LOGIN_INVALID:
-                setErrorMessage("Wachtwoord is onjuist");
-                setIsSubmitting(false);
-                break;
+      switch (errorCode) {
+        case errorCodes.ERR_LOGIN_INVALID:
+          setErrorMessage("Wachtwoord is onjuist");
+          setIsSubmitting(false);
+          break;
 
-            default:
-                setErrorMessage("Er is iets misgegaan, probeer aub nog een keer");
-                setIsSubmitting(false);
-                break;
-        }
+        default:
+          setErrorMessage("Er is iets misgegaan, probeer aub nog een keer");
+          setIsSubmitting(false);
+          break;
+      }
     });
   }
 
@@ -59,9 +59,9 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
     <form className="change-password-form" onSubmit={handleSubmit}>
       <h2>Wachtwoord veranderen</h2>
       <div>
-          <FormEntry type="password" propertyName="Huidig wacthtwoord" propertyKey="password" required />
-          <FormEntry type="password" propertyName="Nieuw wachtwoord" propertyKey="newPassword" required />
-          <FormEntry type="password" propertyName="Herhaal nieuw wachtwoord" propertyKey="confirmNewPassword" required />
+        <FormEntry type="password" propertyName="Huidig wachtwoord" propertyKey="password" required />
+        <FormEntry type="password" propertyName="Nieuw wachtwoord" propertyKey="newPassword" required />
+        <FormEntry type="password" propertyName="Herhaal nieuw wachtwoord" propertyKey="confirmNewPassword" required />
       </div>
       <div className="form-footer">
         {errorMessage && <span className="error-message">{errorMessage}</span>}
@@ -70,7 +70,7 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
           <button className="save-button" type="submit">
             {(isSubmitting && <CircularProgress className="submit-loading" />) || <span>Verander</span>}
           </button>
-          <button className="cancel-button" onClick={handleCancel}>Annuleren</button>
+          <button className="cancel-button" onClick={handleCancel}>{success ? "Sluiten" : "Annuleren"}</button>
         </div>
       </div>
     </form>

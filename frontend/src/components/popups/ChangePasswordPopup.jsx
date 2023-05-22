@@ -18,7 +18,7 @@ export default function ChangePasswordPopup() {
     }
 
     return (
-        <div className="add-item pop-up ignore-overlay">
+        <div className="change-password pop-up ignore-overlay">
             <ChangePasswordForm onCancel={handleClose} onSubmit={handleSubmit} />
         </div>
     )

@@ -22,6 +22,7 @@ export default function MainHeader() {
 /* User information component showing the logged-in user */
 function UserOption({ user }) {
   const [toolTipOpen, setToolTipOpen] = useState(false);
+  const [lock, setLock] = useState(false);
 
   /* Function that is called when the user starts hovering the component */
   function handleHover() {
@@ -30,7 +31,14 @@ function UserOption({ user }) {
 
   /* Function that is called when the user stops hovering the component */
   function handleLeave() {
+    if (!lock) {
+      setToolTipOpen(false);
+    }
+  }
+
+  function handleClose() {
     setToolTipOpen(false);
+    setLock(false);
   }
 
   /* UserOption body */
@@ -38,25 +46,30 @@ function UserOption({ user }) {
     <div className="user-option" onMouseOver={handleHover} onMouseLeave={handleLeave}>
       <span>Ingelogd als {user.name}</span>
       <span className="material-symbols-outlined tool-icon">person</span>
-      {toolTipOpen && <UserToolTip onClose={() => setToolTipOpen(false)} />}
+      {toolTipOpen && <UserToolTip onClose={handleClose} setLock={setLock} />}
     </div>
   );
 }
 
 /* Tooltip component that allows for interaction with user related options */
-function UserToolTip({ onClose }) {
+function UserToolTip({ onClose, setLock }) {
   const [changingPassword, setChangingPassword] = useState(false);
 
-  return(
+  function handleChangePassword() {
+    setChangingPassword(true);
+    setLock(true);
+  }
+
+  return (
     <div className="user-tooltip">
       <div className="user-tooltip-option">
-        <span onClick={() => {AuthService.logout()}}>Logout</span>
+        <span onClick={() => { AuthService.logout() }}>Logout</span>
       </div>
       <div>
-        <span onClick={() => {setChangingPassword(true)}}>Verander wachtwoord</span>
+        <span onClick={handleChangePassword}>Verander wachtwoord</span>
       </div>
       <OverlayContext.Provider value={{
-        closeChangePassword: () => setChangingPassword(false)
+        closeChangePassword: () => { setChangingPassword(false); onClose(); }
       }} >
         <PageOverlay isOpen={changingPassword}>
           <ChangePasswordPopup />

@@ -33,7 +33,7 @@ export default function AddItemForm({ onSubmit, onCancel }) {
 
   /* Form Body */
   return (
-    <form className="change-password-form" onSubmit={handleSubmit}>
+    <form className="add-item-form" onSubmit={handleSubmit}>
       <h2>Item toevoegen</h2>
       <div>
         <FormEntry type="text" propertyName="Naam" propertyKey="name" required />
