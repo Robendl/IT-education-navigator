@@ -37,7 +37,7 @@ public class CourseService {
         return courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, pageable);
     }
 
-    public Optional<Course> getDistinctCourse(long id) {
+    public Optional<Course> getCourseById(long id) {
         return courseRepository.findById(id);
     }
 

@@ -57,8 +57,8 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDistinctCourse(@PathVariable long id) {
-        return ResponseEntity.of(courseService.getDistinctCourse(id));
+    public ResponseEntity<?> getCourseById(@PathVariable long id) {
+        return ResponseEntity.of(courseService.getCourseById(id));
     }
 
     /**
