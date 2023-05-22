@@ -4,6 +4,7 @@
   position: absolute;
   width: 100%;
   padding-top: 30px;
+  top: 200px;
 }
 
 .page-overlay .page-overlay-back {
