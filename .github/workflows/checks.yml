@@ -1,4 +1,4 @@
-name: Build Checks
+name: Merge Checks
 on:
   pull_request:
 
@@ -37,6 +37,11 @@ jobs:
       - name: "build backend"
         run: ./gradlew :bootJar
         working-directory: ./backend
+
+      - name: "run JUnit tests"
+        run: ./gradlew test
+        working-directory: ./backend
+
 
   build-frontend:
     runs-on: ubuntu-latest

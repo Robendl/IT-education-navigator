@@ -7,17 +7,30 @@ export default function SearchBar() {
   const setSearchParams = useSearchParams()[1];
   const searchInput = useRef();
 
-  function handleSearch() {
-    setSearchParams(prevParams => {
-      prevParams.set("search", searchInput.current.value);
-      return prevParams
-    });
+  function handleSearch(e) {
+    e.preventDefault();
+    if (!searchInput.current) {
+      return;
+    }
+    searchInput.current.value = searchInput.current.value.replace(/^\s+/, "");
+    if (searchInput.current.value === "") {
+      setSearchParams(prevParams => {
+        prevParams.delete("search");
+        return prevParams;
+      });
+    } else {
+      setSearchParams(prevParams => {
+        prevParams.set("search", searchInput.current.value);
+        return prevParams;
+      });
+    }
+    
   }
 
   return (
-    <div className="search-bar">
+    <form className="search-bar" onSubmit={handleSearch}>
       <input type="search" placeholder="Zoek op opleidingstitel, institutienaam, beschrijving..." ref={searchInput}/>
-      <button onClick={handleSearch}><span className="material-symbols-outlined">search</span></button>
-    </div>
+      <button type="submit"><span className="material-symbols-outlined">search</span></button>
+    </form>
   ); 
 }
