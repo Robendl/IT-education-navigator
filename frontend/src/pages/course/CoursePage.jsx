@@ -6,12 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import CourseLoader from "services/CourseLoader";
 
 import "./CoursePage.css";
+import { UserContext, userRoles } from "services/AuthService";
 
 /* CoursePage component that show information on a single course */
 export default function CoursePage() {
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
   const overlay = useContext(OverlayContext);
+  const user = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -29,9 +31,7 @@ export default function CoursePage() {
 
   /* Function that is called when the course should be deleted */
   function handleDelete() {
-    CourseLoader.deleteCourse(course).then((response) => {
-      navigate("/");
-    })
+    overlay.openDeleteCourse(course);
   }
 
   /* CoursePage body */
@@ -48,8 +48,12 @@ export default function CoursePage() {
         {Object.keys(course).filter(key => !(["name", "id", "archived", "province"].includes(key)))
           .map(key => <CourseProperty keyName={key} key={key} course={course} value={course[key]} />)}
         <div className="course-actions">
-          <button className="edit-course-button" onClick={handleEdit}>Bewerk</button>
-          <button className="delete-course-button" onClick={handleDelete}>Verwijder</button>
+          {user.role >= userRoles.DATA_MANAGER &&
+            <button className="edit-course-button" onClick={handleEdit}>Bewerk</button>
+          }
+          {user.role >= userRoles.ADMIN &&
+            <button className="delete-course-button" onClick={handleDelete}>Verwijder</button>
+          }
         </div>
       </div>
     </div>

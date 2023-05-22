@@ -6,18 +6,19 @@ import FocusTrap from '@mui/base/FocusTrap';
 
 import "./DeleteItemPopup.css";
 import CourseLoader from "services/CourseLoader";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 /* Popup component for showing a new password to an admin */
 export default function DeleteCoursePopup() {
   const [accepted, setAccepted] = useState(false);
   const overlay = useContext(OverlayContext);
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
 
   /* Function that is called when the popup is closed */
   function handleClose() {
     overlay.closeDeleteCourse();
-    navigate(0);
+    navigate(`/?${searchParams[0].toString()}`);
   }
 
   /* DeleteItemPopup body */
