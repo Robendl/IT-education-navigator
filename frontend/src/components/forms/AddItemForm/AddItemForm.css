@@ -1,4 +1,4 @@
-.change-password-form {
+.add-item-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -7,11 +7,11 @@
   width: 420px;
 }
 
-.change-password-form > h2 {
+.add-item-form > h2 {
   font-size: 2rem;
 }
 
-.change-password-form > div {
+.add-item-form > div {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -19,17 +19,17 @@
   border-top: 1px solid rgba(0,0,0,0.3);
 }
 
-.change-password-form > div:first-of-type, .change-password-form > div:last-of-type {
+.add-item-form > div:first-of-type, .add-item-form > div:last-of-type {
   border-top: none;
 }
 
-.change-password-form .form-actions {
+.add-item-form .form-actions {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
 
-.change-password-form .form-actions button {
+.add-item-form .form-actions button {
   appearance: none;
   border: none;
   padding: 5px 8px 5px 8px;
@@ -38,12 +38,12 @@
   height: 40px;
 }
 
-.change-password-form .form-actions .save-button {
+.add-item-form .form-actions .save-button {
   background-color: #154273;
   color: white;
 }
 
-.change-password-form .submit-loading {
+.add-item-form .submit-loading {
   color: #ffffff;
   max-height: 25px;
   max-width: 25px;
