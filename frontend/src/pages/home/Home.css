@@ -269,8 +269,44 @@ button:hover {
   display: block;
 }
 
-.result-list .result-list-header .sort-icon {
+.result-list .result-list-header .sort-button {
   margin-left: auto;
+}
+
+.sort-by {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+  color: #000000;
+  width: 200px;
+  font-size: 1.2em;
+}
+
+.sort-by .sort-by-title {
+  font-size: 1.2em;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.sort-by .sort-by-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 10px 2px 10px;
+  background: none;
+  border: none;
+  font-size: 1em;
+}
+
+.sort-by .sort-by-entry:hover {
+  background-color: #eeeeee;
+}
+
+.sort-by .sort-by-entry.selected {
+  font-weight: bold;
 }
 
 .result-list .result-list-entries {
