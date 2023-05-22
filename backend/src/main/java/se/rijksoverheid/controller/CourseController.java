@@ -55,6 +55,11 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, pageable));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCourseById(@PathVariable long id) {
+        return ResponseEntity.of(courseService.getCourseById(id));
+    }
+
     /**
      * Endpoint for saving a course in the database.
      * @param courseDTO     Data Transfer Object holding the data to be used for creating course entity.
