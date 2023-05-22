@@ -65,7 +65,7 @@ public class CourseService {
      */
     @Transactional
     public Course edit(Long courseId, CourseRequestDTO courseDTO) throws EntityNotFoundException, IllegalArgumentException {
-        Course course = courseRepository.findById(courseId).orElseThrow(EntityNotFoundException::new);
+        Course course = getCourseById(courseId).orElseThrow(EntityNotFoundException::new);
         Mapper.map(courseDTO, course);
         if(courseDTO.getProvinceId() != course.getProvince().getId()) {
             Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
