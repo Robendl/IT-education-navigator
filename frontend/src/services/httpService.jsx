@@ -1,4 +1,5 @@
 import axios from "axios";
+import AuthService from "./AuthService";
 
 /* Setup default axios configuration */
 axios.interceptors.request.use(
@@ -7,7 +8,16 @@ axios.interceptors.request.use(
     return config;
 });
 
-axios.interceptors.response.
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response.status === 401) {
+      console.log(error.config.uri);
+      AuthService.logout();
+    }
+    return Promise.reject(error);
+  }
+);
 
 axios.defaults.withCredentials = true;
 

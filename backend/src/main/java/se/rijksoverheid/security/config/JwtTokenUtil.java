@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Component
 public class JwtTokenUtil {
-    public static final long JWT_TOKEN_VALIDITY = 1;// 3 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = 3 * 60 * 60;
 
     private static final SecretKey secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
@@ -47,7 +47,7 @@ public class JwtTokenUtil {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 500))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(secret, SignatureAlgorithm.HS512).compact();
     }
 

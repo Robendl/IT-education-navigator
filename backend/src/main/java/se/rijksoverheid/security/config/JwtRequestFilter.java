@@ -76,7 +76,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 logger.info("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
                 logger.info("JWT Token has expired");
-                throw new AuthenticationServiceException("EXPIRED");
             }
         } else {
             logger.warn("No JWT token cookie could be found");
