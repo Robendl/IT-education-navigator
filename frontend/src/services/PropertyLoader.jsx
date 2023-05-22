@@ -1,6 +1,9 @@
-/* Dummy object for API response */
+/* Dummy object for API response that could be implemented when properties need to be dynamic.
+ * (Dynamic: all filters with their available values are loaded from the backend).
+ */
 const filters = {
   "province-ids": {
+    "multivalue": true,
     "options": {
       0: {
         "name": "Noord-Brabant"
@@ -44,6 +47,7 @@ const filters = {
     }
   },
   "levels": {
+    "multivalue": false,
     "options": {
       "hbo": {
         "name": "HBO"
@@ -56,9 +60,10 @@ const filters = {
       // }
     }
   },
-  "courseType": {
+  "course-types": {
+    "multivalue": true,
     "options": {
-      "associateDegree": {
+      "associate degree": {
         "name": "Associate Degree"
       },
       "bachelor": {
@@ -76,6 +81,7 @@ const filters = {
     }
   },
   "regions": {
+    "multivalue": true,
     "options": {
       "midden": {
         "name": "Midden"

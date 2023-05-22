@@ -46,13 +46,14 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "") List<String> levels,
             @RequestParam(required = false, defaultValue = "") List<String> regions,
             @RequestParam(value = "province-ids", required = false, defaultValue = "") List<Long> provinceIds,
+            @RequestParam(value = "course-types", required = false, defaultValue = "") List<String> courseTypes,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "200") int size,
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, pageable));
+        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable));
     }
 
     @GetMapping("/{id}")

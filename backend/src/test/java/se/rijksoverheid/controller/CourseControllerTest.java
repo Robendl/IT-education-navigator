@@ -49,6 +49,7 @@ class CourseControllerTest {
         List<String> levels = List.of("level");
         List<String> regions = List.of("region");
         List<Long> provinceIds = List.of(2L);
+        List<String> courseTypes = List.of("courseType");
         Sort.Direction direction = Sort.Direction.ASC;
         Course mockCourse = mock(Course.class);
         List<Course> courses = new ArrayList<>();
@@ -61,6 +62,7 @@ class CourseControllerTest {
                 eq(levels),
                 eq(regions),
                 eq(provinceIds),
+                eq(courseTypes),
                 any(PageRequest.class)))
                 .thenReturn(coursePage);
         assertEquals(coursePage, courseController.getCourses(
@@ -69,6 +71,7 @@ class CourseControllerTest {
                 levels,
                 regions,
                 provinceIds,
+                courseTypes,
                 page,
                 size,
                 orderBy,
