@@ -1,6 +1,5 @@
 package se.rijksoverheid.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -22,9 +21,6 @@ public class CourseResponseDTO implements Serializable {
     private String timeOccupation;
     private String region;
     private Boolean collaboration;
-    private String responsibleTaskForce;
-    private String professor;
-    private String contact;
     private String web;
     private String explanation;
 }
