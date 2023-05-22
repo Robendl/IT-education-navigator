@@ -1,5 +1,9 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthService, { UserContext } from "services/AuthService";
+import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
+import ChangePasswordPopup from "../popups/ChangePasswordPopup";
+import PageOverlay from "./PageOverlay/PageOverlay";
 
 /* Header Component present on all user pages */
 export default function MainHeader() {
@@ -19,6 +23,7 @@ export default function MainHeader() {
 /* User information component showing the logged-in user */
 function UserOption({ user }) {
   const [toolTipOpen, setToolTipOpen] = useState(false);
+  const [lock, setLock] = useState(false);
 
   /* Function that is called when the user starts hovering the component */
   function handleHover() {
@@ -27,7 +32,14 @@ function UserOption({ user }) {
 
   /* Function that is called when the user stops hovering the component */
   function handleLeave() {
+    if (!lock) {
+      setToolTipOpen(false);
+    }
+  }
+
+  function handleClose() {
     setToolTipOpen(false);
+    setLock(false);
   }
 
   /* UserOption body */
@@ -35,18 +47,41 @@ function UserOption({ user }) {
     <div className="user-option" onMouseOver={handleHover} onMouseLeave={handleLeave}>
       <span>Ingelogd als {user.name}</span>
       <span className="material-symbols-outlined tool-icon">person</span>
-      {toolTipOpen && <UserToolTip onClose={() => setToolTipOpen(false)} />}
+      {toolTipOpen && <UserToolTip onClose={handleClose} setLock={setLock} />}
     </div>
   );
 }
 
 /* Tooltip component that allows for interaction with user related options */
-function UserToolTip({ onClose }) {
-  return(
+function UserToolTip({ onClose, setLock }) {
+  const [changingPassword, setChangingPassword] = useState(false);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    navigate("/");
+    AuthService.logout();
+  }
+
+  function handleChangePassword() {
+    setChangingPassword(true);
+    setLock(true);
+  }
+
+  return (
     <div className="user-tooltip">
       <div className="user-tooltip-option">
-        <span onClick={() => {AuthService.logout()}}>Logout</span>
+        <span onClick={handleLogout}>Logout</span>
       </div>
+      <div>
+        <span onClick={handleChangePassword}>Verander wachtwoord</span>
+      </div>
+      <OverlayContext.Provider value={{
+        closeChangePassword: () => { setChangingPassword(false); onClose(); }
+      }} >
+        <PageOverlay isOpen={changingPassword}>
+          <ChangePasswordPopup />
+        </PageOverlay>
+      </OverlayContext.Provider>
     </div>
   )
 }

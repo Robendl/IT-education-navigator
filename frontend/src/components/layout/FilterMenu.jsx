@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom";
 /* Menu component holding the filters for the result list */
 export default function FilterMenu() {
   const [filters, setFilters] = useState({});
-  
+
   useEffect(() => {
     /* Load available filter properties on page load */
     PropertyLoader.loadProperties().then(results => {
@@ -20,13 +20,13 @@ export default function FilterMenu() {
   return (
     <div className="filter-menu">
       {/* Create a filter component for every filter */}
-      {Object.keys(filters).map(key => <Filter name={propertyTranslations[key]} filterKey={key} key={key} options={filters[key].options} />)}
+      {Object.keys(filters).map(key => <Filter name={propertyTranslations[key]} filterKey={key} key={key} options={filters[key].options} multivalue={filters[key].multivalue ?? false} />)}
     </div>
   );
 }
 
 /* Filter component holding one type of filter with multiple options */
-function Filter({name, filterKey, options}) {
+function Filter({ name, filterKey, options, multivalue }) {
   const [expanded, setExpanded] = useState(false);
   const [itemCount, setItemCount] = useState(3);
   const [unselectedOptions, setUnselectedOptions] = useState([]);
@@ -48,7 +48,7 @@ function Filter({name, filterKey, options}) {
 
   /* Function for setting the filter to a value {opt}.
    * This value must be a value key that is recognized by the courses API (example for courseType filter: opt = 'associateDegree')
-   * Currently, a filter can be set to only one value.
+   * The filter will be set to only one value. For multiple values use 'addOption'.
    */
   function setOption(opt) {
     setSearchParams(prevParams => {
@@ -57,45 +57,89 @@ function Filter({name, filterKey, options}) {
     })
   }
 
-  /* Function for clearing the filter
-   * Should multivalue filters be introduced, this function can be rewritten so that it clears just one option {opt} 
+  /* Function for adding a value to a filter {opt}.
+   * This value must be a value key that is recognized by the courses API (example for courseType filter: opt = 'associateDegree')
    */
-  function clearOption() {
+  function addOption(opt) {
+    setSearchParams(prevParams => {
+      if (prevParams.has(filterKey)) {
+        let currentValues = prevParams.get(filterKey).split(',');
+        currentValues.push(opt);
+        prevParams.set(filterKey, currentValues.join(','));
+      } else {
+        prevParams.set(filterKey, opt);
+      }
+      return prevParams;
+    })
+  }
+
+  /* Function for clearing the filter
+   * This function will remove the filter from the current search parameters.
+   * For removing only one specific value from the filter, use 'removeOption'.
+   */
+  function clearFilter() {
     setSearchParams(prevParams => {
       prevParams.delete(filterKey);
       return prevParams;
     })
   }
 
+  /* Function for removing a value {opt} from the filter
+   * Should multivalue filters be introduced, this function can be rewritten so that it clears just one option {opt} 
+   */
+  function removeOption(opt) {
+    setSearchParams(prevParams => {
+      let currentValues = prevParams.get(filterKey).split(',');
+      currentValues.splice(currentValues.indexOf(opt), 1);
+      if (currentValues.length === 0) {
+        prevParams.delete(filterKey);
+        return prevParams;
+      }
+      prevParams.set(filterKey, currentValues.join(','));
+      return prevParams;
+    })
+  }
+
+  const handleSelect = multivalue ? addOption : setOption;
+  const handleDeselect = multivalue ? removeOption : clearFilter;
+
   useEffect(() => {
     /* Update the selected options based on the url search parameters */
-    setSelectedOptions(
-      Object.keys(options)
-        .filter(opt => searchParams.get(filterKey) === opt)
-    );
+    let currentValues = searchParams.get(filterKey)?.split(',') ?? [];
+    let selected = [];
+    let unselected = [];
+    for (const key of Object.keys(options)) {
+      if (currentValues.includes(key)) {
+        selected.push(key);
+      } else {
+        unselected.push(key);
+      }
+    }
+    setSelectedOptions(selected);
     /* Update the remaining unselected options and limit the number of options based on expand status */
     setUnselectedOptions(
-      Object.keys(options)
-        .filter(opt => searchParams.get(filterKey) !== opt)
-        .slice(0, itemCount - (searchParams.has(filterKey) ? 1 : 0))
+      unselected.slice(0, itemCount - (searchParams.has(filterKey) ? 1 : 0))
     );
   }, [options, itemCount, filterKey, searchParams])
 
   /* Filter body */
   return (
     <div className="filter">
-      <h2>{name}</h2>
+      <div className="filter-header">
+        <h2>{name}</h2>
+        {(selectedOptions.length > 0) && <button className="filter-reset-button" onClick={clearFilter}>Reset</button>}
+      </div>
       <div className={`filter-option-list ${expanded ? "expand" : ""}`}>
         {
-          selectedOptions.map(opt => <FilterOption name={options[opt].name} key={opt} selected setOption={() => setOption(opt)} clearOption={clearOption} />)
+          selectedOptions.map(opt => <FilterOption name={options[opt].name} key={opt} selected onSelect={() => handleSelect(opt)} onDeselect={() => handleDeselect(opt)} />)
         }
         {
-          unselectedOptions.map(opt => <FilterOption name={options[opt].name} key={opt} setOption={() => setOption(opt)} clearOption={clearOption} />)
+          unselectedOptions.map(opt => <FilterOption name={options[opt].name} key={opt} onSelect={() => handleSelect(opt)} onDeselect={() => handleDeselect(opt)} />)
         }
-        {Object.keys(options).length > 3 && 
+        {Object.keys(options).length > 3 &&
           <div className="filter-expand">
-            {(expanded && 
-              <button className="filter-expand-button" onClick={collapseOptions}><span>Toon minder</span> <ExpandLessIcon /></button> ) || 
+            {(expanded &&
+              <button className="filter-expand-button" onClick={collapseOptions}><span>Toon minder</span> <ExpandLessIcon /></button>) ||
               <button className="filter-expand-button" onClick={expandOptions}><span>Toon meer</span> <ExpandMoreIcon /></button>}
           </div>
         }
@@ -105,7 +149,7 @@ function Filter({name, filterKey, options}) {
 }
 
 /* FilterOption component that can be checked or unchecked */
-function FilterOption ({ name, selected = false, setOption, clearOption }) {
+function FilterOption({ name, selected = false, onSelect, onDeselect }) {
 
   const ref = useRef(null);
 
@@ -114,11 +158,11 @@ function FilterOption ({ name, selected = false, setOption, clearOption }) {
     switch (e.target.checked) {
       case true:
         ref.current.classList.add("checked");
-        setOption()
+        onSelect();
         break;
       default:
         ref.current.classList.remove("checked");
-        clearOption();
+        onDeselect();
         break;
     }
   }

@@ -88,12 +88,21 @@ button:hover {
   margin: 5px;
 }
 
+.tool-menu .account-management-tab {
+  margin: 5px 0 5px auto;
+  padding: 2px 5px 2px 5px;
+}
+
 .tool-menu button:hover {
   outline: 1px solid rgb(219, 219, 219);
 }
 
 .tool-menu button:first-of-type:hover {
   background-color: #154273;
+}
+
+.tool-menu .account-management-tab:hover {
+  background-color: #e7e7e7;
 }
 
 .tool-menu button.selected {
@@ -131,10 +140,30 @@ button:hover {
   gap: 10px;
 }
 
-.filter h2 {
-  font-size: 1.9rem;
+.filter .filter-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
   border-bottom: 1px solid rgba(0,0,0,0.2);
   padding-bottom: 5px;
+}
+
+.filter .filter-header h2 {
+  font-size: 1.9rem;
+}
+
+.filter .filter-header .filter-reset-button {
+  appearance: none;
+  border: none;
+  background: none;
+  height: fit-content;
+  color: #154273;
+  font-size: 0.95em;
+}
+
+.filter .filter-header .filter-reset-button:hover {
+  text-decoration: underline;
 }
 
 .filter .filter-option-list {
@@ -156,6 +185,11 @@ button:hover {
   border-radius: 0;
   width: 17px;
   height: 20px;
+}
+
+.filter .filter-option.single input {
+  border-radius: 50%;
+  height: 17px;
 }
 
 .filter .filter-option span {
@@ -235,8 +269,44 @@ button:hover {
   display: block;
 }
 
-.result-list .result-list-header .sort-icon {
+.result-list .result-list-header .sort-button {
   margin-left: auto;
+}
+
+.sort-by {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+  color: #000000;
+  width: 200px;
+  font-size: 1.2em;
+}
+
+.sort-by .sort-by-title {
+  font-size: 1.2em;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.sort-by .sort-by-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 10px 2px 10px;
+  background: none;
+  border: none;
+  font-size: 1em;
+}
+
+.sort-by .sort-by-entry:hover {
+  background-color: #eeeeee;
+}
+
+.sort-by .sort-by-entry.selected {
+  font-weight: bold;
 }
 
 .result-list .result-list-entries {

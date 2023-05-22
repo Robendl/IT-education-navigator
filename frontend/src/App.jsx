@@ -8,6 +8,8 @@ import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
 import { useEffect, useState } from 'react';
 import RegisterPage from "./pages/register/RegisterPage";
+import AdminPanel from 'pages/admin_panel/AdminPanel';
+import AccountManagement from 'components/layout/admin_panel/AccountManagement';
 import CoursePage from 'pages/course/CoursePage';
 import PageOverlay, { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
 import AddItemPopup from 'components/popups/AddItemPopup';
@@ -33,9 +35,12 @@ export default function App() {
         <Routes>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<Layout />}>
-            <Route index element={<Home />}></Route>
+            <Route index element={<Home />} />
             <Route path="course/:courseId" element={<CoursePage />}></Route>
-            <Route path="kaart" element={<Map />}></Route>
+            <Route path="kaart" element={<Map />} />
+            <Route path="admin" element={<AdminPanel />}>
+              <Route path="accounts" element={<AccountManagement />} />
+            </Route>
           </Route>
         </Routes>
       </UserContext.Provider>

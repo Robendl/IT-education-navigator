@@ -1,5 +1,5 @@
 import ToolMenu from "./ToolMenu";
-import FilterMenu from "./FilterMenu";
+import FilterMenu from "components/layout/FilterMenu";
 import ResultList from "./ResultList";
 import { useContext } from "react";
 import { UserContext, userRoles } from "services/AuthService";

@@ -84,6 +84,17 @@ function getRole() {
   }
 }
 
+/* Function for getting username of logged in user */
+function getUsername() {
+  let user = getUser();
+  if (user) {
+    return user.name;
+  } else {
+    return null;
+  }
+}
+
+
 /* Function for registering a user */
 function register(userInfo) {
   return http
@@ -93,13 +104,29 @@ function register(userInfo) {
     });
 }
 
+function changePassword(userInfo) {
+  userInfo.username = getUsername();
+  return new Promise((resolve, reject) => {
+    http.put('/user/password', userInfo)
+        .then(response => {
+          console.log(response);
+          resolve()
+        }, (error) => {
+          if (error.response && error.response.status === 401) {
+            reject(errorCodes.ERR_LOGIN_INVALID)
+          }
+        })
+  });
+}
+
 const AuthService = {
   login,
   logout,
   register,
   getUser,
   getRole,
-  isLoggedIn
+  isLoggedIn,
+  changePassword
 };
 
 export default AuthService;
