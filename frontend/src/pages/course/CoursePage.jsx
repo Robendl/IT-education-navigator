@@ -2,7 +2,7 @@ import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { propertyTranslations } from "config/translations";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CourseLoader from "services/CourseLoader";
 
 import "./CoursePage.css";
