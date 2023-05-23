@@ -8,6 +8,7 @@ import ProvinceLoader from 'services/ProvinceLoader';
 /* Form component for adding new courses to the database */
 export default function AddItemForm({ onSubmit, onCancel }) {
   const [provinces, setProvinces] = useState(null);
+  const regions = [{ id: "midden", name: "Midden" }, { id: "oost", name: "Oost" }, { id: "west", name: "West" }];
 
   /* Boolean state that is true when the form is submitted and being processed */
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,7 +51,7 @@ export default function AddItemForm({ onSubmit, onCancel }) {
       <div>
         <FormEntry type="text" propertyName="Locatie" propertyKey="location" required />
         <FormEntry type="dropdown" propertyName="Provincie" propertyKey="province" options={provinces} />
-        <FormEntry type="dropdown" propertyName="Regio" propertyKey="region" />
+        <FormEntry type="dropdown" propertyName="Regio" propertyKey="region" options={regions} />
       </div>
       <div>
         <FormEntry type="text" propertyName="Niveau" propertyKey="level" />
