@@ -78,6 +78,9 @@ function CourseProperty({ keyName, value, course }) {
         (["housekeepingRelated", "collaboration"].includes(keyName) &&
           <><b>{propertyTranslations[keyName]}: </b>{value ? "ja" : "nee"}</>)
         ||
+        (keyName === "web" &&
+            <><b>{propertyTranslations[keyName]}: </b><a href={value} target="_blank">{value}</a></>)
+        ||
         <><b>{propertyTranslations[keyName]}: </b>{value}</>
       }
     </span>
