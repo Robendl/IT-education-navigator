@@ -129,9 +129,11 @@ function AccountResult({ entry }) {
       </td>
       <td>
         <div className="options-col">
-          <ToolTipButton title="Wachtwoord resetten" onClick={handlePasswordReset}>
-            <LockResetIcon />
-          </ToolTipButton>
+          {(user.name !== entry["username"]) &&
+            <ToolTipButton title="Wachtwoord resetten" onClick={handlePasswordReset}>
+              <LockResetIcon />
+            </ToolTipButton>
+          }
           {(user.name !== entry["username"]) &&
             <ToolTipButton title="Verwijderen" onClick={() => { return }}>
               <DeleteIcon />
