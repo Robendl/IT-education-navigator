@@ -2,11 +2,12 @@ import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { propertyTranslations } from "config/translations";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import CourseLoader from "services/CourseLoader";
 
 import "./CoursePage.css";
 import { UserContext, userRoles } from "services/AuthService";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 /* CoursePage component that show information on a single course */
 export default function CoursePage() {
@@ -46,7 +47,7 @@ export default function CoursePage() {
         </div>
       </div>
       <div className="layout">
-        <button className="back-button" onClick={handleGoBack}>Ga terug</button>
+        <Link to="/" className="back-button"><ArrowBackIcon />Terug naar overzicht</Link>
         <div className="course-page-body page-wide">
           <h3>Gegevens:</h3>
           {Object.keys(course).filter(key => !(["name", "id", "archived", "province"].includes(key)))
