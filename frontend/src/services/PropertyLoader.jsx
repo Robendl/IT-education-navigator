@@ -42,7 +42,7 @@ const filters = {
         "name": "Zuid-Holland"
       },
       12: {
-        "name": "Other"
+        "name": "Overigen"
       },
     }
   },
