@@ -79,7 +79,7 @@ function CourseProperty({ keyName, value, course }) {
           <><b>{propertyTranslations[keyName]}: </b>{value ? "ja" : "nee"}</>)
         ||
         (keyName === "web" &&
-            <><b>{propertyTranslations[keyName]}: </b><a href={value} target="_blank">{value}</a></>)
+            <><b>{propertyTranslations[keyName]}: </b><a href={value} target="_blank" rel="noreferrer">{value}</a></>)
         ||
         <><b>{propertyTranslations[keyName]}: </b>{value}</>
       }
