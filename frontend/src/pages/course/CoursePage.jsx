@@ -33,10 +33,6 @@ export default function CoursePage() {
     overlay.openDeleteCourse(course);
   }
 
-  const handleGoBack = () => {
-    window.history.back();
-  };
-
   /* CoursePage body */
   return (
     <div className="course-page">
