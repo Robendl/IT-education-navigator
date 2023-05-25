@@ -50,7 +50,7 @@ export default function AddItemForm({ onSubmit, onCancel }) {
       </div>
       <div>
         <FormEntry type="text" propertyName="Locatie" propertyKey="location" required />
-        <FormEntry type="dropdown" propertyName="Provincie" propertyKey="province" options={provinces} />
+        <FormEntry type="dropdown" propertyName="Provincie" propertyKey="provinceId" options={provinces} />
         <FormEntry type="dropdown" propertyName="Regio" propertyKey="region" options={regions} />
       </div>
       <div>
