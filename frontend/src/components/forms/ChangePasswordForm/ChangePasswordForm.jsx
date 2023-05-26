@@ -65,7 +65,7 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
       </div>
       <div className="form-footer">
         {errorMessage && <span className="error-message">{errorMessage}</span>}
-        {success && <span className="success-message">Wachtwoord verandert</span>}
+        {success && <span className="success-message">Wachtwoord veranderd</span>}
         <div className="form-actions">
           <button className="save-button" type="submit">
             {(isSubmitting && <CircularProgress className="submit-loading" />) || <span>Verander</span>}
