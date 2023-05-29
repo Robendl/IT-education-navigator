@@ -102,4 +102,12 @@ public class UserControllerTest {
         when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(UsernameNotFoundException.class);
         assertEquals(ResponseEntity.notFound().build(), userController.changeUserPassword(mockUserChangePasswordRequest));
     }
+
+    @Test
+    void testResetUserPasswordSuccess() {
+        long id = 1;
+        UserResetPasswordResponseDTO mockUserResetPasswordResponse = mock(UserResetPasswordResponseDTO.class);
+        when(mockUserService.resetPassword(anyLong())).thenReturn(mockUserResetPasswordResponse);
+        assertEquals(ResponseEntity.ok(mockUserResetPasswordResponse), userController.resetUserPassword(id));
+    }
 }
