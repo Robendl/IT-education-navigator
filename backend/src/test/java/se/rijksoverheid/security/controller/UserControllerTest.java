@@ -95,4 +95,11 @@ public class UserControllerTest {
         when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(BadCredentialsException.class);
         assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
+
+    @Test
+    void testChangeUserPasswordUsernameNotFound() throws Exception {
+        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
+        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(UsernameNotFoundException.class);
+        assertEquals(ResponseEntity.notFound().build(), userController.changeUserPassword(mockUserChangePasswordRequest));
+    }
 }
