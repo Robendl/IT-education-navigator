@@ -7,10 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,5 +53,13 @@ public class UserControllerTest {
         assertDoesNotThrow(() -> {
             userController.editUserPermissions(id,mockUserPermRequest);
         });
+    }
+
+    @Test
+    void testEditNonExistingUserPermissions() {
+        long id = 1;
+        UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
+        when(mockUserService.editUserPerms(anyLong(), any(UserPermRequestDTO.class))).thenThrow(EntityNotFoundException.class);
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(),userController.editUserPermissions(id,mockUserPermRequest).getStatusCode());
     }
 }
