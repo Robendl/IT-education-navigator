@@ -1,15 +1,20 @@
 package se.rijksoverheid.security.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import se.rijksoverheid.security.business.UserService;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
+import se.rijksoverheid.security.dto.UserResetPasswordResponseDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,17 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
 
-    @Mock
     private UserService mockUserService;
-
-    @InjectMocks
     private UserController userController;
+
+
+    @BeforeEach
+    void setUp() {
+        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
+        mockUserService = mock(UserService.class);
+        userController = new UserController(mockAuthenticationManager, mockUserService);
+    }
 
     @Test
     void testGetUsers() {
@@ -39,7 +50,7 @@ public class UserControllerTest {
         List<UserResponseDTO> users = new ArrayList<>();
         users.add(mockUserResponse);
 
-        when(mockUserService.getUsers(anyString(),any(Pageable.class))).thenReturn(users);
+        when(mockUserService.getUsers(anyString(), any(Pageable.class))).thenReturn(users);
 
         assertEquals(users, userController.getUsers(search, page, size, direction).getBody());
     }
@@ -49,9 +60,9 @@ public class UserControllerTest {
         long id = 1;
         UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
-        when(mockUserService.editUserPerms(anyLong(),any(UserPermRequestDTO.class))).thenReturn(mockUserResponse);
+        when(mockUserService.editUserPerms(anyLong(), any(UserPermRequestDTO.class))).thenReturn(mockUserResponse);
         assertDoesNotThrow(() -> {
-            userController.editUserPermissions(id,mockUserPermRequest);
+            userController.editUserPermissions(id, mockUserPermRequest);
         });
     }
 
@@ -60,6 +71,6 @@ public class UserControllerTest {
         long id = 1;
         UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
         when(mockUserService.editUserPerms(anyLong(), any(UserPermRequestDTO.class))).thenThrow(EntityNotFoundException.class);
-        assertEquals(ResponseEntity.notFound().build().getStatusCode(),userController.editUserPermissions(id,mockUserPermRequest).getStatusCode());
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), userController.editUserPermissions(id, mockUserPermRequest).getStatusCode());
     }
 }
