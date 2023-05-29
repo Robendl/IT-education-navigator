@@ -88,4 +88,11 @@ public class UserControllerTest {
         when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(DisabledException.class);
         assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
+
+    @Test
+    void testChangeUserPasswordBadCredentials() {
+        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
+        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(BadCredentialsException.class);
+        assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
+    }
 }
