@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
@@ -97,8 +98,12 @@ public class UserController {
      */
     @PutMapping("/password/{id}/reset")
     public ResponseEntity<?> resetUserPassword(
+            Authentication authentication,
             @PathVariable long id
     ) {
+        if (id == userService.loadUserByUsername(authentication.getName()).getId()) {
+            return ResponseEntity.badRequest().body("Het eigen wachtwoord mag niet gereset worden");
+        }
         try {
             return ResponseEntity.ok(userService.resetPassword(id));
         } catch (EntityNotFoundException e) {
