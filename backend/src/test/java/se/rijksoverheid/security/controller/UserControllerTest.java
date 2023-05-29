@@ -73,4 +73,12 @@ public class UserControllerTest {
         when(mockUserService.editUserPerms(anyLong(), any(UserPermRequestDTO.class))).thenThrow(EntityNotFoundException.class);
         assertEquals(ResponseEntity.notFound().build().getStatusCode(), userController.editUserPermissions(id, mockUserPermRequest).getStatusCode());
     }
+
+    @Test
+    void testChangeUserPasswordSuccess() throws Exception {
+        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
+        UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
+        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenReturn(mockUserResponse);
+        assertEquals(ResponseEntity.ok(mockUserResponse), userController.changeUserPassword(mockUserChangePasswordRequest));
+    }
 }
