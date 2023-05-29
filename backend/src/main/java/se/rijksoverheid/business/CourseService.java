@@ -19,7 +19,6 @@ import se.rijksoverheid.security.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Responsible for all business logic regarding the courses.

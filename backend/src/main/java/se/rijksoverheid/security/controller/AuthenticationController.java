@@ -7,10 +7,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.config.JwtTokenUtil;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
@@ -18,6 +21,7 @@ import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * Holds the endpoints related to authentication
@@ -72,5 +76,32 @@ public class AuthenticationController {
         UserResponseDTO userResponse = new UserResponseDTO();
         userResponse.setRole(user.getRole());
         return ResponseEntity.ok(userResponse);
+    }
+
+    /**
+     * Change a user's password
+     * @param userChangePasswordDTO     The info needed to change.
+     * @return                          The user that was changed
+     * @throws Exception                Wrong password or user not found
+     */
+    @PutMapping("/password")
+    public ResponseEntity<?> changeUserPassword(
+            @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
+    ) throws Exception {
+        if(!userChangePasswordDTO.getNewPassword().equals(userChangePasswordDTO.getConfirmNewPassword())) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userChangePasswordDTO.getUsername(), userChangePasswordDTO.getPassword())
+            );
+            return ResponseEntity.ok(userService.changePassword(userChangePasswordDTO));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

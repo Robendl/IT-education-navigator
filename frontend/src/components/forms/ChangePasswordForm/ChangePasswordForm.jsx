@@ -36,7 +36,6 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
     authService.changePassword(userInfo).then(() => {
       setTimeout(() => {
         setIsSubmitting(false);
-        // onSubmit();
         setSuccess(true);
       }, 1500);
     }, (errorCode) => {

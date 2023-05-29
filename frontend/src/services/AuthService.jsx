@@ -108,7 +108,7 @@ function register(userInfo) {
 function changePassword(userInfo) {
   userInfo.username = getUsername();
   return new Promise((resolve, reject) => {
-    http.put('/user/password', userInfo)
+    http.put('/auth/password', userInfo)
         .then(response => {
           console.log(response);
           resolve()

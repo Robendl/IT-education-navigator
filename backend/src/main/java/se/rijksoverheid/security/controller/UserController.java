@@ -67,38 +67,11 @@ public class UserController {
 
     /**
      * Change a user's password
-     * @param id                        ID of user to be changed.
-     * @param userChangePasswordDTO     The info needed to change.
-     * @return                          The user that was changed
-     * @throws Exception                Wrong password or user not found
-     */
-    @PutMapping("/password")
-    public ResponseEntity<?> changeUserPassword(
-            @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
-    ) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userChangePasswordDTO.getUsername(), userChangePasswordDTO.getPassword())
-            );
-            return ResponseEntity.ok(userService.changePassword(userChangePasswordDTO));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
-     * Change a user's password
      * @param id            ID of user to be changed.
      * @return              The user that was changed
      */
     @PutMapping("/password/{id}/reset")
-    public ResponseEntity<?> resetUserPassword(
-            @PathVariable long id
-    ) {
+    public ResponseEntity<?> resetUserPassword(@PathVariable long id) {
         try {
             return ResponseEntity.ok(userService.resetPassword(id));
         } catch (EntityNotFoundException e) {
