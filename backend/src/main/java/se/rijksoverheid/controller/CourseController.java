@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
+import se.rijksoverheid.controller.filter.Filter;
 import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
+import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.model.Course;
 
 import javax.persistence.EntityNotFoundException;
@@ -41,7 +43,7 @@ public class CourseController {
      */
     @Transactional
     @GetMapping("")
-    public ResponseEntity<CoursePageDTO> getCourses(
+    public ResponseEntity<List<CourseResponseDTO>> getCourses(
             Authentication authentication,
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
@@ -55,7 +57,20 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable, authentication));
+        Filter filter = createFilterObject(search, archived, levels, regions, provinceIds, courseTypes);
+        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, authentication));
+    }
+
+    private Filter createFilterObject(String search, boolean archived, List<String> levels, List<String> regions,
+                                      List<Long> provinceIds, List<String> courseTypes) {
+        Filter filter = new Filter();
+        filter.setSearch(search);
+        filter.setArchived(archived);
+        filter.setLevels(levels);
+        filter.setRegions(regions);
+        filter.setProvinceIds(provinceIds);
+        filter.setCourseTypes(courseTypes);
+        return filter;
     }
 
     @GetMapping("/{id}")

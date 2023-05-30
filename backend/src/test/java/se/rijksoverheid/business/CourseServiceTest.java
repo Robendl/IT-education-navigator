@@ -61,7 +61,7 @@ class CourseServiceTest {
         List<Long> provinceIds = List.of(2L);
         List<String> courseTypes = List.of("courseType");
         Pageable mockPageable = mock(Pageable.class);
-        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes, mockPageable)).thenReturn(pageCourse);
+        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes)).thenReturn(courseList);
 
         try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
             // set up desired Mapper behaviour
@@ -69,8 +69,8 @@ class CourseServiceTest {
             mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
             CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
             mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
-            CoursePageDTO courses = courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, mockPageable, authentication);
-//            assertEquals(courses, mockCoursePage);
+            List<CourseResponseDTO> courses = courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, authentication);
+//            assertEquals(courses, courseList);
         }
     }
 

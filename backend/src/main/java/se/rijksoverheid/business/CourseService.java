@@ -19,7 +19,6 @@ import se.rijksoverheid.security.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Responsible for all business logic regarding the courses.
@@ -34,24 +33,19 @@ public class CourseService {
      * Retrieves a list of courses.
      * @param search        search string that will be used for looking in all string fields
      * @param archived      determines whether to retrieve unarchived or archived courses
-     * @param pageable      Pageable object that contains information on which page of what size to retrieve in what order
      * @return              List of courses
      */
 
-    public CoursePageDTO getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, List<String> courseTypes, Pageable pageable, Authentication authentication) {
-        Page<Course> coursePage = courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable);
-        List<CourseResponseDTO> courses = new ArrayList<>();
-        for(Course course: coursePage.getContent()) {
+    public List<CourseResponseDTO> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, List<String> courseTypes, Authentication authentication) {
+        List<Course> courses = courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes);
+        List<CourseResponseDTO> courseDTOs = new ArrayList<>();
+        for(Course course: courses) {
             ProvinceDTO provinceDTO = Mapper.map(course.getProvince(), ProvinceDTO.class);
             CourseResponseDTO courseDTO = convertCourseAppropriately(course, authentication);
             courseDTO.setProvince(provinceDTO);
-            courses.add(courseDTO);
+            courseDTOs.add(courseDTO);
         }
-        CoursePageDTO coursePageDTO = new CoursePageDTO();
-        coursePageDTO.setContent(courses);
-        coursePageDTO.setTotalPages(coursePage.getTotalPages());
-        coursePageDTO.setTotalElements(coursePage.getTotalElements());
-        return coursePageDTO;
+        return courseDTOs;
     }
 
     public CourseResponseDTO getCourseById(long id, Authentication authentication) throws EntityNotFoundException {
