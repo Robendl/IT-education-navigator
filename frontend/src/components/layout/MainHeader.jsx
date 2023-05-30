@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import AuthService, { UserContext } from "services/AuthService";
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import ChangePasswordPopup from "../popups/ChangePasswordPopup/ChangePasswordPopup";
@@ -13,7 +13,7 @@ export default function MainHeader() {
   return (
     <div className="main-header ignore-overlay">
       <div className="page-wide">
-        <h2>Opleidingsregister</h2>
+      <h2><Link to="/" className="header-title">Opleidingsregister</Link></h2>
         {user.loggedIn && <UserOption user={user} />}
       </div>
     </div>
