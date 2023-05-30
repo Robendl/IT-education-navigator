@@ -49,6 +49,9 @@ const filters = {
   "levels": {
     "multivalue": false,
     "options": {
+      "mbo": {
+        "name": "MBO"
+      },
       "hbo": {
         "name": "HBO"
       },
