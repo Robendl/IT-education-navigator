@@ -2,12 +2,12 @@ package se.rijksoverheid.business;
 
 import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.*;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
@@ -36,8 +36,16 @@ public class CourseService {
      * @return              List of courses
      */
 
-    public List<CourseResponseDTO> getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, List<String> courseTypes, Authentication authentication) {
-        List<Course> courses = courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes);
+    public List<CourseResponseDTO> getCourses(CourseFilter filter, Sort sort, Authentication authentication) {
+        List<Course> courses = courseRepository.searchAndFilterAndOrderCourses(
+                filter.getSearch(),
+                filter.isArchived(),
+                filter.getLevels(),
+                filter.getRegions(),
+                filter.getProvinceIds(),
+                filter.getCourseTypes(),
+                sort
+        );
         List<CourseResponseDTO> courseDTOs = new ArrayList<>();
         for(Course course: courses) {
             ProvinceDTO provinceDTO = Mapper.map(course.getProvince(), ProvinceDTO.class);

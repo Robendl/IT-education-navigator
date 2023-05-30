@@ -1,4 +1,4 @@
-package se.rijksoverheid.controller.filter;
+package se.rijksoverheid.filter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Filter {
+public class CourseFilter {
     private String search;
     private boolean archived;
     private List<String> levels;

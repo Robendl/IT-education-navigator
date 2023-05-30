@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
@@ -61,7 +62,9 @@ class CourseServiceTest {
         List<Long> provinceIds = List.of(2L);
         List<String> courseTypes = List.of("courseType");
         Pageable mockPageable = mock(Pageable.class);
-        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes)).thenReturn(courseList);
+        CourseFilter filter = mock(CourseFilter.class);
+        Sort sort = mock(Sort.class);
+        when(mockCourseRepository.searchAndFilterAndOrderCourses(filter, sort)).thenReturn(courseList);
 
         try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
             // set up desired Mapper behaviour
@@ -69,7 +72,7 @@ class CourseServiceTest {
             mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
             CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
             mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
-            List<CourseResponseDTO> courses = courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, authentication);
+            List<CourseResponseDTO> courses = courseService.getCourses(filter, sort, authentication);
 //            assertEquals(courses, courseList);
         }
     }

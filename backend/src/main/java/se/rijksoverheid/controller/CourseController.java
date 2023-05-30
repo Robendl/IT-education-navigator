@@ -2,8 +2,6 @@ package se.rijksoverheid.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,8 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
-import se.rijksoverheid.controller.filter.Filter;
-import se.rijksoverheid.dto.CoursePageDTO;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.model.Course;
@@ -51,19 +48,17 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "") List<String> regions,
             @RequestParam(value = "province-ids", required = false, defaultValue = "") List<Long> provinceIds,
             @RequestParam(value = "course-types", required = false, defaultValue = "") List<String> courseTypes,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "200") int size,
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        Filter filter = createFilterObject(search, archived, levels, regions, provinceIds, courseTypes);
-        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, authentication));
+        Sort sort = Sort.by(direction, orderBy);
+        CourseFilter filter = createFilterObject(search, archived, levels, regions, provinceIds, courseTypes);
+        return ResponseEntity.ok(courseService.getCourses(filter, sort, authentication));
     }
 
-    private Filter createFilterObject(String search, boolean archived, List<String> levels, List<String> regions,
-                                      List<Long> provinceIds, List<String> courseTypes) {
-        Filter filter = new Filter();
+    private CourseFilter createFilterObject(String search, boolean archived, List<String> levels, List<String> regions,
+                                            List<Long> provinceIds, List<String> courseTypes) {
+        CourseFilter filter = new CourseFilter();
         filter.setSearch(search);
         filter.setArchived(archived);
         filter.setLevels(levels);
