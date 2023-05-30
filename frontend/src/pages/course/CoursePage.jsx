@@ -2,12 +2,11 @@ import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { propertyTranslations } from "config/translations";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
-import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
+import { useLocation, useNavigate, useParams} from "react-router-dom";
 import CourseLoader from "services/CourseLoader";
 
 import "./CoursePage.css";
 import { UserContext, userRoles } from "services/AuthService";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 /* CoursePage component that show information on a single course */
 export default function CoursePage() {
