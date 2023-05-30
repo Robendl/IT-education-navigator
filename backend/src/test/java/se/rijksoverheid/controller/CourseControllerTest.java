@@ -7,19 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.core.Authentication;
 import se.rijksoverheid.business.CourseService;
-import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.model.Course;
 
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,16 +54,14 @@ class CourseControllerTest {
         List<CourseResponseDTO> courses = new ArrayList<>();
         courses.add(mockCourse);
 //        CoursePageDTO coursePage = mock(CoursePageDTO.class);
+        CourseFilter filter = mock(CourseFilter.class);
+        Sort sort = mock(Sort.class);
         Authentication authentication = mock(Authentication.class);
 
         when(courseService.getCourses(
-                eq(search),
-                eq(archived),
-                eq(levels),
-                eq(regions),
-                eq(provinceIds),
-                eq(courseTypes),
-                any(Authentication.class)))
+                filter,
+                sort,
+                authentication))
                 .thenReturn(courses);
         assertEquals(courses, courseController.getCourses(
                 authentication,
@@ -75,14 +71,12 @@ class CourseControllerTest {
                 regions,
                 provinceIds,
                 courseTypes,
-                page,
-                size,
                 orderBy,
                 direction).getBody());
     }
 
     @Test
-    void testCreateCourse() {
+    void testCreateCourse() throws NotFoundException {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         Course mockCourse = mock(Course.class);
         when(courseService.save(mockCourseRequest)).thenReturn(mockCourse);
@@ -90,7 +84,7 @@ class CourseControllerTest {
     }
 
     @Test
-    void testEditCourse() {
+    void testEditCourse() throws NotFoundException {
         long id = 1;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         Course mockCourse = mock(Course.class);
@@ -99,11 +93,11 @@ class CourseControllerTest {
     }
 
     @Test
-    void testEditCourse_IdNotFound() {
+    void testEditCourse_IdNotFound() throws NotFoundException {
         long courseId = 2;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
-        when(courseService.edit(courseId,mockCourseRequest)).thenThrow(EntityNotFoundException.class);
-        assertEquals(ResponseEntity.notFound().build().getStatusCode(),courseController.editCourse(courseId,mockCourseRequest).getStatusCode());
+        when(courseService.edit(courseId,mockCourseRequest)).thenThrow(NotFoundException.class);
+        assertThrows(NotFoundException.class, () -> courseController.editCourse(courseId,mockCourseRequest));
     }
 
     @Test

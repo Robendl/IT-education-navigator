@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
-import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.model.Course;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -32,8 +32,6 @@ public class CourseController {
      * Endpoint for retrieving courses
      * @param search        every string field is checked for this search string when provided.
      * @param archived      determines whether to return unarchived or archived course, unarchived by default.
-     * @param page          page number of page to return, 0 by default.
-     * @param size          size of page to return, 500 by default.
      * @param orderBy       what field to order by, name by default.
      * @param direction     direction to order by, can be ASC or DESC, ASC by default.
      * @return              List of courses.
@@ -69,12 +67,8 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable long id, Authentication authentication) {
-        try {
-            return ResponseEntity.ok(courseService.getCourseById(id, authentication));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable long id, Authentication authentication) throws NotFoundException {
+        return ResponseEntity.ok(courseService.getCourseById(id, authentication));
     }
 
     /**
@@ -83,12 +77,8 @@ public class CourseController {
      * @return              The saved Course.
      */
     @PostMapping("")
-    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
-        try {
-            return ResponseEntity.ok(courseService.save(courseDTO));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) throws NotFoundException {
+        return ResponseEntity.ok(courseService.save(courseDTO));
     }
 
     /**
@@ -101,14 +91,8 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
-            @RequestBody @Valid CourseRequestDTO courseDTO) {
-        try {
-            return ResponseEntity.ok(courseService.edit(id, courseDTO));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+            @RequestBody @Valid CourseRequestDTO courseDTO) throws NotFoundException {
+        return ResponseEntity.ok(courseService.edit(id, courseDTO));
     }
 
     /**

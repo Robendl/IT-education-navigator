@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
@@ -64,7 +65,15 @@ class CourseServiceTest {
         Pageable mockPageable = mock(Pageable.class);
         CourseFilter filter = mock(CourseFilter.class);
         Sort sort = mock(Sort.class);
-        when(mockCourseRepository.searchAndFilterAndOrderCourses(filter, sort)).thenReturn(courseList);
+        when(mockCourseRepository.searchAndFilterAndOrderCourses(
+                search,
+                archived,
+                levels,
+                regions,
+                provinceIds,
+                courseTypes,
+                sort
+        )).thenReturn(courseList);
 
         try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
             // set up desired Mapper behaviour
@@ -78,7 +87,7 @@ class CourseServiceTest {
     }
 
     @Test
-    void testSave_Successful() {
+    void testSave_Successful() throws NotFoundException {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         long provinceId = 1;
         when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
@@ -97,7 +106,7 @@ class CourseServiceTest {
         long provinceId = 1;
         when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
         when(mockProvinceRepository.findById(provinceId)).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> courseService.save(mockCourseRequest));
+        assertThrows(NotFoundException.class, () -> courseService.save(mockCourseRequest));
     }
 
 //    @Test

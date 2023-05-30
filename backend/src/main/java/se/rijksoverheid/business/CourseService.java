@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.*;
 import se.rijksoverheid.mapper.Mapper;
@@ -56,8 +57,8 @@ public class CourseService {
         return courseDTOs;
     }
 
-    public CourseResponseDTO getCourseById(long id, Authentication authentication) throws EntityNotFoundException {
-        Course course = courseRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public CourseResponseDTO getCourseById(long id, Authentication authentication) throws NotFoundException {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Course with id " + id + "could not be found."));
         return convertCourseAppropriately(course, authentication);
     }
 
@@ -79,8 +80,10 @@ public class CourseService {
      * @return                              The saved course.
      */
     @Transactional
-    public Course save(CourseRequestDTO courseDTO) throws IllegalArgumentException {
-        Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
+    public Course save(CourseRequestDTO courseDTO) throws NotFoundException {
+        Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
+                new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
+                        "trying to save new course"));
         Course course = Mapper.map(courseDTO, Course.class);
         course.setProvince(province);
         return courseRepository.save(course);
@@ -95,11 +98,14 @@ public class CourseService {
      * @return                              The new Course object
      */
     @Transactional
-    public Course edit(Long courseId, CourseRequestDTO courseDTO) throws EntityNotFoundException, IllegalArgumentException {
-        Course course = courseRepository.findById(courseId).orElseThrow(EntityNotFoundException::new);
+    public Course edit(Long courseId, CourseRequestDTO courseDTO) throws NotFoundException {
+        Course course = courseRepository.findById(courseId).orElseThrow(() ->
+                new NotFoundException("Course with id " + courseId + " could not be found while trying to edit"));
         Mapper.map(courseDTO, course);
         if(courseDTO.getProvinceId() != course.getProvince().getId()) {
-            Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
+            Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
+                    new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
+                            "trying to edit course with id" + courseId));
             course.setProvince(province);
         }
         return courseRepository.save(course);

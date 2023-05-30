@@ -1,7 +1,5 @@
 package se.rijksoverheid.model;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -53,5 +51,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                                                 @Param("regions") Collection<String> regions,
                                                 @Param("provinceIds") Collection<Long> provinceIds,
                                                 @Param("courseTypes") Collection<String> courseTypes,
-                                                Sort sort);
+                                                Sort sort
+    );
 }
