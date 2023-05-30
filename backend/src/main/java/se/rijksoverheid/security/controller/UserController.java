@@ -6,15 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.security.business.UserService;
-import se.rijksoverheid.security.dto.*;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
+import se.rijksoverheid.security.dto.UserPermRequestDTO;
+import se.rijksoverheid.security.dto.UserResetPasswordResponseDTO;
+import se.rijksoverheid.security.dto.UserResponseDTO;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class UserController {
      * @return              The user that was changed
      */
     @PutMapping("/password/{id}/reset")
-    public ResponseEntity<?> resetUserPassword(
+    public ResponseEntity<UserResetPasswordResponseDTO> resetUserPassword(
             @PathVariable long id) {
         return ResponseEntity.ok(userService.resetPassword(id));
     }

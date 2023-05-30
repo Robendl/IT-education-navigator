@@ -33,7 +33,6 @@ class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        when(mockUserService.checkEmailAddress(email)).thenReturn(true);
         when(mockUserService.save(any(UserRequestDTO.class))).thenReturn(mockUserRequest);
         assertEquals(ResponseEntity.status(HttpStatus.CREATED).build(),authenticationController.registerUser(mockUserRequest));
     }
@@ -53,7 +52,6 @@ class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        when(mockUserService.checkEmailAddress(email)).thenReturn(false);
         assertEquals("Geen geldig emailadres ingevoerd",authenticationController.registerUser(mockUserRequest).getBody());
     }
 

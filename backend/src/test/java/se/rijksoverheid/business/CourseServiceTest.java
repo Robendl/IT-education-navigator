@@ -33,6 +33,7 @@ class CourseServiceTest {
     private CourseRepository mockCourseRepository;
     private ProvinceRepository mockProvinceRepository;
     private Course mockCourse;
+    private CourseResponseDTO mockCourseDTO;
     private Province mockProvince;
     private List<Course> courseList;
     private CoursePageDTO mockCoursePage;
@@ -49,6 +50,7 @@ class CourseServiceTest {
         courseService = new CourseService(mockCourseRepository, mockProvinceRepository);
         courseList = new ArrayList<>();
         courseList.add(mockCourse);
+        mockCourseDTO = mock(CourseResponseDTO.class);
         mockCoursePage = mock(CoursePageDTO.class);
         pageCourse = new PageImpl<>(courseList);
         authentication = mock(Authentication.class);
@@ -82,7 +84,8 @@ class CourseServiceTest {
             CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
             mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
             List<CourseResponseDTO> courses = courseService.getCourses(filter, sort, authentication);
-//            assertEquals(courses, courseList);
+            List<CourseResponseDTO> check = List.of(mockCourseDTO);
+            assertEquals(courses, check);
         }
     }
 

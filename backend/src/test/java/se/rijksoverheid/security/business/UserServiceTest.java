@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
@@ -67,13 +68,13 @@ class UserServiceTest {
     @Test
     void testIsValidEmailAddress() {
         String email = "name@domain.com";
-        assertTrue(userService.checkEmailAddress(email));
+        assertDoesNotThrow(() -> userService.checkEmailAddress(email));
     }
 
     @Test
     void testIsValidEmailAddress_False() {
         String email = "name";
-        assertFalse(userService.checkEmailAddress(email));
+        assertThrows(EntityConflictException.class, () -> userService.checkEmailAddress(email));
     }
 
     @Test
