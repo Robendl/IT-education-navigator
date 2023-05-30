@@ -53,9 +53,9 @@ export default function CoursePage() {
           {course.archived && <span className="archived-tag">(Gearchiveerd)</span>}
         </div>
       </div>
-      <div className="layout">
+      <div className="layout page-wide">
         <button className="back-button" onClick={handleGoBack}>Terug naar overzicht</button>
-        <div className="course-page-body page-wide">
+        <div className="course-page-body">
           <h3>Gegevens:</h3>
           {Object.keys(course).filter(key => !(["name", "id", "archived", "province"].includes(key)))
             .map(key => <CourseProperty keyName={key} key={key} course={course} value={course[key]} />)}
