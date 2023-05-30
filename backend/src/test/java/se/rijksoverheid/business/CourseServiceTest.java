@@ -144,7 +144,7 @@ class CourseServiceTest {
     void testDeleteById() {
         long courseId = 1;
         doAnswer(invocation -> {
-            assertEquals(courseId,(long)invocation.getArgument(0));
+            assertEquals(courseId, (long) invocation.getArgument(0));
             return null;
         }).when(mockCourseRepository).deleteById(courseId);
         mockCourseRepository.deleteById(courseId);

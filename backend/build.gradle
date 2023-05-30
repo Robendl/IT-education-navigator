@@ -2,6 +2,18 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "org.sonarqube" version "4.0.0.2929"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "Rijksoverheid")
+        property("sonar.projectName", "Rijksoverheid")
+        property("sonar.organization", "se")
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.token", "sqp_6d65576eef4a9b76a9a808157cc05aa4e0e7cc07")
+        property("sonar.tests", "./src/test/")
+    }
 }
 
 apply plugin: 'io.spring.dependency-management'

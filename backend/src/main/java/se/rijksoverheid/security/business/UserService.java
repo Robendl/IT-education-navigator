@@ -90,15 +90,15 @@ public class UserService implements UserDetailsService {
             users = userRepository.findAllUserByUsername(search, pageable);
         }
 
-        List<UserResponseDTO> UserResponseDTO = new ArrayList<>();
+        List<UserResponseDTO> userResponseDTOs = new ArrayList<>();
         for(User user: users.getContent()) {
-            UserResponseDTO UserResDTO = new UserResponseDTO();
-            UserResDTO.setId(user.getId());
-            UserResDTO.setUsername(user.getUsername());
-            UserResDTO.setRole(user.getRole());
-            UserResponseDTO.add(UserResDTO);
+            UserResponseDTO userResDTO = new UserResponseDTO();
+            userResDTO.setId(user.getId());
+            userResDTO.setUsername(user.getUsername());
+            userResDTO.setRole(user.getRole());
+            userResponseDTOs.add(userResDTO);
         }
-        return UserResponseDTO;
+        return userResponseDTOs;
     }
 
     /**
@@ -114,9 +114,9 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         Mapper.map(userPermDTO, user);
         userRepository.save(user);
-        UserResponseDTO UserDTO = new UserResponseDTO();
-        Mapper.map(user, UserDTO);
-        return UserDTO;
+        UserResponseDTO userDTO = new UserResponseDTO();
+        Mapper.map(user, userDTO);
+        return userDTO;
     }
 
     /**
@@ -143,9 +143,9 @@ public class UserService implements UserDetailsService {
         String newPassword = alphaNumericString(NEW_RANDOM_PASSWORD_LENGTH);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        UserResetPasswordResponseDTO UserDTO = new UserResetPasswordResponseDTO();
-        UserDTO.setPassword(newPassword);
-        return UserDTO;
+        UserResetPasswordResponseDTO userDTO = new UserResetPasswordResponseDTO();
+        userDTO.setPassword(newPassword);
+        return userDTO;
     }
 
     /**
@@ -154,12 +154,12 @@ public class UserService implements UserDetailsService {
      * @return          Random alphanumeric string
      */
     private static String alphaNumericString(int length) {
-        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random rnd = new Random();
 
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+            sb.append(CHARS.charAt(rnd.nextInt(CHARS.length())));
         }
         return sb.toString();
     }

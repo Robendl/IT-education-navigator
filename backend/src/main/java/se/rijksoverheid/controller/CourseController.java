@@ -1,17 +1,12 @@
 package se.rijksoverheid.controller;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +14,10 @@ import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.model.Course;
-import se.rijksoverheid.security.model.User;
 
-import java.io.IOException;
-import java.util.Collection;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Holds endpoints to which the course data can be accessed/altered from the outside world.
@@ -71,18 +64,6 @@ public class CourseController {
             return ResponseEntity.ok(courseService.getCourseById(id, authentication));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    private void censorCourseIfNeeded(Course course, Authentication authentication) {
-        Collection<?> authorities = authentication.getAuthorities();
-        if(!(authorities.contains(new SimpleGrantedAuthority(User.Role.ADMIN.toString()))
-                || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_CONSUMER.toString()))
-                || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_MANAGER.toString())))) {
-            String UNAUTHORIZED = "UNAUTHORIZED";
-            course.setResponsibleTaskForce(UNAUTHORIZED);
-            course.setContact(UNAUTHORIZED);
-            course.setProfessor(UNAUTHORIZED);
         }
     }
 
