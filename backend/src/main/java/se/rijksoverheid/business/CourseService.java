@@ -57,7 +57,7 @@ public class CourseService {
         return courseDTOs;
     }
 
-    public CourseResponseDTO getCourseById(long id, Authentication authentication) throws NotFoundException {
+    public CourseResponseDTO getCourseById(long id, Authentication authentication) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Course with id " + id + "could not be found."));
         return convertCourseAppropriately(course, authentication);
     }
@@ -80,7 +80,7 @@ public class CourseService {
      * @return                              The saved course.
      */
     @Transactional
-    public Course save(CourseRequestDTO courseDTO) throws NotFoundException {
+    public Course save(CourseRequestDTO courseDTO) {
         Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
                 new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
                         "trying to save new course"));
@@ -98,7 +98,7 @@ public class CourseService {
      * @return                              The new Course object
      */
     @Transactional
-    public Course edit(Long courseId, CourseRequestDTO courseDTO) throws NotFoundException {
+    public Course edit(Long courseId, CourseRequestDTO courseDTO) {
         Course course = courseRepository.findById(courseId).orElseThrow(() ->
                 new NotFoundException("Course with id " + courseId + " could not be found while trying to edit"));
         Mapper.map(courseDTO, course);

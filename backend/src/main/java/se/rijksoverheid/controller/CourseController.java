@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
-import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.model.Course;
 
@@ -67,7 +66,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable long id, Authentication authentication) throws NotFoundException {
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable long id, Authentication authentication) {
         return ResponseEntity.ok(courseService.getCourseById(id, authentication));
     }
 
@@ -77,7 +76,7 @@ public class CourseController {
      * @return              The saved Course.
      */
     @PostMapping("")
-    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) throws NotFoundException {
+    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.save(courseDTO));
     }
 
@@ -91,7 +90,7 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
-            @RequestBody @Valid CourseRequestDTO courseDTO) throws NotFoundException {
+            @RequestBody @Valid CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.edit(id, courseDTO));
     }
 

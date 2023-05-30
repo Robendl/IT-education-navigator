@@ -87,7 +87,7 @@ class CourseServiceTest {
     }
 
     @Test
-    void testSave_Successful() throws NotFoundException {
+    void testSave_Successful() {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         long provinceId = 1;
         when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);

@@ -67,13 +67,13 @@ class UserServiceTest {
     @Test
     void testIsValidEmailAddress() {
         String email = "name@domain.com";
-        assertTrue(userService.isValidEmailAddress(email));
+        assertTrue(userService.checkEmailAddress(email));
     }
 
     @Test
     void testIsValidEmailAddress_False() {
         String email = "name";
-        assertFalse(userService.isValidEmailAddress(email));
+        assertFalse(userService.checkEmailAddress(email));
     }
 
     @Test

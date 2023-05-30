@@ -76,7 +76,7 @@ class CourseControllerTest {
     }
 
     @Test
-    void testCreateCourse() throws NotFoundException {
+    void testCreateCourse() {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         Course mockCourse = mock(Course.class);
         when(courseService.save(mockCourseRequest)).thenReturn(mockCourse);
@@ -84,7 +84,7 @@ class CourseControllerTest {
     }
 
     @Test
-    void testEditCourse() throws NotFoundException {
+    void testEditCourse() {
         long id = 1;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         Course mockCourse = mock(Course.class);
@@ -93,7 +93,7 @@ class CourseControllerTest {
     }
 
     @Test
-    void testEditCourse_IdNotFound() throws NotFoundException {
+    void testEditCourse_IdNotFound() {
         long courseId = 2;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         when(courseService.edit(courseId,mockCourseRequest)).thenThrow(NotFoundException.class);
