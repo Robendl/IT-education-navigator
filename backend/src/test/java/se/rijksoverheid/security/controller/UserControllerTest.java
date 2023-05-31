@@ -3,6 +3,8 @@ package se.rijksoverheid.security.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,16 +30,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
+    @Mock
     private UserService mockUserService;
+    @Mock
+    private AuthenticationManager mockAuthenticationManager;
+    @Mock
+    private UserPermRequestDTO mockUserPermRequest;
+    @Mock
+    private UserResponseDTO mockUserResponse;
+    @Mock
+    private UserChangePasswordRequestDTO mockUserChangePasswordRequest;
+    @Mock
+    private UserResetPasswordResponseDTO mockUserResetPasswordResponse;
+    @InjectMocks
     private UserController userController;
-
-
-    @BeforeEach
-    void setUp() {
-        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-        mockUserService = mock(UserService.class);
-        userController = new UserController(mockAuthenticationManager, mockUserService);
-    }
 
     @Test
     void testGetUsers() {
@@ -45,7 +51,6 @@ class UserControllerTest {
         int page = 0,size = 500;
         Sort.Direction direction = Sort.Direction.ASC;
 
-        UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
         List<UserResponseDTO> users = new ArrayList<>();
         users.add(mockUserResponse);
 
@@ -57,8 +62,6 @@ class UserControllerTest {
     @Test
     void testEditUserPermissions() {
         long id = 1;
-        UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
-        UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
         when(mockUserService.editUserPerms(id,mockUserPermRequest)).thenReturn(mockUserResponse);
         assertDoesNotThrow(() -> {
             userController.editUserPermissions(id, mockUserPermRequest);
@@ -68,14 +71,12 @@ class UserControllerTest {
     @Test
     void testEditNonExistingUserPermissions() {
         long id = 1;
-        UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
         when(mockUserService.editUserPerms(id, mockUserPermRequest)).thenThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, ()-> userController.editUserPermissions(id, mockUserPermRequest));
     }
 
     @Test
     void testChangeUserPasswordSuccess() {
-        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
         when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenReturn(mockUserResponse);
         assertEquals(ResponseEntity.ok(mockUserResponse), userController.changeUserPassword(mockUserChangePasswordRequest));
@@ -83,21 +84,18 @@ class UserControllerTest {
 
     @Test
     void testChangeUserPasswordUserDisabled() {
-        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(DisabledException.class);
         assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
     @Test
     void testChangeUserPasswordBadCredentials() {
-        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(BadCredentialsException.class);
         assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
     @Test
     void testChangeUserPasswordUsernameNotFound() {
-        UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
@@ -105,7 +103,6 @@ class UserControllerTest {
     @Test
     void testResetUserPasswordSuccess() {
         long id = 1;
-        UserResetPasswordResponseDTO mockUserResetPasswordResponse = mock(UserResetPasswordResponseDTO.class);
         when(mockUserService.resetPassword(id)).thenReturn(mockUserResetPasswordResponse);
         assertEquals(ResponseEntity.ok(mockUserResetPasswordResponse), userController.resetUserPassword(id));
     }
