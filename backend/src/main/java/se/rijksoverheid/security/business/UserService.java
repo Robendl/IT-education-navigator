@@ -15,9 +15,9 @@ import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
 import javax.transaction.Transactional;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -30,8 +30,13 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private static SecureRandom secureRandom;
 
     private static final int NEW_RANDOM_PASSWORD_LENGTH = 12;
+
+    public UserService() {
+        secureRandom = new SecureRandom();
+    }
 
     /**
      * Finds a user by username.
@@ -159,11 +164,11 @@ public class UserService implements UserDetailsService {
      */
     private static String alphaNumericString(int length) {
         final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Random rnd = new Random();
-
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            sb.append(CHARS.charAt(rnd.nextInt(CHARS.length())));
+            int randomIndex = secureRandom.nextInt(CHARS.length());
+            char randomChar = CHARS.charAt(randomIndex);
+            sb.append(randomChar);
         }
         return sb.toString();
     }

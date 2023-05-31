@@ -7,13 +7,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.security.business.UserService;
+import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +29,10 @@ class AuthenticationControllerTest {
 
     @Mock
     private UserService mockUserService;
+    @Mock
+    AuthenticationManager authenticationManager;
+    @Mock
+    JwtTokenUtil jwtTokenUtil;
 
     @InjectMocks
     private AuthenticationController authenticationController;
@@ -64,13 +72,10 @@ class AuthenticationControllerTest {
         HttpServletResponse mockHttpServletResponse = mock(HttpServletResponse.class);
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         User.Role mockRole = mock(User.Role.class);
+        User mockUser = mock(User.class);
+        when(mockUser.getRole()).thenReturn(mockRole);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
         when(mockUserRequest.getUsername()).thenReturn(username);
-
-        try {
-            assertEquals(mockRole, authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse));
-
-        } catch (Exception e) {
-
-        }
+        assertEquals(mockRole, Objects.requireNonNull(authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse).getBody()).getRole());
     }
 }
