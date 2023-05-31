@@ -64,8 +64,13 @@ class CourseServiceTest {
         List<String> regions = List.of("region");
         List<Long> provinceIds = List.of(2L);
         List<String> courseTypes = List.of("courseType");
-        Pageable mockPageable = mock(Pageable.class);
         CourseFilter filter = mock(CourseFilter.class);
+        when(filter.getSearch()).thenReturn(search);
+        when(filter.isArchived()).thenReturn(archived);
+        when(filter.getLevels()).thenReturn(levels);
+        when(filter.getRegions()).thenReturn(regions);
+        when(filter.getProvinceIds()).thenReturn(provinceIds);
+        when(filter.getCourseTypes()).thenReturn(courseTypes);
         Sort sort = mock(Sort.class);
         when(mockCourseRepository.searchAndFilterAndOrderCourses(
                 search,

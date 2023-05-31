@@ -15,6 +15,7 @@ import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
+import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
 
 
@@ -43,7 +44,6 @@ class CourseControllerTest {
     void testGetCourses() {
         String search = "search";
         boolean archived = false;
-        int page = 0,size = 500;
         String orderBy = "name";
         List<String> levels = List.of("level");
         List<String> regions = List.of("region");
@@ -53,26 +53,40 @@ class CourseControllerTest {
         CourseResponseDTO mockCourse = mock(CourseResponseDTO.class);
         List<CourseResponseDTO> courses = new ArrayList<>();
         courses.add(mockCourse);
-//        CoursePageDTO coursePage = mock(CoursePageDTO.class);
         CourseFilter filter = mock(CourseFilter.class);
         Sort sort = mock(Sort.class);
         Authentication authentication = mock(Authentication.class);
 
-        when(courseService.getCourses(
-                filter,
-                sort,
-                authentication))
-                .thenReturn(courses);
-        assertEquals(courses, courseController.getCourses(
-                authentication,
-                search,
-                archived,
-                levels,
-                regions,
-                provinceIds,
-                courseTypes,
-                orderBy,
-                direction).getBody());
+        try (MockedStatic<Sort> mockSort = Mockito.mockStatic(Sort.class)) {
+            mockSort.when(() -> Sort.by(direction, orderBy)).thenReturn(sort);
+            CourseController spyCourseController = spy(courseController);
+            doReturn(filter).when(spyCourseController).getCourseFilter(
+                    search,
+                    archived,
+                    levels,
+                    regions,
+                    provinceIds,
+                    courseTypes
+            );
+
+            when(courseService.getCourses(
+                    filter,
+                    sort,
+                    authentication)
+            ).thenReturn(courses);
+
+            assertEquals(courses, spyCourseController.getCourses(
+                    authentication,
+                    search,
+                    archived,
+                    levels,
+                    regions,
+                    provinceIds,
+                    courseTypes,
+                    orderBy,
+                    direction).getBody()
+            );
+        }
     }
 
     @Test

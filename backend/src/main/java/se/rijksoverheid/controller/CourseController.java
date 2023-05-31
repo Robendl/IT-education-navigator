@@ -49,12 +49,12 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Sort sort = Sort.by(direction, orderBy);
-        CourseFilter filter = createFilterObject(search, archived, levels, regions, provinceIds, courseTypes);
+        CourseFilter filter = getCourseFilter(search, archived, levels, regions, provinceIds, courseTypes);
         return ResponseEntity.ok(courseService.getCourses(filter, sort, authentication));
     }
 
-    private CourseFilter createFilterObject(String search, boolean archived, List<String> levels, List<String> regions,
-                                            List<Long> provinceIds, List<String> courseTypes) {
+    protected CourseFilter getCourseFilter(String search, boolean archived, List<String> levels, List<String> regions,
+                                 List<Long> provinceIds, List<String> courseTypes) {
         CourseFilter filter = new CourseFilter();
         filter.setSearch(search);
         filter.setArchived(archived);
