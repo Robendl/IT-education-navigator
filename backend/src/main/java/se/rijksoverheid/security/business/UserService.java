@@ -30,13 +30,9 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private static SecureRandom secureRandom;
-
+    private static final SecureRandom secureRandom = new SecureRandom();
     private static final int NEW_RANDOM_PASSWORD_LENGTH = 12;
 
-    public UserService() {
-        secureRandom = new SecureRandom();
-    }
 
     /**
      * Finds a user by username.
