@@ -4,15 +4,15 @@ import FormEntry from 'components/forms/FormEntry/FormEntry';
 import './EditItemForm.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import ProvinceLoader from 'services/ProvinceLoader';
+import ProvinceLoader, { errorCodes } from 'services/ProvinceLoader';
 
 /* Form component for editing a course */
 export default function EditItemForm({ onSubmit, onCancel, entry }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [provinces, setProvinces] = useState(null);
   const regions = [{ id: "midden", name: "Midden" }, { id: "oost", name: "Oost" }, { id: "west", name: "West" }];
-  const [selectedProvince, setSelectedProvince] = useState(0);
-  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
 
   /* Function that is called when the form is closed */
   function handleCancel(e) {
@@ -42,19 +42,24 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
   function populate() {
     ProvinceLoader.loadProvinces().then((response) => {
       setProvinces(response);
+    }, (error) => {
+      switch (error) {
+        case errorCodes.ERR_CANCELED:
+          break;
+        default:
+          console.log("Kon provincies niet ophalen van server.");
+          break;
+      }
     });
     Object.keys(entry).forEach(key => {
       let inputElement = document.querySelectorAll(`.edit-item-form input[name=${key}]`);
       inputElement = inputElement[inputElement.length - 1];
       let value = (entry[key] === null) ? "" : entry[key];
       if (key === "province") {
-        inputElement = document.querySelector(`.edit-item-form select[name=${key}]`);
-        setSelectedProvince(value.id);
+        setSelectedProvince(value.id.toString());
         return;
       }
       if (key === "region") {
-        console.log(value);
-        inputElement = document.querySelector(`.edit-item-form select[name=${key}]`);
         setSelectedRegion(value);
         return;
       }
@@ -76,8 +81,8 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
       </div>
       <div>
         <FormEntry type="text" propertyName="Locatie" propertyKey="location" required />
-        <FormEntry type="dropdown" propertyName="Provincie" propertyKey="province" options={provinces} defaultValue={selectedProvince} />
-        <FormEntry type="dropdown" propertyName="Regio" propertyKey="region" options={regions} defaultValue={selectedRegion} />
+        {selectedProvince && provinces && <FormEntry type="dropdown" propertyName="Provincie" propertyKey="provinceId" options={provinces} defaultValue={selectedProvince} />}
+        {selectedRegion && <FormEntry type="dropdown" propertyName="Regio" propertyKey="region" options={regions} defaultValue={selectedRegion} />}
       </div>
       <div>
         <FormEntry type="text" propertyName="Niveau" propertyKey="level" />
