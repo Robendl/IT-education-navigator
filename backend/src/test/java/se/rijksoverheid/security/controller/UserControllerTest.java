@@ -1,5 +1,6 @@
 package se.rijksoverheid.security.controller;
 
+import org.hibernate.annotations.NotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,8 +101,8 @@ class UserControllerTest {
     @Test
     void testChangeUserPasswordUsernameNotFound() {
         UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
-        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(UsernameNotFoundException.class);
-        assertEquals(ResponseEntity.notFound().build(), userController.changeUserPassword(mockUserChangePasswordRequest));
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(NotFoundException.class);
+        assertThrows(NotFoundException.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
     @Test
