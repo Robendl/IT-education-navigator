@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
@@ -120,8 +121,16 @@ class UserControllerTest {
 
     @Test
     void testResetUserPasswordUserNotFound() {
-        long id = 1;
-        when(mockUserService.resetPassword(id)).thenThrow(NotFoundException.class);
-        assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(id));
+        long idAdmin = 1;
+        long idUser = 2;
+        String username = "test@email.com";
+        User mockUser = mock(User.class);
+
+        when(authentication.getName()).thenReturn(username);
+        when(mockUser.getId()).thenReturn(idAdmin);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
+        when(mockUserService.resetPassword(idUser)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(authentication, idUser));
     }
 }
