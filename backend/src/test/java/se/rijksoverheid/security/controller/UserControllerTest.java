@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
@@ -70,8 +71,8 @@ class UserControllerTest {
     void testEditNonExistingUserPermissions() {
         long id = 1;
         UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
-        when(mockUserService.editUserPerms(anyLong(), any(UserPermRequestDTO.class))).thenThrow(EntityNotFoundException.class);
-        assertEquals(ResponseEntity.notFound().build().getStatusCode(), userController.editUserPermissions(id, mockUserPermRequest).getStatusCode());
+        when(mockUserService.editUserPerms(id, mockUserPermRequest)).thenThrow(NotFoundException.class);
+        assertThrows(NotFoundException.class, ()-> userController.editUserPermissions(id, mockUserPermRequest));
     }
 
     @Test
