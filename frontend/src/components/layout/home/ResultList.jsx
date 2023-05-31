@@ -235,7 +235,7 @@ function Result({ entry }) {
     <div className={`result ${entry["archived"] ? "archived" : ""}`} ref={resultElement}>
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
-        <Link to={`/course/${entry.id}`} className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
+        <Link to={`/course/${entry.id}`} state={{goBack: true}} className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
 
         { /* Edit button */
           (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&
