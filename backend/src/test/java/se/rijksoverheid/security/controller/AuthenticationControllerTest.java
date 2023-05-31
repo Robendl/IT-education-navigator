@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
+import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
@@ -43,7 +45,7 @@ class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(true);
-        assertEquals("Emailadres wordt al gebruikt",authenticationController.registerUser(mockUserRequest).getBody());
+        assertThrows(EntityConflictException.class, ()-> authenticationController.registerUser(mockUserRequest));
     }
 
     @Test
@@ -52,7 +54,8 @@ class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        assertEquals("Geen geldig emailadres ingevoerd",authenticationController.registerUser(mockUserRequest).getBody());
+        doThrow(new BadRequestException("")).when(mockUserService).checkEmailAddress(email);
+        assertThrows(BadRequestException.class, () -> authenticationController.registerUser(mockUserRequest));
     }
 
     @Test
