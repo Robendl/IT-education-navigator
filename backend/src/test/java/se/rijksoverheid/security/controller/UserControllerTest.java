@@ -133,4 +133,18 @@ class UserControllerTest {
 
         assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(authentication, idUser));
     }
+
+    @Test
+    void testResetUserNotResetOwnPassword() {
+        long idAdmin = 1;
+        long idUser = 1;
+        String username = "test@email.com";
+        User mockUser = mock(User.class);
+
+        when(authentication.getName()).thenReturn(username);
+        when(mockUser.getId()).thenReturn(idAdmin);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
+
+        assertThrows(BadRequestException.class, ()-> userController.resetUserPassword(authentication, idUser));
+    }
 }
