@@ -37,7 +37,7 @@ class UserControllerTest {
         List<UserResponseDTO> users = new ArrayList<>();
         users.add(mockUserResponse);
 
-        when(mockUserService.getUsers(anyString(),any(Pageable.class))).thenReturn(users);
+        when(mockUserService.getUsers(search,any(Pageable.class))).thenReturn(users);
 
         assertEquals(users, userController.getUsers(search, page, size, direction).getBody());
     }
@@ -47,7 +47,7 @@ class UserControllerTest {
         long id = 1;
         UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
-        when(mockUserService.editUserPerms(anyLong(),any(UserPermRequestDTO.class))).thenReturn(mockUserResponse);
+        when(mockUserService.editUserPerms(id,mockUserPermRequest)).thenReturn(mockUserResponse);
         assertDoesNotThrow(() -> {
             userController.editUserPermissions(id,mockUserPermRequest);
         });
