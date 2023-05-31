@@ -3,10 +3,7 @@ package se.rijksoverheid.security.business;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,14 +46,24 @@ class UserServiceTest {
     @Test
     void testSave() {
         User mockUser = mock(User.class);
+        String username = "test@email.com";
+        String passwordPlaintext = "plaintextPassword";
+        String passwordEncrypted = "encryptedPassword";
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
-        when(mockUserRequest.getPassword()).thenReturn("encryptedPassword");
-        when(mockPasswordEncoder.encode(anyString())).thenReturn("encryptedPassword");
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+
+        when(mockUserRequest.getPassword()).thenReturn(passwordPlaintext);
+        when(mockUserRequest.getUsername()).thenReturn(username);
+        when(mockPasswordEncoder.encode(passwordPlaintext)).thenReturn(passwordEncrypted);
         when(mockUserRepository.save(any(User.class))).thenReturn(mockUser);
-        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
-            mockMapper.when(() -> Mapper.map(mockUser, UserRequestDTO.class)).thenReturn(mockUserRequest);
-            assertEquals(mockUserRequest, userService.save(mockUserRequest));
-        }
+
+        userService.save(mockUserRequest);
+
+        verify(mockUserRepository).save(userArgumentCaptor.capture());
+        assertEquals(User.Role.LIM_DATA_CONSUMER, userArgumentCaptor.getValue().getRole());
+
+        assertEquals(username, userArgumentCaptor.getValue().getUsername());
+        assertEquals(passwordEncrypted, userArgumentCaptor.getValue().getPassword());
     }
 
     @Test
