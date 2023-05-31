@@ -37,7 +37,7 @@ class UserControllerTest {
         List<UserResponseDTO> users = new ArrayList<>();
         users.add(mockUserResponse);
 
-        when(mockUserService.getUsers(search,any(Pageable.class))).thenReturn(users);
+        when(mockUserService.getUsers(anyString(),any(Pageable.class))).thenReturn(users);
 
         assertEquals(users, userController.getUsers(search, page, size, direction).getBody());
     }
