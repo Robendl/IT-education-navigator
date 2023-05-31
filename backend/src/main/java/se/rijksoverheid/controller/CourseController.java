@@ -1,30 +1,21 @@
 package se.rijksoverheid.controller;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.business.CourseService;
-import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
+import se.rijksoverheid.dto.CourseResponseDTO;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.model.Course;
-import se.rijksoverheid.security.model.User;
 
-import java.io.IOException;
-import java.util.Collection;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Holds endpoints to which the course data can be accessed/altered from the outside world.
@@ -40,15 +31,13 @@ public class CourseController {
      * Endpoint for retrieving courses
      * @param search        every string field is checked for this search string when provided.
      * @param archived      determines whether to return unarchived or archived course, unarchived by default.
-     * @param page          page number of page to return, 0 by default.
-     * @param size          size of page to return, 500 by default.
      * @param orderBy       what field to order by, name by default.
      * @param direction     direction to order by, can be ASC or DESC, ASC by default.
      * @return              List of courses.
      */
     @Transactional
     @GetMapping("")
-    public ResponseEntity<CoursePageDTO> getCourses(
+    public ResponseEntity<List<CourseResponseDTO>> getCourses(
             Authentication authentication,
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false, defaultValue = "false") boolean archived,
@@ -56,34 +45,29 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "") List<String> regions,
             @RequestParam(value = "province-ids", required = false, defaultValue = "") List<Long> provinceIds,
             @RequestParam(value = "course-types", required = false, defaultValue = "") List<String> courseTypes,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "200") int size,
             @RequestParam(value = "order-by", required = false, defaultValue = "name") String orderBy,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable, authentication));
+        Sort sort = Sort.by(direction, orderBy);
+        CourseFilter filter = getCourseFilter(search, archived, levels, regions, provinceIds, courseTypes);
+        return ResponseEntity.ok(courseService.getCourses(filter, sort, authentication));
+    }
+
+    protected CourseFilter getCourseFilter(String search, boolean archived, List<String> levels, List<String> regions,
+                                 List<Long> provinceIds, List<String> courseTypes) {
+        CourseFilter filter = new CourseFilter();
+        filter.setSearch(search);
+        filter.setArchived(archived);
+        filter.setLevels(levels);
+        filter.setRegions(regions);
+        filter.setProvinceIds(provinceIds);
+        filter.setCourseTypes(courseTypes);
+        return filter;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable long id, Authentication authentication) {
-        try {
-            return ResponseEntity.ok(courseService.getCourseById(id, authentication));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    private void censorCourseIfNeeded(Course course, Authentication authentication) {
-        Collection<?> authorities = authentication.getAuthorities();
-        if(!(authorities.contains(new SimpleGrantedAuthority(User.Role.ADMIN.toString()))
-                || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_CONSUMER.toString()))
-                || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_MANAGER.toString())))) {
-            String UNAUTHORIZED = "UNAUTHORIZED";
-            course.setResponsibleTaskForce(UNAUTHORIZED);
-            course.setContact(UNAUTHORIZED);
-            course.setProfessor(UNAUTHORIZED);
-        }
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable long id, Authentication authentication) {
+        return ResponseEntity.ok(courseService.getCourseById(id, authentication));
     }
 
     /**
@@ -93,11 +77,7 @@ public class CourseController {
      */
     @PostMapping("")
     public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
-        try {
-            return ResponseEntity.ok(courseService.save(courseDTO));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(courseService.save(courseDTO));
     }
 
     /**
@@ -111,13 +91,7 @@ public class CourseController {
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
             @RequestBody @Valid CourseRequestDTO courseDTO) {
-        try {
-            return ResponseEntity.ok(courseService.edit(id, courseDTO));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(courseService.edit(id, courseDTO));
     }
 
     /**

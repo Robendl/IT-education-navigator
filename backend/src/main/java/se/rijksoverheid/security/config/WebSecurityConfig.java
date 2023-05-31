@@ -17,8 +17,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import se.rijksoverheid.security.model.User;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Extension of WebSecurityConfigurerAdapter from Spring Security, used for configuring the security settings.
@@ -69,15 +71,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        final String ADMIN = String.valueOf(User.Role.ADMIN);
+        final String DATA_MANAGER = String.valueOf(User.Role.DATA_MANAGER);
         httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "user/password/{id}/reset").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "user/password/{id}/reset").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.PUT, "/user/password/{id}/change").authenticated()
-                .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority("ADMIN")
-                .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority("ADMIN")
-                .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority("ADMIN", "DATA_MANAGER")
-                .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority("ADMIN", "DATA_MANAGER")
+                .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority(ADMIN)
+                .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority(ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority(ADMIN)
+                .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority(ADMIN, DATA_MANAGER)
+                .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority(ADMIN, DATA_MANAGER)
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -90,8 +94,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/", "http://127.0.0.1:3000/"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Credentials", "authorization", "content-type", "x-auth-token"));
-        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Credentials", "authorization", "content-type", "x-auth-token", "x-xsrf-token"));
+        configuration.setExposedHeaders(List.of("x-auth-token"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

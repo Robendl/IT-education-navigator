@@ -56,11 +56,28 @@ export default function ToolMenu() {
   /* ToolMenu body */
   return (
     <div className="tool-menu">
-      {user.loggedIn && (user.role >= userRoles.DATA_MANAGER) && <ToolOption name="Nieuw Item" icon="post_add" action={overlay.openAdd} />}
+      {user.loggedIn && (user.role >= userRoles.DATA_MANAGER) && <ToolButton name="Nieuw Item" icon="post_add" action={overlay.openAdd} />}
       {user.loggedIn && <ToolOption name="Overzicht" icon="list" selected={selected === tabOption.OVERVIEW} action={handleOpenOverview} />}
       {user.loggedIn && (user.role >= userRoles.DATA_MANAGER) && <ToolOption name="Archief" icon="inventory_2" selected={selected === tabOption.ARCHIVE} action={handleOpenArchive} />}
       {user.loggedIn && (user.role >= userRoles.ADMIN) && <ToolOption className="account-management-tab" name="Accountbeheer" icon="manage_accounts" action={handleOpenAccountManagement} />}
     </div>
+  );
+}
+
+/* ToolButton component for the ToolMenu */
+function ToolButton({ className = "", name, icon, action }) {
+
+  /* Function that is called when clicking on the tool button */
+  function handleClick(e) {
+    action();
+  }
+
+  /* ToolOButton body */
+  return (
+    <button onClick={handleClick} className={className}>
+      <span className="material-symbols-outlined tool-icon">{icon}</span>
+      <span className="tool-name">{name}</span>
+    </button>
   );
 }
 

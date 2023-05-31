@@ -2,12 +2,13 @@ package se.rijksoverheid.business;
 
 import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.*;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
@@ -19,7 +20,6 @@ import se.rijksoverheid.security.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Responsible for all business logic regarding the courses.
@@ -34,28 +34,31 @@ public class CourseService {
      * Retrieves a list of courses.
      * @param search        search string that will be used for looking in all string fields
      * @param archived      determines whether to retrieve unarchived or archived courses
-     * @param pageable      Pageable object that contains information on which page of what size to retrieve in what order
      * @return              List of courses
      */
 
-    public CoursePageDTO getCourses(String search, boolean archived, List<String> levels, List<String> regions, List<Long> provinceIds, List<String> courseTypes, Pageable pageable, Authentication authentication) {
-        Page<Course> coursePage = courseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes, pageable);
-        List<CourseResponseDTO> courses = new ArrayList<>();
-        for(Course course: coursePage.getContent()) {
+    public List<CourseResponseDTO> getCourses(CourseFilter filter, Sort sort, Authentication authentication) {
+        List<Course> courses = courseRepository.searchAndFilterAndOrderCourses(
+                filter.getSearch(),
+                filter.isArchived(),
+                filter.getLevels(),
+                filter.getRegions(),
+                filter.getProvinceIds(),
+                filter.getCourseTypes(),
+                sort
+        );
+        List<CourseResponseDTO> courseDTOs = new ArrayList<>();
+        for(Course course: courses) {
             ProvinceDTO provinceDTO = Mapper.map(course.getProvince(), ProvinceDTO.class);
             CourseResponseDTO courseDTO = convertCourseAppropriately(course, authentication);
             courseDTO.setProvince(provinceDTO);
-            courses.add(courseDTO);
+            courseDTOs.add(courseDTO);
         }
-        CoursePageDTO coursePageDTO = new CoursePageDTO();
-        coursePageDTO.setContent(courses);
-        coursePageDTO.setTotalPages(coursePage.getTotalPages());
-        coursePageDTO.setTotalElements(coursePage.getTotalElements());
-        return coursePageDTO;
+        return courseDTOs;
     }
 
-    public CourseResponseDTO getCourseById(long id, Authentication authentication) throws EntityNotFoundException {
-        Course course = courseRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public CourseResponseDTO getCourseById(long id, Authentication authentication) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Course with id " + id + "could not be found."));
         return convertCourseAppropriately(course, authentication);
     }
 
@@ -77,8 +80,10 @@ public class CourseService {
      * @return                              The saved course.
      */
     @Transactional
-    public Course save(CourseRequestDTO courseDTO) throws IllegalArgumentException {
-        Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
+    public Course save(CourseRequestDTO courseDTO) {
+        Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
+                new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
+                        "trying to save new course"));
         Course course = Mapper.map(courseDTO, Course.class);
         course.setProvince(province);
         return courseRepository.save(course);
@@ -93,11 +98,14 @@ public class CourseService {
      * @return                              The new Course object
      */
     @Transactional
-    public Course edit(Long courseId, CourseRequestDTO courseDTO) throws EntityNotFoundException, IllegalArgumentException {
-        Course course = courseRepository.findById(courseId).orElseThrow(EntityNotFoundException::new);
+    public Course edit(Long courseId, CourseRequestDTO courseDTO) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() ->
+                new NotFoundException("Course with id " + courseId + " could not be found while trying to edit"));
         Mapper.map(courseDTO, course);
         if(courseDTO.getProvinceId() != course.getProvince().getId()) {
-            Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(IllegalArgumentException::new);
+            Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
+                    new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
+                            "trying to edit course with id" + courseId));
             course.setProvince(province);
         }
         return courseRepository.save(course);

@@ -51,6 +51,11 @@ button {
   align-items: stretch;
 }
 
+.main-header .page-wide .header-title {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .main-header .page-wide .user-option {
   position: relative;
   display: flex;

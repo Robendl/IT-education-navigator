@@ -7,12 +7,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.security.dto.*;
 import se.rijksoverheid.security.model.User;
 import se.rijksoverheid.security.model.UserRepository;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +37,12 @@ public class UserService implements UserDetailsService {
      * Finds a user by username.
      * @param username  the username identifying the user whose data is required.
      * @return          the user.
-     * @throws UsernameNotFoundException    when no user with the given username can be found.
+     * @throws NotFoundException    when no user with the given username can be found.
      */
     @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) {
         return userRepository.findUserByUsername(username).
-                orElseThrow(() -> new UsernameNotFoundException("There exists no user with username: " + username));
+                orElseThrow(() -> new NotFoundException("There exists no user with username: " + username));
     }
 
     /**
@@ -71,9 +72,11 @@ public class UserService implements UserDetailsService {
      * @param email string to be checked
      * @return      true if string is a valid email address, false otherwise
      */
-    public boolean isValidEmailAddress(String email) {
+    public void checkEmailAddress(String email) {
         String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
-        return Pattern.compile(regexPattern).matcher(email).matches();
+        if(!Pattern.compile(regexPattern).matcher(email).matches()) {
+            throw new BadRequestException("Email-address is not valid");
+        }
     }
 
     /**
@@ -90,15 +93,15 @@ public class UserService implements UserDetailsService {
             users = userRepository.findAllUserByUsername(search, pageable);
         }
 
-        List<UserResponseDTO> UserResponseDTO = new ArrayList<>();
+        List<UserResponseDTO> userResponseDTOs = new ArrayList<>();
         for(User user: users.getContent()) {
-            UserResponseDTO UserResDTO = new UserResponseDTO();
-            UserResDTO.setId(user.getId());
-            UserResDTO.setUsername(user.getUsername());
-            UserResDTO.setRole(user.getRole());
-            UserResponseDTO.add(UserResDTO);
+            UserResponseDTO userResDTO = new UserResponseDTO();
+            userResDTO.setId(user.getId());
+            userResDTO.setUsername(user.getUsername());
+            userResDTO.setRole(user.getRole());
+            userResponseDTOs.add(userResDTO);
         }
-        return UserResponseDTO;
+        return userResponseDTOs;
     }
 
     /**
@@ -106,17 +109,18 @@ public class UserService implements UserDetailsService {
      * @param userId                    Id of user to change permissions for.
      * @param userPermDTO               DTO for all data to be changed.
      * @return                          The user which was changed.
-     * @throws EntityNotFoundException  No user with id was found.
+     * @throws NotFoundException  No user with id was found.
      * @throws Exception                Changed user to non-existing role.
      */
     @Transactional
-    public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) throws EntityNotFoundException {
-        User user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+    public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("User with id " + userId + " could not be found."));
         Mapper.map(userPermDTO, user);
         userRepository.save(user);
-        UserResponseDTO UserDTO = new UserResponseDTO();
-        Mapper.map(user, UserDTO);
-        return UserDTO;
+        UserResponseDTO userDTO = new UserResponseDTO();
+        Mapper.map(user, userDTO);
+        return userDTO;
     }
 
     /**
@@ -136,16 +140,16 @@ public class UserService implements UserDetailsService {
      * Reset a user's password.
      * @param id                        ID of user to change password for.
      * @return                          The user that was changed.
-     * @throws EntityNotFoundException  No user with id was found.
      */
-    public UserResetPasswordResponseDTO resetPassword(long id) throws EntityNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public UserResetPasswordResponseDTO resetPassword(long id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("User with id " + id + " could not be found."));
         String newPassword = alphaNumericString(NEW_RANDOM_PASSWORD_LENGTH);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        UserResetPasswordResponseDTO UserDTO = new UserResetPasswordResponseDTO();
-        UserDTO.setPassword(newPassword);
-        return UserDTO;
+        UserResetPasswordResponseDTO userDTO = new UserResetPasswordResponseDTO();
+        userDTO.setPassword(newPassword);
+        return userDTO;
     }
 
     /**
@@ -154,12 +158,12 @@ public class UserService implements UserDetailsService {
      * @return          Random alphanumeric string
      */
     private static String alphaNumericString(int length) {
-        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random rnd = new Random();
 
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+            sb.append(CHARS.charAt(rnd.nextInt(CHARS.length())));
         }
         return sb.toString();
     }

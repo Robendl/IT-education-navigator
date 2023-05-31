@@ -42,13 +42,16 @@ const filters = {
         "name": "Zuid-Holland"
       },
       12: {
-        "name": "Other"
+        "name": "Overigen"
       },
     }
   },
   "levels": {
     "multivalue": false,
     "options": {
+      "mbo": {
+        "name": "MBO"
+      },
       "hbo": {
         "name": "HBO"
       },

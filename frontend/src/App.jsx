@@ -3,7 +3,7 @@ import MainHeader from 'components/layout/MainHeader';
 import Home from 'pages/home/Home';
 import Map from 'pages/map/Map';
 import LoginPage from 'pages/login/LoginPage';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import {Routes, Route, Outlet, Link} from 'react-router-dom';
 import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
 import { useEffect, useState } from 'react';
@@ -77,7 +77,9 @@ function Layout() {
             openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry, openDeleteCourse: handleOpenDeleteCourse, closeDeleteCourse: () => setIsDeletingCourse(false), deleteEntry: deleteEntry
           }} >
             <header className="logo-header ignore-overlay">
-              <img src={logo} className="ro-logo" alt="logo" />
+              <Link to="/">
+                <img src={logo} className="ro-logo" alt="logo" />
+              </Link>
             </header>
             <MainHeader />
             <Outlet />
