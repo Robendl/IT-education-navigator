@@ -102,7 +102,7 @@ class CourseControllerTest {
         long id = 1;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         Course mockCourse = mock(Course.class);
-        when(courseService.edit(anyLong(),any(CourseRequestDTO.class))).thenReturn(mockCourse);
+        when(courseService.edit(id,mockCourseRequest)).thenReturn(mockCourse);
         assertEquals(mockCourse,courseController.editCourse(id,mockCourseRequest).getBody());
     }
 

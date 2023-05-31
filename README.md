@@ -5,7 +5,7 @@
 Installeer en open docker.
 In een terminal, run:
 ```
-docker run --rm -p 5432:5432 -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_USER=postgres" -e "POSTGRES_DB=postgres" postgres
+docker run -d -p 5434:5432 -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_USER=postgres" -e "POSTGRES_DB=postgres" --name rijksoverheid-postgres postgres
 ```
 ### Backend
 Open het project in IntelliJ IDEA. De ``BackendApplication`` Run Configuration zou automatisch geladen moeten worden. 

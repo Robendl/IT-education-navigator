@@ -7,16 +7,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.security.business.UserService;
+import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -25,6 +28,10 @@ class AuthenticationControllerTest {
 
     @Mock
     private UserService mockUserService;
+    @Mock
+    AuthenticationManager authenticationManager;
+    @Mock
+    JwtTokenUtil jwtTokenUtil;
 
     @InjectMocks
     private AuthenticationController authenticationController;
@@ -35,7 +42,7 @@ class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        when(mockUserService.save(any(UserRequestDTO.class))).thenReturn(mockUserRequest);
+        when(mockUserService.save(mockUserRequest)).thenReturn(mockUserRequest);
         assertEquals(ResponseEntity.status(HttpStatus.CREATED).build(),authenticationController.registerUser(mockUserRequest));
     }
 
@@ -64,13 +71,10 @@ class AuthenticationControllerTest {
         HttpServletResponse mockHttpServletResponse = mock(HttpServletResponse.class);
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         User.Role mockRole = mock(User.Role.class);
+        User mockUser = mock(User.class);
+        when(mockUser.getRole()).thenReturn(mockRole);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
         when(mockUserRequest.getUsername()).thenReturn(username);
-
-        try {
-            assertEquals(mockRole, authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse));
-
-        } catch (Exception e) {
-
-        }
+        assertEquals(mockRole, Objects.requireNonNull(authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse).getBody()).getRole());
     }
 }
