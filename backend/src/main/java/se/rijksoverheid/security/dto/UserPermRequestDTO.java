@@ -3,7 +3,6 @@ package se.rijksoverheid.security.dto;
 import lombok.Data;
 import se.rijksoverheid.security.model.User;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**

@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
+import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
@@ -31,6 +33,7 @@ class CourseServiceTest {
     private CourseRepository mockCourseRepository;
     private ProvinceRepository mockProvinceRepository;
     private Course mockCourse;
+    private CourseResponseDTO mockCourseDTO;
     private Province mockProvince;
     private List<Course> courseList;
     private CoursePageDTO mockCoursePage;
@@ -47,6 +50,7 @@ class CourseServiceTest {
         courseService = new CourseService(mockCourseRepository, mockProvinceRepository);
         courseList = new ArrayList<>();
         courseList.add(mockCourse);
+        mockCourseDTO = mock(CourseResponseDTO.class);
         mockCoursePage = mock(CoursePageDTO.class);
         pageCourse = new PageImpl<>(courseList);
         authentication = mock(Authentication.class);
@@ -60,8 +64,23 @@ class CourseServiceTest {
         List<String> regions = List.of("region");
         List<Long> provinceIds = List.of(2L);
         List<String> courseTypes = List.of("courseType");
-        Pageable mockPageable = mock(Pageable.class);
-        when(mockCourseRepository.searchAndFilterAndOrderCourses(search, archived, levels, regions, provinceIds, courseTypes, mockPageable)).thenReturn(pageCourse);
+        CourseFilter filter = mock(CourseFilter.class);
+        when(filter.getSearch()).thenReturn(search);
+        when(filter.isArchived()).thenReturn(archived);
+        when(filter.getLevels()).thenReturn(levels);
+        when(filter.getRegions()).thenReturn(regions);
+        when(filter.getProvinceIds()).thenReturn(provinceIds);
+        when(filter.getCourseTypes()).thenReturn(courseTypes);
+        Sort sort = mock(Sort.class);
+        when(mockCourseRepository.searchAndFilterAndOrderCourses(
+                search,
+                archived,
+                levels,
+                regions,
+                provinceIds,
+                courseTypes,
+                sort
+        )).thenReturn(courseList);
 
         try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
             // set up desired Mapper behaviour
@@ -69,8 +88,9 @@ class CourseServiceTest {
             mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
             CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
             mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
-            CoursePageDTO courses = courseService.getCourses(search, archived, levels, regions, provinceIds, courseTypes, mockPageable, authentication);
-//            assertEquals(courses, mockCoursePage);
+            List<CourseResponseDTO> courses = courseService.getCourses(filter, sort, authentication);
+            List<CourseResponseDTO> check = List.of(mockCourseDTO);
+            assertEquals(courses, check);
         }
     }
 
@@ -94,7 +114,7 @@ class CourseServiceTest {
         long provinceId = 1;
         when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
         when(mockProvinceRepository.findById(provinceId)).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> courseService.save(mockCourseRequest));
+        assertThrows(NotFoundException.class, () -> courseService.save(mockCourseRequest));
     }
 
 //    @Test
@@ -144,7 +164,7 @@ class CourseServiceTest {
     void testDeleteById() {
         long courseId = 1;
         doAnswer(invocation -> {
-            assertEquals(courseId,(long)invocation.getArgument(0));
+            assertEquals(courseId, (long) invocation.getArgument(0));
             return null;
         }).when(mockCourseRepository).deleteById(courseId);
         mockCourseRepository.deleteById(courseId);

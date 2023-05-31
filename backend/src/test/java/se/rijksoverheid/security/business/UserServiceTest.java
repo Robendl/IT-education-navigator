@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
+import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     UserRepository mockUserRepository;
@@ -67,13 +69,13 @@ public class UserServiceTest {
     @Test
     void testIsValidEmailAddress() {
         String email = "name@domain.com";
-        assertTrue(userService.isValidEmailAddress(email));
+        assertDoesNotThrow(() -> userService.checkEmailAddress(email));
     }
 
     @Test
     void testIsValidEmailAddress_False() {
         String email = "name";
-        assertFalse(userService.isValidEmailAddress(email));
+        assertThrows(BadRequestException.class, () -> userService.checkEmailAddress(email));
     }
 
     @Test

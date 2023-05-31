@@ -33,8 +33,8 @@ export default function ResultList() {
     setIsLoading(true);
     setResults([]);
     CourseLoader.loadCourses(location.search ? location.search : "").then((response) => {
-      setResults(response.content);
-      setResultCount(response.totalElements);
+      setResults(response);
+      setResultCount(response.length)
       setIsLoading(false);
     }, (error) => {
       switch (error) {
