@@ -87,6 +87,7 @@ public class UserService implements UserDetailsService {
      */
     @Transactional
     public List<UserResponseDTO> getUsers(String search,Pageable pageable){
+        //TODO Remove paging from Users (don't forget to update tests)
         Page<User> users;
         if(search.isEmpty()){
             users = userRepository.findAll(pageable);
