@@ -87,6 +87,7 @@ public class UserService implements UserDetailsService {
      */
     @Transactional
     public List<UserResponseDTO> getUsers(String search,Pageable pageable){
+        //TODO Remove paging from Users (don't forget to update tests)
         Page<User> users;
         if(search.isEmpty()){
             users = userRepository.findAll(pageable);
@@ -130,7 +131,7 @@ public class UserService implements UserDetailsService {
      * @return                           The user that was changed.
      * @throws UsernameNotFoundException No user with username was found.
      */
-    public UserResponseDTO changePassword(UserChangePasswordRequestDTO userDTO) throws UsernameNotFoundException {
+    public UserResponseDTO changePassword(UserChangePasswordRequestDTO userDTO) {
         User user = loadUserByUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
         userRepository.save(user);
