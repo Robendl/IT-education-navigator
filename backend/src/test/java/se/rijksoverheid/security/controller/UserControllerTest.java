@@ -116,7 +116,7 @@ class UserControllerTest {
     @Test
     void testResetUserPasswordUserNotFound() {
         long id = 1;
-        when(mockUserService.resetPassword(anyLong())).thenThrow(EntityNotFoundException.class);
-        assertEquals(ResponseEntity.notFound().build(), userController.resetUserPassword(id));
+        when(mockUserService.resetPassword(anyLong())).thenThrow(NotFoundException.class);
+        assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(id));
     }
 }
