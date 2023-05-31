@@ -80,21 +80,21 @@ class UserControllerTest {
     void testChangeUserPasswordSuccess() {
         UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
-        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenReturn(mockUserResponse);
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenReturn(mockUserResponse);
         assertEquals(ResponseEntity.ok(mockUserResponse), userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
     @Test
     void testChangeUserPasswordUserDisabled() {
         UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
-        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(DisabledException.class);
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(DisabledException.class);
         assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
     @Test
     void testChangeUserPasswordBadCredentials() {
         UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
-        when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(BadCredentialsException.class);
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(BadCredentialsException.class);
         assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
@@ -109,14 +109,14 @@ class UserControllerTest {
     void testResetUserPasswordSuccess() {
         long id = 1;
         UserResetPasswordResponseDTO mockUserResetPasswordResponse = mock(UserResetPasswordResponseDTO.class);
-        when(mockUserService.resetPassword(anyLong())).thenReturn(mockUserResetPasswordResponse);
+        when(mockUserService.resetPassword(id)).thenReturn(mockUserResetPasswordResponse);
         assertEquals(ResponseEntity.ok(mockUserResetPasswordResponse), userController.resetUserPassword(id));
     }
 
     @Test
     void testResetUserPasswordUserNotFound() {
         long id = 1;
-        when(mockUserService.resetPassword(anyLong())).thenThrow(NotFoundException.class);
+        when(mockUserService.resetPassword(id)).thenThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(id));
     }
 }
