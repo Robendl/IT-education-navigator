@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -43,7 +42,7 @@ class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        when(mockUserService.save(any(UserRequestDTO.class))).thenReturn(mockUserRequest);
+        when(mockUserService.save(mockUserRequest)).thenReturn(mockUserRequest);
         assertEquals(ResponseEntity.status(HttpStatus.CREATED).build(),authenticationController.registerUser(mockUserRequest));
     }
 

@@ -47,7 +47,7 @@ class UserControllerTest {
         long id = 1;
         UserPermRequestDTO mockUserPermRequest = mock(UserPermRequestDTO.class);
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
-        when(mockUserService.editUserPerms(anyLong(),any(UserPermRequestDTO.class))).thenReturn(mockUserResponse);
+        when(mockUserService.editUserPerms(id,mockUserPermRequest)).thenReturn(mockUserResponse);
         assertDoesNotThrow(() -> {
             userController.editUserPermissions(id,mockUserPermRequest);
         });
