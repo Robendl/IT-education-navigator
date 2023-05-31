@@ -130,7 +130,7 @@ public class UserService implements UserDetailsService {
      * @return                           The user that was changed.
      * @throws UsernameNotFoundException No user with username was found.
      */
-    public UserResponseDTO changePassword(UserChangePasswordRequestDTO userDTO) throws UsernameNotFoundException {
+    public UserResponseDTO changePassword(UserChangePasswordRequestDTO userDTO) {
         User user = loadUserByUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
         userRepository.save(user);

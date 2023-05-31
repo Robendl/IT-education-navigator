@@ -76,7 +76,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testChangeUserPasswordSuccess() throws Exception {
+    void testChangeUserPasswordSuccess() {
         UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
         when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenReturn(mockUserResponse);
@@ -98,7 +98,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testChangeUserPasswordUsernameNotFound() throws Exception {
+    void testChangeUserPasswordUsernameNotFound() {
         UserChangePasswordRequestDTO mockUserChangePasswordRequest = mock(UserChangePasswordRequestDTO.class);
         when(mockUserService.changePassword(any(UserChangePasswordRequestDTO.class))).thenThrow(UsernameNotFoundException.class);
         assertEquals(ResponseEntity.notFound().build(), userController.changeUserPassword(mockUserChangePasswordRequest));
