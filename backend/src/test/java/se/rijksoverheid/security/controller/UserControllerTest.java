@@ -135,7 +135,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testResetUserNotResetOwnPassword() {
+    void testResetUserPasswordNotResetOwnPassword() {
         long idAdmin = 1;
         long idUser = 1;
         String username = "test@email.com";
