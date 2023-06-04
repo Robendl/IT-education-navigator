@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -76,7 +77,10 @@ class UserControllerTest {
     void testResetUserPasswordSuccess() {
         long id = 1;
         when(mockUserService.resetPassword(id)).thenReturn(mockUserResetPasswordResponse);
-        assertEquals(ResponseEntity.ok(mockUserResetPasswordResponse), userController.resetUserPassword(id));
+        ResponseEntity<UserResetPasswordResponseDTO> responseEntity = userController.resetUserPassword(id);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(mockUserResetPasswordResponse, responseEntity.getBody());
+
     }
 
     @Test
