@@ -8,24 +8,30 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
+import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.security.business.UserService;
+import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationControllerTest {
+class AuthenticationControllerTest {
 
     @Mock
     private UserService mockUserService;
+    @Mock
+    AuthenticationManager authenticationManager;
+    @Mock
+    JwtTokenUtil jwtTokenUtil;
 
     @InjectMocks
     private AuthenticationController authenticationController;
@@ -36,8 +42,7 @@ public class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        when(mockUserService.isValidEmailAddress(email)).thenReturn(true);
-        when(mockUserService.save(any(UserRequestDTO.class))).thenReturn(mockUserRequest);
+        when(mockUserService.save(mockUserRequest)).thenReturn(mockUserRequest);
         assertEquals(ResponseEntity.status(HttpStatus.CREATED).build(),authenticationController.registerUser(mockUserRequest));
     }
 
@@ -47,7 +52,7 @@ public class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(true);
-        assertEquals("Emailadres wordt al gebruikt",authenticationController.registerUser(mockUserRequest).getBody());
+        assertThrows(EntityConflictException.class, ()-> authenticationController.registerUser(mockUserRequest));
     }
 
     @Test
@@ -56,8 +61,8 @@ public class AuthenticationControllerTest {
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         when(mockUserRequest.getUsername()).thenReturn(email);
         when(mockUserService.existsByUsername(email)).thenReturn(false);
-        when(mockUserService.isValidEmailAddress(email)).thenReturn(false);
-        assertEquals("Geen geldig emailadres ingevoerd",authenticationController.registerUser(mockUserRequest).getBody());
+        doThrow(new BadRequestException("")).when(mockUserService).checkEmailAddress(email);
+        assertThrows(BadRequestException.class, () -> authenticationController.registerUser(mockUserRequest));
     }
 
     @Test
@@ -66,13 +71,10 @@ public class AuthenticationControllerTest {
         HttpServletResponse mockHttpServletResponse = mock(HttpServletResponse.class);
         UserRequestDTO mockUserRequest = mock(UserRequestDTO.class);
         User.Role mockRole = mock(User.Role.class);
+        User mockUser = mock(User.class);
+        when(mockUser.getRole()).thenReturn(mockRole);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
         when(mockUserRequest.getUsername()).thenReturn(username);
-
-        try {
-            assertEquals(mockRole, authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse));
-
-        } catch (Exception e) {
-
-        }
+        assertEquals(mockRole, Objects.requireNonNull(authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse).getBody()).getRole());
     }
 }

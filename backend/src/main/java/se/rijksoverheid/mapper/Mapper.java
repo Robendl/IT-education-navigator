@@ -16,6 +16,10 @@ public abstract class Mapper {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
     }
 
+    private Mapper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Calls the map function on a ModelMapper object.
      * @param source            source object

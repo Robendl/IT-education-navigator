@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.config.JwtTokenUtil;
 import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
@@ -19,7 +18,6 @@ import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.model.User;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -40,13 +38,11 @@ public class AuthenticationController {
      * @return          Created HTTP Status, or Bad Request HTTP Status if username is already in use.
      */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
+    public ResponseEntity<String> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
         if(userService.existsByUsername(userDTO.getUsername())) {
-            return ResponseEntity.badRequest().body("Emailadres wordt al gebruikt");
+            throw new EntityConflictException("Email-address is already in use");
         }
-        if(!userService.isValidEmailAddress(userDTO.getUsername())) {
-            return ResponseEntity.badRequest().body("Geen geldig emailadres ingevoerd");
-        }
+        userService.checkEmailAddress(userDTO.getUsername());
         userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -55,24 +51,14 @@ public class AuthenticationController {
      * Login endpoint
      * @param userDTO   Data Transfer Object containing login info
      * @return          Data Transfer Object containing JwtToken and role of user
-     * @throws Exception
      */
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody @Validated UserRequestDTO userDTO,
-                                                       HttpServletResponse response) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword())
-            );
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
+    public ResponseEntity<UserResponseDTO> createAuthenticationToken(@RequestBody @Validated UserRequestDTO userDTO,
+                                                       HttpServletResponse response) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword()));
         User user = userService.loadUserByUsername(userDTO.getUsername());
         String token = jwtTokenUtil.generateToken(user);
         response.addHeader("Set-Cookie", "jwt=" + token + "; Path=/; Secure; HttpOnly; SameSite=strict");
-
         UserResponseDTO userResponse = new UserResponseDTO();
         userResponse.setRole(user.getRole());
         return ResponseEntity.ok(userResponse);

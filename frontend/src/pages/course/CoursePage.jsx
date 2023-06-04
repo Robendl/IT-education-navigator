@@ -2,7 +2,7 @@ import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { propertyTranslations } from "config/translations";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams} from "react-router-dom";
 import CourseLoader from "services/CourseLoader";
 
 import "./CoursePage.css";
@@ -14,6 +14,9 @@ export default function CoursePage() {
   const { courseId } = useParams();
   const overlay = useContext(OverlayContext);
   const user = useContext(UserContext);
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   /* Get the course information on page load */
   useEffect(() => {
@@ -32,9 +35,14 @@ export default function CoursePage() {
     overlay.openDeleteCourse(course);
   }
 
-  const handleGoBack = () => {
-    window.history.back();
-  };
+  /* Function that will redirect the user back to the overview page */
+  function handleGoBack() {
+    if (location.state && location.state.goBack) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  }
 
   /* CoursePage body */
   return (
@@ -45,9 +53,9 @@ export default function CoursePage() {
           {course.archived && <span className="archived-tag">(Gearchiveerd)</span>}
         </div>
       </div>
-      <div className="layout">
-        <button className="back-button" onClick={handleGoBack}>Ga terug</button>
-        <div className="course-page-body page-wide">
+      <div className="layout page-wide">
+        <button className="back-button" onClick={handleGoBack}>Terug naar overzicht</button>
+        <div className="course-page-body">
           <h3>Gegevens:</h3>
           {Object.keys(course).filter(key => !(["name", "id", "archived", "province"].includes(key)))
             .map(key => <CourseProperty keyName={key} key={key} course={course} value={course[key]} />)}
@@ -77,6 +85,9 @@ function CourseProperty({ keyName, value, course }) {
         ||
         (["housekeepingRelated", "collaboration"].includes(keyName) &&
           <><b>{propertyTranslations[keyName]}: </b>{value ? "ja" : "nee"}</>)
+        ||
+        (keyName === "web" &&
+            <><b>{propertyTranslations[keyName]}: </b><a href={value} target="_blank" rel="noreferrer">{value}</a></>)
         ||
         <><b>{propertyTranslations[keyName]}: </b>{value}</>
       }

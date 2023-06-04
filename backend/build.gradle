@@ -2,6 +2,18 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "org.sonarqube" version "4.0.0.2929"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "Rijksoverheid")
+        property("sonar.projectName", "Rijksoverheid")
+        property("sonar.organization", "se")
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.token", "sqp_ba689b476336ad3f3d0cf804951e9fd31a538f80")
+        property("sonar.tests", "./src/test/")
+    }
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -42,6 +54,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mockito:mockito-inline:3.12.4'
 //    testImplementation 'org.springframework.security:spring-security-test'

@@ -49,6 +49,15 @@
   height: 40px;
 }
 
+.course-page .layout .back-button {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  text-decoration: none;
+  margin-top: 10px;
+  color: #154273;
+}
+
 .course-page .layout .course-page-body {
   display: flex;
   flex-direction: column;
@@ -56,6 +65,13 @@
   gap: 5px;
   font-size: 1.1em;
   margin-top: 30px;
+  width: 0;
+  flex-grow: 1;
+}
+
+.course-page .layout .course-page-body .course-property {
+  width: 100%;
+  word-wrap: break-word;
 }
 
 .course-page .layout .course-page-body .course-actions {
