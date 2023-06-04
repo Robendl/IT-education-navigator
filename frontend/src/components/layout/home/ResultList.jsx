@@ -64,7 +64,7 @@ export default function ResultList() {
 
   /* ResultList body */
   return (
-    <div className="result-list">
+    <div className="result-list" data-testid="result-list">
       <div className="result-list-header">
         <span><b>{resultCount}</b> {getResultText(resultCount)}</span>
         {searchParams.has("search") &&
@@ -232,10 +232,10 @@ function Result({ entry }) {
 
   /* Result body */
   return (
-    <div className={`result ${entry["archived"] ? "archived" : ""}`} ref={resultElement}>
+    <div className={`result ${entry["archived"] ? "archived" : ""}`} ref={resultElement} data-testid="result">
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
-        <Link to={`/course/${entry.id}`} state={{goBack: true}} className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
+        <Link to={`/course/${entry.id}`} state={{ goBack: true }} className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
 
         { /* Edit button */
           (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&
@@ -267,7 +267,7 @@ function Result({ entry }) {
 function ToolTipButton({ title, buttonClass, iconClass, onClick, hasRedHover, iconName }) {
   return (
     <Tooltip title={title}>
-      <button className={`${buttonClass} ${hasRedHover ? "red-hover-button" : ""}`} onClick={onClick}><span className={`material-symbols-outlined ${iconClass}`}>{iconName}</span></button>
+      <button className={`${buttonClass} ${hasRedHover ? "red-hover-button" : ""}`} onClick={onClick} data-testid={buttonClass}><span className={`material-symbols-outlined ${iconClass}`}>{iconName}</span></button>
     </Tooltip>
   )
 }
