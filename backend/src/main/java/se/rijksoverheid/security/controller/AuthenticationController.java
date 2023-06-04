@@ -5,16 +5,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.config.JwtTokenUtil;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
+import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * Holds the endpoints related to authentication
@@ -57,5 +62,22 @@ public class AuthenticationController {
         UserResponseDTO userResponse = new UserResponseDTO();
         userResponse.setRole(user.getRole());
         return ResponseEntity.ok(userResponse);
+    }
+
+    /**
+     * Change a user's password
+     * @param userChangePasswordDTO     The info needed to change.
+     * @return                          The user that was changed
+     */
+    @PutMapping("/password")
+    public ResponseEntity<UserResponseDTO> changeUserPassword(
+            @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
+    ) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                        userChangePasswordDTO.getUsername(),
+                        userChangePasswordDTO.getPassword()
+                )
+        );
+        return ResponseEntity.ok(userService.changePassword(userChangePasswordDTO));
     }
 }
