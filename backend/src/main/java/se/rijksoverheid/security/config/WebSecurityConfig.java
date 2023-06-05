@@ -1,6 +1,5 @@
 package se.rijksoverheid.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,19 +7,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 import se.rijksoverheid.security.model.User;
 
 import java.util.Arrays;
@@ -34,21 +35,8 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @Autowired
-    private UserDetailsService userService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -56,8 +44,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManagerBean() {
-        return new ProviderManager(Collections.singletonList(authenticationProvider()));
+    public AuthenticationManager authenticationManagerBean(UserDetailsService userService, PasswordEncoder passwordEncoder) {
+        return new ProviderManager(Collections.singletonList(authenticationProvider(userService, passwordEncoder)));
     }
 
     /**
@@ -67,11 +55,15 @@ public class WebSecurityConfig {
      * @throws Exception
      */
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filterChain(
+            HttpSecurity http,
+            AuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            OncePerRequestFilter jwtRequestFilter) throws Exception {
         final String ADMIN = String.valueOf(User.Role.ADMIN);
         final String DATA_MANAGER = String.valueOf(User.Role.DATA_MANAGER);
         http.cors().and()
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+                .csrf().disable()//csrfTokenRepository(cookieCsrfTokenRepository())
+//                .ignoringAntMatchers("/auth/**").and()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "user/password/{id}/reset").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.PUT, "/user/password/{id}/change").authenticated()
@@ -81,11 +73,19 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority(ADMIN, DATA_MANAGER)
                 .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority(ADMIN, DATA_MANAGER)
                 .anyRequest().authenticated().and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public CookieCsrfTokenRepository cookieCsrfTokenRepository() {
+        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repository.setSecure(true);
+        repository.setCookiePath("/");
+        return repository;
     }
 
     @Bean

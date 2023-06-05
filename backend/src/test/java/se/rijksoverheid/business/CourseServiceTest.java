@@ -140,25 +140,25 @@ class CourseServiceTest {
 //        }
 //    }
 
-//    @Test
-//    void testEditCourse_DifferentProvince() {
-//        long courseId = 1;
-//        long provinceId = 1, newProvinceId = 2;
-//        CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
-//        Province newProvince = mock(Province.class);
-//
-//        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
-//
-//        //simulate different id's
-//        when(mockCourseRequest.getProvinceId()).thenReturn(newProvinceId);
-//        when(mockCourse.getProvince()).thenReturn(mockProvince);
-//        when(mockProvince.getId()).thenReturn(provinceId);
-//
-//        when(mockProvinceRepository.findById(newProvinceId)).thenReturn(Optional.of(newProvince));
-//        when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
-//
-//        assertEquals(mockCourse, courseService.edit(courseId, mockCourseRequest));
-//    }
+    @Test
+    void testEditCourse_DifferentProvince() {
+        long courseId = 1;
+        long provinceId = 1, newProvinceId = 2;
+        CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
+        Province newProvince = mock(Province.class);
+
+        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
+
+        //simulate different id's
+        when(mockCourseRequest.getProvinceId()).thenReturn(newProvinceId);
+        when(mockCourse.getProvince()).thenReturn(mockProvince);
+        when(mockProvince.getId()).thenReturn(provinceId);
+
+        when(mockProvinceRepository.findById(newProvinceId)).thenReturn(Optional.of(newProvince));
+        when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
+
+        assertEquals(mockCourse, courseService.edit(courseId, mockCourseRequest));
+    }
 
     @Test
     void testDeleteById() {

@@ -14,6 +14,7 @@ import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.model.User;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -53,7 +54,12 @@ public class AuthenticationController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword()));
         User user = userService.loadUserByUsername(userDTO.getUsername());
         String token = jwtTokenUtil.generateToken(user);
-        response.addHeader("Set-Cookie", "jwt=" + token + "; Path=/; Secure; HttpOnly; SameSite=strict");
+        Cookie cookie = new Cookie("jwt", token);
+        cookie.setPath("/rijksoverheid/api");
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+//        response.addHeader("Set-Cookie", "jwt=" + token + "; Path=/; Secure; HttpOnly; SameSite=strict");
         UserResponseDTO userResponse = new UserResponseDTO();
         userResponse.setRole(user.getRole());
         return ResponseEntity.ok(userResponse);

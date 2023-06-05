@@ -14,6 +14,7 @@ import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.model.Course;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -90,7 +91,8 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
-            @RequestBody @Valid CourseRequestDTO courseDTO) {
+            @RequestBody @Valid CourseRequestDTO courseDTO,
+            HttpServletRequest request) {
         return ResponseEntity.ok(courseService.edit(id, courseDTO));
     }
 
