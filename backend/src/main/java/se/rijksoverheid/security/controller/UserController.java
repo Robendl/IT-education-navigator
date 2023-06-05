@@ -84,8 +84,8 @@ public class UserController {
      */
     @PutMapping("/password/{id}/reset")
     public ResponseEntity<UserResetPasswordResponseDTO> resetUserPassword(
-        Authentication authentication,
-        @PathVariable long id) {
+            Authentication authentication,
+            @PathVariable long id) {
         if (id == userService.loadUserByUsername(authentication.getName()).getId()) {
             throw new BadRequestException("Het eigen wachtwoord mag niet gereset worden");
         }
