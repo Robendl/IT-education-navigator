@@ -14,7 +14,6 @@ import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.filter.CourseFilter;
 import se.rijksoverheid.model.Course;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
