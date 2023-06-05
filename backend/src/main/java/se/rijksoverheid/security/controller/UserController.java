@@ -61,24 +61,7 @@ public class UserController {
     }
 
     /**
-     * Change a user's password
-     * @param userChangePasswordDTO     The info needed to change.
-     * @return                          The user that was changed
-     */
-    @PutMapping("/password")
-    public ResponseEntity<UserResponseDTO> changeUserPassword(
-            @RequestBody @Valid UserChangePasswordRequestDTO userChangePasswordDTO
-    ) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        userChangePasswordDTO.getUsername(),
-                        userChangePasswordDTO.getPassword()
-                )
-        );
-        return ResponseEntity.ok(userService.changePassword(userChangePasswordDTO));
-    }
-
-    /**
-     * Change a user's password
+     * Reset a user's password
      * @param id            ID of user to be changed.
      * @return              The user that was changed
      */

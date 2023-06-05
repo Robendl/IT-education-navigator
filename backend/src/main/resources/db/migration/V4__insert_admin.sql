@@ -1,1 +1,1 @@
-INSERT INTO users (username, password, role) VALUES ('Cees.Vegter@rijksoverheid.nl', '$2a$10$j5h.CPv3i71qTqO7WMVNouf0p7dagt2Rj2ShcvKuJiJ6tKnh9XfM2', 'ADMIN')
+INSERT INTO users (username, password, role) VALUES ('cees.vegter@rijksoverheid.nl', '$2a$10$j5h.CPv3i71qTqO7WMVNouf0p7dagt2Rj2ShcvKuJiJ6tKnh9XfM2', 'ADMIN')

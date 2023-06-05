@@ -1,25 +1,30 @@
 package se.rijksoverheid.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 import se.rijksoverheid.security.model.User;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,52 +33,36 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @Autowired
-    private UserDetailsService userService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-
-    /**
-     * Configures implementation of UserDetailsService (UserService) and what password encoder to use.
-     * @param auth          authentication manager builder.
-     * @throws Exception    if an error occurs when adding the UserService to the configuration.
-     */
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+public class WebSecurityConfig {
+    @Bean
+    public AuthenticationProvider authenticationProvider(UserDetailsService userService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        return authenticationProvider;
     }
 
-    /**
-     * Sets up the Authentication Manager Bean to be used by Spring Security.
-     * @return AuthenticationManagerBean
-     * @throws Exception
-     */
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManagerBean(UserDetailsService userService, PasswordEncoder passwordEncoder) {
+        return new ProviderManager(Collections.singletonList(authenticationProvider(userService, passwordEncoder)));
     }
 
     /**
      * Configures the security settings. Sets which endpoints need which roles and specifies classes to be used in the
      * security process.
-     * @param httpSecurity the {@link HttpSecurity} to modify
+     * @param http the {@link HttpSecurity} to modify
      * @throws Exception
      */
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    protected SecurityFilterChain filterChain(
+            HttpSecurity http,
+            AuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            OncePerRequestFilter jwtRequestFilter) throws Exception {
         final String ADMIN = String.valueOf(User.Role.ADMIN);
         final String DATA_MANAGER = String.valueOf(User.Role.DATA_MANAGER);
-        httpSecurity.cors().and().csrf().disable()
+        http.cors().and()
+                .csrf().csrfTokenRepository(cookieCsrfTokenRepository()).and()
+//                .ignoringAntMatchers("/auth/**").and()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "user/password/{id}/reset").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.PUT, "/user/password/{id}/change").authenticated()
@@ -83,10 +72,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority(ADMIN, DATA_MANAGER)
                 .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority(ADMIN, DATA_MANAGER)
                 .anyRequest().authenticated().and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+
+    @Bean
+    public CookieCsrfTokenRepository cookieCsrfTokenRepository() {
+        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repository.setSecure(true);
+        repository.setCookiePath("/");
+        return repository;
     }
 
     @Bean

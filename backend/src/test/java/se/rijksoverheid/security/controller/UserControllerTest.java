@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -43,8 +44,6 @@ class UserControllerTest {
     @Mock
     private UserResponseDTO mockUserResponse;
     @Mock
-    private UserChangePasswordRequestDTO mockUserChangePasswordRequest;
-    @Mock
     private UserResetPasswordResponseDTO mockUserResetPasswordResponse;
     @InjectMocks
     private UserController userController;
@@ -77,31 +76,6 @@ class UserControllerTest {
         long id = 1;
         when(mockUserService.editUserPerms(id, mockUserPermRequest)).thenThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, ()-> userController.editUserPermissions(id, mockUserPermRequest));
-    }
-
-    @Test
-    void testChangeUserPasswordSuccess() {
-        UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
-        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenReturn(mockUserResponse);
-        assertEquals(ResponseEntity.ok(mockUserResponse), userController.changeUserPassword(mockUserChangePasswordRequest));
-    }
-
-    @Test
-    void testChangeUserPasswordUserDisabled() {
-        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(DisabledException.class);
-        assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
-    }
-
-    @Test
-    void testChangeUserPasswordBadCredentials() {
-        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(BadCredentialsException.class);
-        assertThrows(Exception.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
-    }
-
-    @Test
-    void testChangeUserPasswordUsernameNotFound() {
-        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(NotFoundException.class);
-        assertThrows(NotFoundException.class, ()-> userController.changeUserPassword(mockUserChangePasswordRequest));
     }
 
     @Test

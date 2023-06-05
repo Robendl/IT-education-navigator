@@ -8,11 +8,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.config.JwtTokenUtil;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
+import se.rijksoverheid.security.dto.UserResponseDTO;
 import se.rijksoverheid.security.model.User;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +37,8 @@ class AuthenticationControllerTest {
     AuthenticationManager authenticationManager;
     @Mock
     JwtTokenUtil jwtTokenUtil;
+    @Mock
+    private UserChangePasswordRequestDTO mockUserChangePasswordRequest;
 
     @InjectMocks
     private AuthenticationController authenticationController;
@@ -76,5 +83,32 @@ class AuthenticationControllerTest {
         when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
         when(mockUserRequest.getUsername()).thenReturn(username);
         assertEquals(mockRole, Objects.requireNonNull(authenticationController.createAuthenticationToken(mockUserRequest, mockHttpServletResponse).getBody()).getRole());
+    }
+
+    @Test
+    void testChangeUserPasswordSuccess() {
+        UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenReturn(mockUserResponse);
+        ResponseEntity<UserResponseDTO> responseEntity = authenticationController.changeUserPassword(mockUserChangePasswordRequest);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(mockUserResponse, responseEntity.getBody());
+    }
+
+    @Test
+    void testChangeUserPasswordUserDisabled() {
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(DisabledException.class);
+        assertThrows(Exception.class, ()-> authenticationController.changeUserPassword(mockUserChangePasswordRequest));
+    }
+
+    @Test
+    void testChangeUserPasswordBadCredentials() {
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(BadCredentialsException.class);
+        assertThrows(Exception.class, ()-> authenticationController.changeUserPassword(mockUserChangePasswordRequest));
+    }
+
+    @Test
+    void testChangeUserPasswordUsernameNotFound() {
+        when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenThrow(NotFoundException.class);
+        assertThrows(NotFoundException.class, ()-> authenticationController.changeUserPassword(mockUserChangePasswordRequest));
     }
 }

@@ -36,7 +36,7 @@ function login(credentials) {
           }
           localStorage.setItem("user", JSON.stringify({
             role: userRoles[response.data.role],
-            name: credentials.username
+            name: response.data.username
           }));
           resolve()
         }
@@ -108,7 +108,7 @@ function register(userInfo) {
 function changePassword(userInfo) {
   userInfo.username = getUsername();
   return new Promise((resolve, reject) => {
-    http.put('/user/password', userInfo)
+    http.put('/auth/password', userInfo)
         .then(response => {
           console.log(response);
           resolve()

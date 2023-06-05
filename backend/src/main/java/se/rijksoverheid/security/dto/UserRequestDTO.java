@@ -15,4 +15,8 @@ public class UserRequestDTO {
     @NotNull
     @NotBlank
     private String password;
+
+    public void setUsername(String username) {
+        this.username = username.toLowerCase();
+    }
 }
