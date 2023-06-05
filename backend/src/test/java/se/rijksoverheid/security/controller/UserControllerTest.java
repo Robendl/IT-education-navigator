@@ -12,12 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.Authentication;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResetPasswordResponseDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
+import se.rijksoverheid.security.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,8 @@ class UserControllerTest {
     private UserService mockUserService;
     @Mock
     private AuthenticationManager mockAuthenticationManager;
+    @Mock
+    private Authentication authentication;
     @Mock
     private UserPermRequestDTO mockUserPermRequest;
     @Mock
@@ -75,18 +80,45 @@ class UserControllerTest {
 
     @Test
     void testResetUserPasswordSuccess() {
-        long id = 1;
-        when(mockUserService.resetPassword(id)).thenReturn(mockUserResetPasswordResponse);
-        ResponseEntity<UserResetPasswordResponseDTO> responseEntity = userController.resetUserPassword(id);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(mockUserResetPasswordResponse, responseEntity.getBody());
+        long idAdmin = 1;
+        long idUser = 2;
+        String username = "test@email.com";
+        User mockUser = mock(User.class);
 
+        when(authentication.getName()).thenReturn(username);
+        when(mockUser.getId()).thenReturn(idAdmin);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
+        when(mockUserService.resetPassword(idUser)).thenReturn(mockUserResetPasswordResponse);
+
+        assertEquals(ResponseEntity.ok(mockUserResetPasswordResponse), userController.resetUserPassword(authentication, idUser));
     }
 
     @Test
     void testResetUserPasswordUserNotFound() {
-        long id = 1;
-        when(mockUserService.resetPassword(id)).thenThrow(NotFoundException.class);
-        assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(id));
+        long idAdmin = 1;
+        long idUser = 2;
+        String username = "test@email.com";
+        User mockUser = mock(User.class);
+
+        when(authentication.getName()).thenReturn(username);
+        when(mockUser.getId()).thenReturn(idAdmin);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
+        when(mockUserService.resetPassword(idUser)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, ()-> userController.resetUserPassword(authentication, idUser));
+    }
+
+    @Test
+    void testResetUserPasswordNotResetOwnPassword() {
+        long idAdmin = 1;
+        long idUser = 1;
+        String username = "test@email.com";
+        User mockUser = mock(User.class);
+
+        when(authentication.getName()).thenReturn(username);
+        when(mockUser.getId()).thenReturn(idAdmin);
+        when(mockUserService.loadUserByUsername(username)).thenReturn(mockUser);
+
+        assertThrows(BadRequestException.class, ()-> userController.resetUserPassword(authentication, idUser));
     }
 }

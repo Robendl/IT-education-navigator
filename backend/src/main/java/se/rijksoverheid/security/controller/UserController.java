@@ -7,7 +7,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.security.business.UserService;
 import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
@@ -65,7 +67,11 @@ public class UserController {
      */
     @PutMapping("/password/{id}/reset")
     public ResponseEntity<UserResetPasswordResponseDTO> resetUserPassword(
+            Authentication authentication,
             @PathVariable long id) {
+        if (id == userService.loadUserByUsername(authentication.getName()).getId()) {
+            throw new BadRequestException("Het eigen wachtwoord mag niet gereset worden");
+        }
         return ResponseEntity.ok(userService.resetPassword(id));
     }
 }
