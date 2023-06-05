@@ -91,8 +91,7 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<Course> editCourse(
             @PathVariable long id,
-            @RequestBody @Valid CourseRequestDTO courseDTO,
-            HttpServletRequest request) {
+            @RequestBody @Valid CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.edit(id, courseDTO));
     }
 
