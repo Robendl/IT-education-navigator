@@ -36,7 +36,7 @@ function login(credentials) {
           }
           localStorage.setItem("user", JSON.stringify({
             role: userRoles[response.data.role],
-            name: credentials.username
+            name: response.data.username
           }));
           resolve()
         }

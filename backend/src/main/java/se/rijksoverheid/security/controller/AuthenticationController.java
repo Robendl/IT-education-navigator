@@ -67,6 +67,7 @@ public class AuthenticationController {
 //        response.addHeader("Set-Cookie", "jwt=" + token + "; Path=/; Secure; HttpOnly; SameSite=strict");
         UserResponseDTO userResponse = new UserResponseDTO();
         userResponse.setRole(user.getRole());
+        userResponse.setUsername(user.getUsername());
         return ResponseEntity.ok(userResponse);
     }
 
