@@ -61,7 +61,7 @@ public class WebSecurityConfig {
         final String ADMIN = String.valueOf(User.Role.ADMIN);
         final String DATA_MANAGER = String.valueOf(User.Role.DATA_MANAGER);
         http.cors().and()
-                .csrf().disable()//csrfTokenRepository(cookieCsrfTokenRepository())
+                .csrf().csrfTokenRepository(cookieCsrfTokenRepository()).and()
 //                .ignoringAntMatchers("/auth/**").and()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "user/password/{id}/reset").hasAnyAuthority(ADMIN)
