@@ -24,6 +24,20 @@ export const errorCodes = {
   ERR_INVALID_ROLE: 4
 }
 
+/* Function that rejects a http error with a corresponding error code */
+function handleHttpError(error, reject) {
+  if (error.response && error.response.status === 404) {
+    reject(errorCodes.ERR_LOGIN_INVALID);
+  }
+  if (error.response && error.response.status === 409) {
+    reject(errorCodes.ERR_USERNAME_DUPLICATE);
+  }
+  if (error.code === "ERR_NETWORK") {
+    reject(errorCodes.ERR_NETWORK);
+  }
+  reject(errorCodes.ERR_OTHER);
+}
+
 /* Function for loggin in that accepts an object containing a "username" and "password" */
 /* Currently login information is stored in localStorage, which should be changed for security purposes */
 function login(credentials) {
@@ -40,18 +54,11 @@ function login(credentials) {
           }));
           resolve()
         }
-    }, (error) => {
-      if (error.response && error.response.status === 401) {
-        reject(errorCodes.ERR_LOGIN_INVALID)
-      }
-      if (error.code === "ERR_NETWORK") {
-        reject(errorCodes.ERR_NETWORK)
-      } else {
-        reject(error.code);
-      }
-    });
+      }, (error) => {
+        handleHttpError(error, reject);
+      });
   });
-    
+
 }
 
 /* Function for loggin out */
@@ -98,25 +105,29 @@ function getUsername() {
 
 /* Function for registering a user */
 function register(userInfo) {
-  return http
-    .post('/auth/register', userInfo)
+  return new Promise((resolve, reject) => {
+    return http
+      .post('/auth/register', userInfo)
       .then(response => {
-        console.log(response);
-    });
+        resolve(response);
+      }, (error) => {
+        handleHttpError(error, reject);
+      });
+  });
 }
 
 function changePassword(userInfo) {
   userInfo.username = getUsername();
   return new Promise((resolve, reject) => {
     http.put('/auth/password', userInfo)
-        .then(response => {
-          console.log(response);
-          resolve()
-        }, (error) => {
-          if (error.response && error.response.status === 401) {
-            reject(errorCodes.ERR_LOGIN_INVALID)
-          }
-        })
+      .then(response => {
+        console.log(response);
+        resolve()
+      }, (error) => {
+        if (error.response && error.response.status === 401) {
+          reject(errorCodes.ERR_LOGIN_INVALID)
+        }
+      })
   });
 }
 

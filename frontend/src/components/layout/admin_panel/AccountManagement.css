@@ -37,6 +37,12 @@
   align-items: stretch;
 }
 
+.account-management .account-management-body .error-message {
+  color: rgb(182, 42, 42);
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
 .account-management .account-table {
   border-collapse: collapse;
   table-layout: fixed;
