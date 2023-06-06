@@ -3,6 +3,8 @@ plugins {
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id "org.sonarqube" version "4.0.0.2929"
+    id 'jacoco'
+
 }
 
 sonarqube {
@@ -12,7 +14,8 @@ sonarqube {
         property("sonar.organization", "se")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqp_ba689b476336ad3f3d0cf804951e9fd31a538f80")
-        property("sonar.tests", "./src/test/")
+        property("sonar.tests", "src/test/")
+        property("sonar.jacoco.reportPaths", "build/jacoco/test.exec")
     }
 }
 
@@ -21,6 +24,12 @@ apply plugin: 'io.spring.dependency-management'
 group = 'se'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
 
 configurations {
     compileOnly {

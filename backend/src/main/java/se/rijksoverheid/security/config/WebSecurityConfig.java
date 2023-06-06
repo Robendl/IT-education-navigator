@@ -1,5 +1,10 @@
 package se.rijksoverheid.security.config;
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,6 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import se.rijksoverheid.security.model.User;
 
+import javax.crypto.SecretKey;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +40,8 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
+    private static final SecretKey secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -98,5 +106,15 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public JwtParser jwtParser() {
+        return Jwts.parserBuilder().setSigningKey(secret).build();
+    }
+
+    @Bean
+    public JwtBuilder jwtBuilder() {
+        return Jwts.builder().signWith(secret, SignatureAlgorithm.HS512);
     }
 }

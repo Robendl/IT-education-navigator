@@ -1,12 +1,11 @@
 package se.rijksoverheid.security.config;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtParser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +14,11 @@ import java.util.Map;
  * Utility class used for generating and checking JwtTokens.
  */
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtil {
     public static final long JWT_TOKEN_VALIDITY = (long) 3 * 60 * 60;
-
-    private static final SecretKey secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final JwtParser jwtParser;
+    private final JwtBuilder jwtBuilder;
 
     /**
      * Retrieves username from token.
@@ -26,7 +26,7 @@ public class JwtTokenUtil {
      * @return      username
      */
     public String getUsernameFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
+        return jwtParser.parseClaimsJws(token).getBody().getSubject();
     }
 
     /**
@@ -35,7 +35,7 @@ public class JwtTokenUtil {
      * @return          true if token is expired, false if not.
      */
     private Boolean isTokenExpired(String token) {
-        Date expiration = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getExpiration();
+        Date expiration = jwtParser.parseClaimsJws(token).getBody().getExpiration();
         return expiration.before(new Date());
     }
 
@@ -46,9 +46,8 @@ public class JwtTokenUtil {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(secret, SignatureAlgorithm.HS512).compact();
+        return jwtBuilder.setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000)).compact();
     }
 
     /**
