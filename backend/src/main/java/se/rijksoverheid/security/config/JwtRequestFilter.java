@@ -4,7 +4,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,7 +48,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
-        String jwtToken = getJwtFromCookies(request.getCookies());
+        String jwtToken = null;
+        if(request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals("jwt")) {
+                    jwtToken = cookie.getValue();
+                }
+            }
+        }
         try {
             String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -62,18 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
-            throw new JwtAuthenticationException("Invalid JWT token", e);
+            throw new JwtAuthenticationException("Exception occurred while validating JWT: ", e);
         }
-    }
-
-    private String getJwtFromCookies(Cookie[] cookies) {
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("jwt")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        throw new AuthenticationCredentialsNotFoundException("No JWT found in cookies");
     }
 }
