@@ -82,7 +82,7 @@ class JwtTokenUtilTest {
     void testValidateToken_InvalidToken() {
         String invalidToken = "invalidToken";
         doThrow(JwtException.class).when(spyJwtTokenUtil).getUsernameFromToken(invalidToken);
-        assertThrows(JwtException.class, () -> spyJwtTokenUtil.getUsernameFromToken(invalidToken));
+        assertFalse(spyJwtTokenUtil.validateToken(invalidToken, userDetails));
     }
 
     @Test
