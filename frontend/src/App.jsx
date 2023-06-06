@@ -1,9 +1,8 @@
 import logo from 'assets/svg/logo.svg';
 import MainHeader from 'components/layout/MainHeader';
 import Home from 'pages/home/Home';
-import Map from 'pages/map/Map';
 import LoginPage from 'pages/login/LoginPage';
-import {Routes, Route, Outlet, Link} from 'react-router-dom';
+import { Routes, Route, Outlet, Link } from 'react-router-dom';
 import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
 import { useEffect, useState } from 'react';
@@ -38,7 +37,6 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="course/:courseId" element={<CoursePage />}></Route>
-            <Route path="kaart" element={<Map />} />
             <Route path="admin" element={<AdminPanel />}>
               <Route path="accounts" element={<AccountManagement />} />
             </Route>
