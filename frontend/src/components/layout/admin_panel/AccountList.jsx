@@ -43,7 +43,7 @@ export default function AccountList() {
         </tr>
       </thead>
       <tbody>
-        {results.map((result, idx) => <AccountResult entry={result} key={idx} />)}
+        {results.map((result, idx) => <AccountResult entry={result} key={result["id"]} />)}
       </tbody>
     </table>
   )

@@ -2,8 +2,7 @@ import { CircularProgress } from '@mui/material';
 import CourseLoader from 'services/CourseLoader';
 import FormEntry from 'components/forms/FormEntry/FormEntry';
 import './EditItemForm.css'
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ProvinceLoader, { errorCodes } from 'services/ProvinceLoader';
 
 /* Form component for editing a course */

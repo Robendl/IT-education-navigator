@@ -155,15 +155,12 @@ function FilterOption({ name, selected = false, onSelect, onDeselect }) {
 
   /* Function that is called when the user interacts with the option */
   function onChange(e) {
-    switch (e.target.checked) {
-      case true:
-        ref.current.classList.add("checked");
-        onSelect();
-        break;
-      default:
-        ref.current.classList.remove("checked");
-        onDeselect();
-        break;
+    if (e.target && e.target.checked) {
+      ref.current.classList.add("checked");
+      onSelect();
+    } else {
+      ref.current.classList.remove("checked");
+      onDeselect();
     }
   }
 
