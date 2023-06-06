@@ -4,54 +4,65 @@ import io.jsonwebtoken.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import se.rijksoverheid.mapper.Mapper;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class JwtTokenUtilTest {
 
     @Mock
-    private JwtParser jwtParser;
+    private JwtParser mockJwtParser;
     @Mock
-    private JwtBuilder jwtBuilder;
-
-    @InjectMocks
+    private JwtBuilder mockJwtBuilder;
     private JwtTokenUtil jwtTokenUtil;
     @Mock
-    Jws<Claims> jws;
+    Jws<Claims> mockJws;
     @Mock
-    Claims claims;
+    Claims mockClaims;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        jwtTokenUtil = new JwtTokenUtil(jwtParser, jwtBuilder);
+        jwtTokenUtil = new JwtTokenUtil(mockJwtParser, mockJwtBuilder);
     }
 
     @Test
     void testGetUsernameFromToken() {
         String token = "token";
         String username = "username";
-        when(jws.getBody()).thenReturn(claims);
-        when(claims.getSubject()).thenReturn(username);
-        when(jwtParser.parseClaimsJws(token)).thenReturn(jws);
+        when(mockJws.getBody()).thenReturn(mockClaims);
+        when(mockClaims.getSubject()).thenReturn(username);
+        when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
         assertEquals(username, jwtTokenUtil.getUsernameFromToken(token));
     }
 
     @Test
     public void testGetUsernameFromToken_InvalidToken() {
         String invalidToken = "invalidToken";
-        when(jwtParser.parseClaimsJws(invalidToken)).thenThrow(JwtException.class);
+        when(mockJwtParser.parseClaimsJws(invalidToken)).thenThrow(JwtException.class);
         assertThrows(JwtException.class, () -> jwtTokenUtil.getUsernameFromToken(invalidToken));
     }
 
     @Test
-    void generateToken() {
+    void testGenerateToken() {
+        UserDetails userDetails = mock(UserDetails.class);
+        String username = "username";
+        String token = "token";
+        when(userDetails.getUsername()).thenReturn(username);
+        when(mockJwtBuilder.setClaims(any(Map.class))).thenReturn(mockJwtBuilder);
+        when(mockJwtBuilder.setSubject(username)).thenReturn(mockJwtBuilder);
+        when(mockJwtBuilder.setIssuedAt(Mockito.any())).thenReturn(mockJwtBuilder);
+        when(mockJwtBuilder.setExpiration(Mockito.any())).thenReturn(mockJwtBuilder);
+        when(mockJwtBuilder.compact()).thenReturn(token);
+        assertEquals(token, jwtTokenUtil.generateToken(userDetails));
     }
 
     @Test
-    void validateToken() {
+    void testValidateToken() {
     }
 }
