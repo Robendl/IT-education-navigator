@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Date;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class JwtTokenUtilTest {
 
@@ -20,15 +20,19 @@ class JwtTokenUtilTest {
     @Mock
     private JwtBuilder mockJwtBuilder;
     private JwtTokenUtil jwtTokenUtil;
+    private JwtTokenUtil spyJwtTokenUtil;
     @Mock
     Jws<Claims> mockJws;
     @Mock
     Claims mockClaims;
+    @Mock
+    UserDetails userDetails;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         jwtTokenUtil = new JwtTokenUtil(mockJwtParser, mockJwtBuilder);
+        spyJwtTokenUtil = spy(new JwtTokenUtil(mockJwtParser, mockJwtBuilder));
     }
 
     @Test
@@ -42,7 +46,7 @@ class JwtTokenUtilTest {
     }
 
     @Test
-    public void testGetUsernameFromToken_InvalidToken() {
+    void testGetUsernameFromToken_InvalidToken() {
         String invalidToken = "invalidToken";
         when(mockJwtParser.parseClaimsJws(invalidToken)).thenThrow(JwtException.class);
         assertThrows(JwtException.class, () -> jwtTokenUtil.getUsernameFromToken(invalidToken));
@@ -50,7 +54,6 @@ class JwtTokenUtilTest {
 
     @Test
     void testGenerateToken() {
-        UserDetails userDetails = mock(UserDetails.class);
         String username = "username";
         String token = "token";
         when(userDetails.getUsername()).thenReturn(username);
@@ -63,6 +66,35 @@ class JwtTokenUtilTest {
     }
 
     @Test
-    void testValidateToken() {
+    void testValidateToken_ValidTokenAndMatchingUserDetails() {
+        String token = "validToken";
+        String username = "testUser";
+        doReturn(username).when(spyJwtTokenUtil).getUsernameFromToken(token);
+        when(userDetails.getUsername()).thenReturn(username);
+        when(mockJws.getBody()).thenReturn(mockClaims);
+        when(mockClaims.getExpiration()).thenReturn(Date.from(new Date().toInstant().plusSeconds(1000)));
+        when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
+
+        assertTrue(spyJwtTokenUtil.validateToken(token, userDetails));
+    }
+
+    @Test
+    void testValidateToken_InvalidToken() {
+        String invalidToken = "invalidToken";
+        doThrow(JwtException.class).when(spyJwtTokenUtil).getUsernameFromToken(invalidToken);
+        assertThrows(JwtException.class, () -> spyJwtTokenUtil.getUsernameFromToken(invalidToken));
+    }
+
+    @Test
+    void testValidateToken_ExpiredToken() {
+        String token = "expiredToken";
+        String username = "testUser";
+        doReturn(username).when(spyJwtTokenUtil).getUsernameFromToken(token);
+        when(userDetails.getUsername()).thenReturn(username);
+        when(mockJws.getBody()).thenReturn(mockClaims);
+        when(mockClaims.getExpiration()).thenReturn(Date.from(new Date().toInstant().minusSeconds(1000)));
+        when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
+
+        assertFalse(spyJwtTokenUtil.validateToken(token, userDetails));
     }
 }
