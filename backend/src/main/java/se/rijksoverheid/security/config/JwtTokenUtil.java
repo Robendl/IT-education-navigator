@@ -1,7 +1,6 @@
 package se.rijksoverheid.security.config;
 
 import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,20 +27,6 @@ public class JwtTokenUtil {
      */
     public String getUsernameFromToken(String token) {
         return jwtParser.parseClaimsJws(token).getBody().getSubject();
-    }
-
-    /**
-     * Checks if token is expired.
-     * @param token     token
-     * @return          true if token is expired, false if not.
-     */
-    public Boolean isTokenExpired(String token) {
-        try {
-            Date expiration = jwtParser.parseClaimsJws(token).getBody().getExpiration();
-            return expiration.before(new Date());
-        } catch (JwtException e) {
-            return true;
-        }
     }
 
     /**

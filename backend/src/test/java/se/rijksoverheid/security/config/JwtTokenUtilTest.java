@@ -3,15 +3,18 @@ package se.rijksoverheid.security.config;
 import io.jsonwebtoken.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 class JwtTokenUtilTest {
 
@@ -63,32 +66,5 @@ class JwtTokenUtilTest {
         when(mockJwtBuilder.setExpiration(Mockito.any())).thenReturn(mockJwtBuilder);
         when(mockJwtBuilder.compact()).thenReturn(token);
         assertEquals(token, jwtTokenUtil.generateToken(userDetails));
-    }
-
-    @Test
-    void testIsTokenExpired_NotExpiredToken() {
-        String token = "validToken";
-        when(mockJws.getBody()).thenReturn(mockClaims);
-        when(mockClaims.getExpiration()).thenReturn(Date.from(new Date().toInstant().plusSeconds(1000)));
-        when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
-
-        assertFalse(spyJwtTokenUtil.isTokenExpired(token));
-    }
-
-    @Test
-    void testIsTokenExpired_InvalidToken() {
-        String invalidToken = "invalidToken";
-        doThrow(JwtException.class).when(mockJwtParser).parseClaimsJws(invalidToken);
-        assertTrue(jwtTokenUtil.isTokenExpired(invalidToken));
-    }
-
-    @Test
-    void testIsTokenExpired_ExpiredToken() {
-        String token = "expiredToken";
-        when(mockJws.getBody()).thenReturn(mockClaims);
-        when(mockClaims.getExpiration()).thenReturn(Date.from(new Date().toInstant().minusSeconds(1000)));
-        when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
-
-        assertTrue(spyJwtTokenUtil.isTokenExpired(token));
     }
 }

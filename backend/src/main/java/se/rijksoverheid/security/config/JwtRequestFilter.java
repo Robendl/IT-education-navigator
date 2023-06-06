@@ -1,5 +1,6 @@
 package se.rijksoverheid.security.config;
 
+import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -8,9 +9,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import se.rijksoverheid.exceptions.webexceptions.JwtAuthenticationException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -47,22 +50,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
         String jwtToken = getJwtFromCookies(request.getCookies());
-        String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username);
-            if (!jwtTokenUtil.isTokenExpired(jwtToken)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        try {
+            String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
+            chain.doFilter(request, response);
+        } catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
+            throw new JwtAuthenticationException("Invalid JWT token", e);
         }
-        chain.doFilter(request, response);
     }
-
-
 
     private String getJwtFromCookies(Cookie[] cookies) {
         if (cookies != null) {
