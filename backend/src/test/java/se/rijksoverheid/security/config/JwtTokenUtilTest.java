@@ -66,35 +66,29 @@ class JwtTokenUtilTest {
     }
 
     @Test
-    void testValidateToken_ValidTokenAndMatchingUserDetails() {
+    void testIsTokenExpired_NotExpiredToken() {
         String token = "validToken";
-        String username = "testUser";
-        doReturn(username).when(spyJwtTokenUtil).getUsernameFromToken(token);
-        when(userDetails.getUsername()).thenReturn(username);
         when(mockJws.getBody()).thenReturn(mockClaims);
         when(mockClaims.getExpiration()).thenReturn(Date.from(new Date().toInstant().plusSeconds(1000)));
         when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
 
-        assertTrue(spyJwtTokenUtil.validateToken(token, userDetails));
+        assertFalse(spyJwtTokenUtil.isTokenExpired(token));
     }
 
     @Test
-    void testValidateToken_InvalidToken() {
+    void testIsTokenExpired_InvalidToken() {
         String invalidToken = "invalidToken";
-        doThrow(JwtException.class).when(spyJwtTokenUtil).getUsernameFromToken(invalidToken);
-        assertFalse(spyJwtTokenUtil.validateToken(invalidToken, userDetails));
+        doThrow(JwtException.class).when(mockJwtParser).parseClaimsJws(invalidToken);
+        assertTrue(jwtTokenUtil.isTokenExpired(invalidToken));
     }
 
     @Test
-    void testValidateToken_ExpiredToken() {
+    void testIsTokenExpired_ExpiredToken() {
         String token = "expiredToken";
-        String username = "testUser";
-        doReturn(username).when(spyJwtTokenUtil).getUsernameFromToken(token);
-        when(userDetails.getUsername()).thenReturn(username);
         when(mockJws.getBody()).thenReturn(mockClaims);
         when(mockClaims.getExpiration()).thenReturn(Date.from(new Date().toInstant().minusSeconds(1000)));
         when(mockJwtParser.parseClaimsJws(token)).thenReturn(mockJws);
 
-        assertFalse(spyJwtTokenUtil.validateToken(token, userDetails));
+        assertTrue(spyJwtTokenUtil.isTokenExpired(token));
     }
 }

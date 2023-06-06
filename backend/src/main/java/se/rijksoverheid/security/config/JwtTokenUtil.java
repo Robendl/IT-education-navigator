@@ -35,9 +35,13 @@ public class JwtTokenUtil {
      * @param token     token
      * @return          true if token is expired, false if not.
      */
-    private Boolean isTokenExpired(String token) {
-        Date expiration = jwtParser.parseClaimsJws(token).getBody().getExpiration();
-        return expiration.before(new Date());
+    public Boolean isTokenExpired(String token) {
+        try {
+            Date expiration = jwtParser.parseClaimsJws(token).getBody().getExpiration();
+            return expiration.before(new Date());
+        } catch (JwtException e) {
+            return true;
+        }
     }
 
     /**
@@ -49,20 +53,5 @@ public class JwtTokenUtil {
         Map<String, Object> claims = new HashMap<>();
         return jwtBuilder.setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000)).compact();
-    }
-
-    /**
-     * Validates token
-     * @param token         token
-     * @param userDetails   user to be checked for.
-     * @return              true if token is valid, false if not.
-     */
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        try {
-            final String username = getUsernameFromToken(token);
-            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-        } catch (JwtException e) {
-            return false;
-        }
     }
 }
