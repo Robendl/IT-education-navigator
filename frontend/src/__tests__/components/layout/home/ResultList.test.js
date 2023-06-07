@@ -14,9 +14,9 @@ const mockLoadCoursesSingle = () => {
   });
 };
 
-const mockLoadCoursesMultiple = (count) => {
+const mockLoadCoursesMultiple = (count, filterObject) => {
   return new Promise((resolve, reject) => {
-    resolve(testCourses.slice(0, count));
+    resolve(testCourses.slice(0, count).filter(course => Object.keys(filterObject).every(key => course[key] === filterObject[key])));
   });
 };
 
@@ -51,6 +51,7 @@ describe("Edit Item Button", () => {
  * REQ-M-F6: There must be an interface to show the records.
  * REQ-M-F7: The interface must display the records as a list.
  * REQ-M-F8: All records must be displayed.
+ * REQ-M-F9: All archived records must be displayed.
  */
 describe("Result List", () => {
   it("should be visible", async () => {
@@ -61,11 +62,19 @@ describe("Result List", () => {
     expect(screen.getByTestId("result-list")).toBeInTheDocument();
   });
 
-  it.each([1, 2, 4])("should display all courses", async (count) => {
-    jest.spyOn(CourseLoader, "loadCourses").mockImplementation(() => mockLoadCoursesMultiple(count));
+  it.each([1, 2, 4])("should display all non-archived courses", async (count) => {
+    jest.spyOn(CourseLoader, "loadCourses").mockImplementation(() => mockLoadCoursesMultiple(count, {archived: false}));
     await act(async () => {
       render(<TestContainer><ResultList /></TestContainer>);
     });
-    expect(screen.getAllByTestId("result")).toHaveLength(count);
-  })
-})
+    expect(screen.queryAllByTestId("result")).toHaveLength(testCourses.slice(0,count).filter(entry => !entry.archived).length);
+  });
+
+  it.each([1, 2, 4])("should display all archived courses", async (count) => {
+    jest.spyOn(CourseLoader, "loadCourses").mockImplementation(() => mockLoadCoursesMultiple(count, {archived: true}));
+    await act(async () => {
+      render(<TestContainer><ResultList /></TestContainer>);
+    });
+    expect(screen.queryAllByTestId("result")).toHaveLength(testCourses.slice(0,count).filter(entry => entry.archived).length);
+  });
+});
