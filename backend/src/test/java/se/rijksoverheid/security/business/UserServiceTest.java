@@ -22,6 +22,7 @@ import se.rijksoverheid.security.model.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -178,5 +179,39 @@ class UserServiceTest {
         when(mockUserRequest.getUsername()).thenReturn(username);
         when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, ()-> userService.changePassword(mockUserRequest));
+    }
+
+    @Test
+    void testResetPassword() {
+        String REGEX = "^[A-Z0-9]*$";
+        String username = "admin@email.com";
+        String passwordOld = "passwordOld";
+        String passwordNew = "passwordNew";
+        int size = 12;
+
+        User user = new User();
+        long userId = user.getId();
+        user.setRole(User.Role.DATA_MANAGER);
+        user.setUsername(username);
+        user.setPassword(passwordOld);
+
+        when(mockUserRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(mockPasswordEncoder.encode(anyString())).thenReturn(passwordNew);
+
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<String> randomPasswordArgumentCaptor = ArgumentCaptor.forClass(String.class);
+
+        userService.resetPassword(userId);
+
+        verify(mockPasswordEncoder).encode(randomPasswordArgumentCaptor.capture());
+        String randomString1 = randomPasswordArgumentCaptor.getValue();
+        assertTrue(Pattern.compile(REGEX).matcher(randomString1).matches());
+        assertEquals(randomString1.length(), size);
+
+        verify(mockUserRepository).save(userArgumentCaptor.capture());
+        User userChanged = userArgumentCaptor.getValue();
+        assertEquals(User.Role.DATA_MANAGER, userChanged.getRole());
+        assertEquals(username, userChanged.getUsername());
+        assertEquals(passwordNew, userChanged.getPassword());
     }
 }
