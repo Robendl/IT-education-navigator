@@ -170,4 +170,13 @@ class UserServiceTest {
         assertEquals(username, userArgumentCaptor.getValue().getUsername());
         assertEquals(passwordNewEncrypted, userArgumentCaptor.getValue().getPassword());
     }
+
+    @Test
+    void testChangePassword_userNotFound() {
+        String username = "test@email.com";
+        UserChangePasswordRequestDTO mockUserRequest = mock(UserChangePasswordRequestDTO.class);
+        when(mockUserRequest.getUsername()).thenReturn(username);
+        when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, ()-> userService.changePassword(mockUserRequest));
+    }
 }
