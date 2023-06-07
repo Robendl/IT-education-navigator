@@ -214,4 +214,11 @@ class UserServiceTest {
         assertEquals(username, userChanged.getUsername());
         assertEquals(passwordNew, userChanged.getPassword());
     }
+
+    @Test
+    void testResetPassword_userNotFound() {
+        long userId = 1;
+        when(mockUserRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, ()-> userService.resetPassword(userId));
+    }
 }
