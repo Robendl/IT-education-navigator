@@ -1,6 +1,11 @@
 # Rijksoverheid
 
-## Quick guide
+## Easy startup
+
+Run the following command from the main directory:
+``docker-compose up``
+
+## Development startup guide
 ### DB
 Installeer en open docker.
 In een terminal, run:
