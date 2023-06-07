@@ -74,4 +74,15 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.resetPassword(id));
     }
+
+    /**
+     * Endpoint used for deleting a user.
+     * @param id    id of user to be deleted.
+     * @return      No content response.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> removeUser(@PathVariable long id) {
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

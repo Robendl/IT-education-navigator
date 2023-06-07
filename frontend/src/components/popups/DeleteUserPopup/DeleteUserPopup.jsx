@@ -4,21 +4,17 @@ import { useContext, useState } from "react";
 import { errorCodes } from "services/UserLoader";
 import FocusTrap from '@mui/base/FocusTrap';
 
-import "./DeleteItemPopup.css";
-import CourseLoader from "services/CourseLoader";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import "./DeleteUserPopup.css";
+import UserLoader from "services/UserLoader";
 
 /* Popup component for showing a new password to an admin */
-export default function DeleteCoursePopup() {
+export default function DeleteUserPopup({ user }) {
   const [accepted, setAccepted] = useState(false);
   const overlay = useContext(OverlayContext);
-  const navigate = useNavigate();
-  const searchParams = useSearchParams();
 
   /* Function that is called when the popup is closed */
   function handleClose() {
-    overlay.closeDeleteCourse();
-    navigate(`/?${searchParams[0].toString()}`);
+    overlay.closeDeleteUser();
   }
 
   /* DeleteItemPopup body */
@@ -26,7 +22,7 @@ export default function DeleteCoursePopup() {
     <FocusTrap open>
       <div className="delete-item pop-up ignore-overlay" tabIndex={-1}>
         {(accepted && <DeleteItem handleClose={handleClose} />)
-          || <ConfirmDeleteCourse handleClose={handleClose} setAccepted={setAccepted} course={overlay.deleteEntry} />}
+          || <ConfirmDeleteUser handleClose={handleClose} setAccepted={setAccepted} user={user} />}
       </div>
     </FocusTrap>
   );
@@ -44,16 +40,16 @@ function DeleteItem({ handleClose }) {
   );
 }
 
-/* Component that asks the user for confirmation to delete a course */
-function ConfirmDeleteCourse({ setAccepted, handleClose, course }) {
+/* Component that asks the user for confirmation to delete a user */
+function ConfirmDeleteUser({ setAccepted, handleClose, user }) {
   const [isAccepting, setIsAccepting] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  /* Function that deletes the specific course
+  /* Function that deletes the specific user
    */
-  function handleDeleteCourse() {
+  function handleDeleteUser() {
     setIsAccepting(true);
-    CourseLoader.deleteCourse(course).then((response) => {
+    UserLoader.deleteUser(user).then((response) => {
       setAccepted(true);
       setIsAccepting(false);
     }, (error) => {
@@ -71,15 +67,15 @@ function ConfirmDeleteCourse({ setAccepted, handleClose, course }) {
     });
   }
 
-  /* ConfirmDeleteCourse body */
+  /* ConfirmDeleteUser body */
   return (
     <>
-      <span>Dit item verwijderen?</span>
-      <b>{course.name}</b>
+      <span>Dit account verwijderen?</span>
+      <b>{user.username}</b>
       <span className="warning-message">Dit kan niet ongedaan worden gemaakt</span>
       {errorMessage && <span className="delete-error-message">{errorMessage}</span>}
       <div className="delete-item-actions">
-        <button className="delete-button" onClick={handleDeleteCourse}>
+        <button className="delete-button" onClick={handleDeleteUser}>
           {(isAccepting && <CircularProgress className="delete-loading" />) || <span>Verwijder</span>}
         </button>
         <button className="cancel-button" onClick={handleClose}>Annuleren</button>

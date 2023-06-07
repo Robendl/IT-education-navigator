@@ -90,6 +90,10 @@ function AccountResult({ entry }) {
     overlay.showNewPassword(entry);
   }
 
+  function handleDeleteUser() {
+    overlay.showDeleteUser(entry);
+  }
+
   return (
     <tr className="account-row">
       <td className="username-col">
@@ -135,7 +139,7 @@ function AccountResult({ entry }) {
             </ToolTipButton>
           }
           {(user.name !== entry["username"]) &&
-            <ToolTipButton title="Verwijderen" onClick={() => { return }}>
+            <ToolTipButton title="Verwijderen" onClick={handleDeleteUser}>
               <DeleteIcon />
             </ToolTipButton>
           }
