@@ -43,12 +43,8 @@ export default function EditItemForm({ onSubmit, onCancel, entry }) {
     ProvinceLoader.loadProvinces().then((response) => {
       setProvinces(response);
     }, (error) => {
-      switch (error) {
-        case errorCodes.ERR_CANCELED:
-          break;
-        default:
-          console.log("Kon provincies niet ophalen van server.");
-          break;
+      if (error !== errorCodes.ERR_CANCELED) {
+        console.log("Kon provincies niet ophalen van server.");
       }
     });
     Object.keys(entry).forEach(key => {
