@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
+import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
@@ -140,5 +141,33 @@ class UserServiceTest {
         UserPermRequestDTO mockUserRequest = mock(UserPermRequestDTO.class);
         when(mockUserRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> userService.editUserPerms(userId,mockUserRequest));
+    }
+
+    @Test
+    void testChangePassword() {
+        String username = "test@email.com";
+        String passwordOldEncrypted = "encryptedOldPassword";
+        String passwordNewEncrypted = "encryptedNewPassword";
+        String passwordNewPlainText = "plaintextNewPassword";
+        UserChangePasswordRequestDTO mockUserRequest = mock(UserChangePasswordRequestDTO.class);
+        when(mockUserRequest.getUsername()).thenReturn(username);
+        when(mockUserRequest.getNewPassword()).thenReturn(passwordNewPlainText);
+
+        User user = new User();
+        user.setRole(User.Role.DATA_MANAGER);
+        user.setUsername(username);
+        user.setPassword(passwordOldEncrypted);
+
+        when(mockUserRepository.findUserByUsername(username)).thenReturn(Optional.of(user));
+        when(mockPasswordEncoder.encode(passwordNewPlainText)).thenReturn(passwordNewEncrypted);
+
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+
+        userService.changePassword(mockUserRequest);
+
+        verify(mockUserRepository).save(userArgumentCaptor.capture());
+        assertEquals(User.Role.DATA_MANAGER, userArgumentCaptor.getValue().getRole());
+        assertEquals(username, userArgumentCaptor.getValue().getUsername());
+        assertEquals(passwordNewEncrypted, userArgumentCaptor.getValue().getPassword());
     }
 }
