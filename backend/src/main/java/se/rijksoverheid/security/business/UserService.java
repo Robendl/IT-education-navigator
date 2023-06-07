@@ -118,7 +118,7 @@ public class UserService implements UserDetailsService {
     public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("User with id " + userId + " could not be found."));
-        Mapper.map(userPermDTO, user);
+        user.setRole(userPermDTO.getRole());
         userRepository.save(user);
         UserResponseDTO userDTO = new UserResponseDTO();
         Mapper.map(user, userDTO);
