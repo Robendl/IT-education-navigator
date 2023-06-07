@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
+import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserRequestDTO;
 import se.rijksoverheid.security.model.User;
@@ -124,5 +125,13 @@ class UserServiceTest {
         assertDoesNotThrow(() -> {
             userService.editUserPerms(userId,mockUserRequest);
         });
+    }
+
+    @Test
+    void testEditUserPermsUserNotFound() {
+        long userId = 1;
+        UserPermRequestDTO mockUserRequest = mock(UserPermRequestDTO.class);
+        when(mockUserRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> userService.editUserPerms(userId,mockUserRequest));
     }
 }
