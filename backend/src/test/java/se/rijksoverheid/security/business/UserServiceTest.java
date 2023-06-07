@@ -118,13 +118,20 @@ class UserServiceTest {
 
     @Test
     void testEditUserPerms() {
-        long userId = 1;
-        User mockUser = mock(User.class);
+        String username = "admin@email.com";
+        String password = "password";
         UserPermRequestDTO mockUserRequest = mock(UserPermRequestDTO.class);
-        when(mockUserRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        assertDoesNotThrow(() -> {
-            userService.editUserPerms(userId,mockUserRequest);
-        });
+        when(mockUserRequest.getRole()).thenReturn(User.Role.ADMIN);
+
+        User user = new User();
+        long userId = user.getId();
+        user.setRole(User.Role.DATA_MANAGER);
+        user.setUsername(username);
+        user.setPassword(password);
+
+        when(mockUserRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        assertEquals(User.Role.ADMIN, userService.editUserPerms(userId, mockUserRequest).getRole());
     }
 
     @Test
