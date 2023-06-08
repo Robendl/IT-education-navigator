@@ -2,7 +2,7 @@ import { CircularProgress } from '@mui/material';
 import FormEntry from 'components/forms/FormEntry/FormEntry';
 import './ChangePasswordForm.css'
 import { useState } from 'react';
-import authService, { errorCodes } from "../../../services/AuthService";
+import authService, { errorCodes } from "services/AuthService";
 
 /* Form component for adding new courses to the database */
 export default function ChangePasswordForm({ onSubmit, onCancel }) {
@@ -42,6 +42,11 @@ export default function ChangePasswordForm({ onSubmit, onCancel }) {
       switch (errorCode) {
         case errorCodes.ERR_LOGIN_INVALID:
           setErrorMessage("Wachtwoord is onjuist");
+          setIsSubmitting(false);
+          break;
+
+        case errorCodes.ERR_NETWORK:
+          setErrorMessage("Kon niet verbinden met de server");
           setIsSubmitting(false);
           break;
 
