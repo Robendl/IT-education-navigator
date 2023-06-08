@@ -1,29 +1,27 @@
 package se.rijksoverheid.controller;
 
-import static org.mockito.Mockito.mock;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
-
 import org.springframework.security.core.Authentication;
 import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
+import se.rijksoverheid.dto.LimitedCourseResponseDTO;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.mapper.Mapper;
-import se.rijksoverheid.model.Course;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +48,7 @@ class CourseControllerTest {
         List<Long> provinceIds = List.of(2L);
         List<String> courseTypes = List.of("courseType");
         Sort.Direction direction = Sort.Direction.ASC;
-        CourseResponseDTO mockCourse = mock(CourseResponseDTO.class);
+        LimitedCourseResponseDTO mockCourse = mock(LimitedCourseResponseDTO.class);
         List<CourseResponseDTO> courses = new ArrayList<>();
         courses.add(mockCourse);
         CourseFilter filter = mock(CourseFilter.class);
@@ -92,7 +90,7 @@ class CourseControllerTest {
     @Test
     void testCreateCourse() {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
-        Course mockCourse = mock(Course.class);
+        CourseResponseDTO mockCourse = mock(CourseResponseDTO.class);
         when(courseService.save(mockCourseRequest)).thenReturn(mockCourse);
         assertEquals(mockCourse,courseController.createCourse(mockCourseRequest).getBody());
     }
@@ -101,7 +99,7 @@ class CourseControllerTest {
     void testEditCourse() {
         long id = 1;
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
-        Course mockCourse = mock(Course.class);
+        CourseResponseDTO mockCourse = mock(CourseResponseDTO.class);
         when(courseService.edit(id,mockCourseRequest)).thenReturn(mockCourse);
         assertEquals(mockCourse,courseController.editCourse(id,mockCourseRequest).getBody());
     }

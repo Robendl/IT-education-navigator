@@ -1,15 +1,14 @@
 package se.rijksoverheid.business;
 
-import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.rijksoverheid.dto.*;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.dto.*;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
@@ -17,6 +16,7 @@ import se.rijksoverheid.model.Province;
 import se.rijksoverheid.model.ProvinceRepository;
 import se.rijksoverheid.security.model.User;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,7 +69,7 @@ public class CourseService {
                 || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_MANAGER.toString()))) {
             return Mapper.map(course, FullCourseResponseDTO.class);
         } else {
-            return Mapper.map(course, CourseResponseDTO.class);
+            return Mapper.map(course, LimitedCourseResponseDTO.class);
         }
     }
 
@@ -80,13 +80,13 @@ public class CourseService {
      * @return                              The saved course.
      */
     @Transactional
-    public Course save(CourseRequestDTO courseDTO) {
+    public CourseResponseDTO save(CourseRequestDTO courseDTO) {
         Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
                 new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
                         "trying to save new course"));
         Course course = Mapper.map(courseDTO, Course.class);
         course.setProvince(province);
-        return courseRepository.save(course);
+        return Mapper.map(courseRepository.save(course), FullCourseResponseDTO.class);
     }
 
     /**
@@ -98,7 +98,7 @@ public class CourseService {
      * @return                              The new Course object
      */
     @Transactional
-    public Course edit(Long courseId, CourseRequestDTO courseDTO) {
+    public CourseResponseDTO edit(Long courseId, CourseRequestDTO courseDTO) {
         Course course = courseRepository.findById(courseId).orElseThrow(() ->
                 new NotFoundException("Course with id " + courseId + " could not be found while trying to edit"));
         Mapper.map(courseDTO, course);
@@ -108,7 +108,7 @@ public class CourseService {
                             "trying to edit course with id" + courseId));
             course.setProvince(province);
         }
-        return courseRepository.save(course);
+        return Mapper.map(courseRepository.save(course), FullCourseResponseDTO.class);
     }
 
     /**
