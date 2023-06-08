@@ -1,6 +1,5 @@
 package se.rijksoverheid.exceptions;
 
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 
+import javax.servlet.http.HttpServletResponse;
+
 @ControllerAdvice
 @Slf4j
 public class WebExceptionHandler {
@@ -22,7 +23,7 @@ public class WebExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> handleAuthException(Exception e) {
+    public ResponseEntity<String> handleAuthException(HttpServletResponse response, Exception e) {
         log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }

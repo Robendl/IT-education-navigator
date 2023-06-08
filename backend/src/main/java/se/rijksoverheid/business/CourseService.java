@@ -16,7 +16,6 @@ import se.rijksoverheid.model.Province;
 import se.rijksoverheid.model.ProvinceRepository;
 import se.rijksoverheid.security.model.User;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -76,7 +75,6 @@ public class CourseService {
     /**
      * Saves a course to the database
      * @param courseDTO                     Data Transfer Object containing information on course to be created.
-     * @throws IllegalArgumentException     when no province with the given provinceId can be found.
      * @return                              The saved course.
      */
     @Transactional
@@ -93,8 +91,6 @@ public class CourseService {
      * Edits a course, can also be used for archiving.
      * @param courseId                      id of course to be edited.
      * @param courseDTO                     Data Transfer Object containing new data to be saved.
-     * @throws EntityNotFoundException      when the no course with courseId can be found.
-     * @throws IllegalArgumentException     when no province with the given provinceId can be found.
      * @return                              The new Course object
      */
     @Transactional
