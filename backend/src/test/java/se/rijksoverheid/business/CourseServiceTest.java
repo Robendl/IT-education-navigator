@@ -10,7 +10,6 @@ import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.dto.CoursePageDTO;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.dto.ProvinceDTO;
@@ -36,7 +35,6 @@ class CourseServiceTest {
     private CourseResponseDTO mockCourseDTO;
     private Province mockProvince;
     private List<Course> courseList;
-    private CoursePageDTO mockCoursePage;
     private Page<Course> pageCourse;
     private CourseService courseService;
     private Authentication authentication;
@@ -51,7 +49,6 @@ class CourseServiceTest {
         courseList = new ArrayList<>();
         courseList.add(mockCourse);
         mockCourseDTO = mock(CourseResponseDTO.class);
-        mockCoursePage = mock(CoursePageDTO.class);
         pageCourse = new PageImpl<>(courseList);
         authentication = mock(Authentication.class);
     }
