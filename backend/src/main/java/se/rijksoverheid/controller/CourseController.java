@@ -12,7 +12,6 @@ import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.model.Course;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -76,7 +75,7 @@ public class CourseController {
      * @return              The saved Course.
      */
     @PostMapping("")
-    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
+    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.save(courseDTO));
     }
 
@@ -88,7 +87,7 @@ public class CourseController {
      *                      no course with the given id can be found.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Course> editCourse(
+    public ResponseEntity<CourseResponseDTO> editCourse(
             @PathVariable long id,
             @RequestBody @Valid CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.edit(id, courseDTO));
