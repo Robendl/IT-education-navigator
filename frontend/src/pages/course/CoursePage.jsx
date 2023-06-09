@@ -1,8 +1,7 @@
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { propertyTranslations } from "config/translations";
-import { useContext, useEffect } from "react";
-import { useState } from "react";
-import { useLocation, useNavigate, useParams} from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CourseLoader from "services/CourseLoader";
 
 import "./CoursePage.css";
@@ -87,7 +86,7 @@ function CourseProperty({ keyName, value, course }) {
           <><b>{propertyTranslations[keyName]}: </b>{value ? "ja" : "nee"}</>)
         ||
         (keyName === "web" &&
-            <><b>{propertyTranslations[keyName]}: </b><a href={value} target="_blank" rel="noreferrer">{value}</a></>)
+          <><b>{propertyTranslations[keyName]}: </b><a href={value} target="_blank" rel="noreferrer">{value}</a></>)
         ||
         <><b>{propertyTranslations[keyName]}: </b>{value}</>
       }

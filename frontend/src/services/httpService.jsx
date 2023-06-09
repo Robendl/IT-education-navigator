@@ -4,12 +4,12 @@ import AuthService from "./AuthService";
 let xsrfToken = null;
 
 function getXsrfToken() {
-  if(xsrfToken) {
+  if (xsrfToken) {
     return xsrfToken;
   }
   const cookies = document.cookie.split(';')
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
+  for (let value of cookies) {
+    const cookie = value.trim();
     if (cookie.startsWith('XSRF-TOKEN=')) {
       xsrfToken = cookie.substring('XSRF-TOKEN='.length, cookie.length);
       return xsrfToken;
@@ -27,7 +27,7 @@ axios.interceptors.request.use(
       config.headers['X-XSRF-TOKEN'] = xsrfToken;
     }
     return config;
-});
+  });
 
 axios.interceptors.response.use(
   response => response,

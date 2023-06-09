@@ -1,7 +1,7 @@
 import axios from "axios";
 import http from "./httpService";
 
-var loadController = new AbortController();
+let loadController = new AbortController();
 
 /* Enum containing various error codes that can be returned */
 export const errorCodes = {

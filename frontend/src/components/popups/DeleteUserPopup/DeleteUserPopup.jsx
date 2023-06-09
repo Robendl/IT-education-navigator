@@ -1,11 +1,10 @@
 import { CircularProgress } from "@mui/material";
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { useContext, useState } from "react";
-import { errorCodes } from "services/UserLoader";
+import UserLoader, { errorCodes } from "services/UserLoader";
 import FocusTrap from '@mui/base/FocusTrap';
 
 import "./DeleteUserPopup.css";
-import UserLoader from "services/UserLoader";
 
 /* Popup component for showing a new password to an admin */
 export default function DeleteUserPopup({ user }) {

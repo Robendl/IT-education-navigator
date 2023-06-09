@@ -1,8 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import "./AdminPanel.css";
 import PageOverlay, { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
-import { useContext, useState } from 'react';
+import { useContext, useState, useMemo, useCallback } from 'react';
 import PasswordPopup from 'components/popups/PasswordPopup/PasswordPopup';
 import { UserContext, userRoles } from 'services/AuthService';
 import DeleteUserPopup from 'components/popups/DeleteUserPopup/DeleteUserPopup';
@@ -16,9 +15,19 @@ export default function AdminPanel() {
 
   const user = useContext(UserContext);
 
-  if (user.role < userRoles.ADMIN) {
-    return;
-  }
+  /* Function that is called when the account deletion popup should be closed */
+  const handleCloseDeleteUser = useCallback(() => {
+    setIsShowingUserDelete(false);
+    setUserInfo(null);
+    navigate(0);
+  }, [navigate]);
+
+  const overlayConfig = useMemo(() => ({
+    showNewPassword: handleShowNewPassword,
+    closeNewPassword: handleCloseNewPassword,
+    showDeleteUser: handleShowDeleteUser,
+    closeDeleteUser: handleCloseDeleteUser
+  }), [handleCloseDeleteUser]);
 
   /* Function that is called when the password popup should be displayed */
   function handleShowNewPassword(user) {
@@ -38,17 +47,14 @@ export default function AdminPanel() {
     setUserInfo(user);
   }
 
-  /* Function that is called when the account deletion popup should be closed */
-  function handleCloseDeleteUser() {
-    setIsShowingUserDelete(false);
-    setUserInfo(null);
-    navigate(0);
+  if (user.role < userRoles.ADMIN) {
+    return;
   }
 
   /* AdminPanel body */
   return (
     <div className="page-wrap">
-      <OverlayContext.Provider value={{ showNewPassword: handleShowNewPassword, closeNewPassword: handleCloseNewPassword, showDeleteUser: handleShowDeleteUser, closeDeleteUser: handleCloseDeleteUser }} >
+      <OverlayContext.Provider value={overlayConfig} >
         <Outlet />
         <PageOverlay isOpen={isShowingPassword}>
           <PasswordPopup user={userInfo} />

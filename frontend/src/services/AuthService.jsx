@@ -70,11 +70,7 @@ function logout() {
 /* Function for checking if the user is logged in; returns a boolean */
 function isLoggedIn() {
   let user = getUser();
-  if (user) {
-    return true;
-  } else {
-    return false;
-  }
+  return !!user;
 }
 
 /* Function for getting the user object from localStorage */

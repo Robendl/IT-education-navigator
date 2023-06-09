@@ -19,9 +19,6 @@ function RegisterForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    // const passwordField = document.querySelector('#passwordField');
-    // const confirmPasswordField = document.querySelector('#confirmPasswordField')
-
     function handleSubmit(e) {
         e.preventDefault();
         setIsSubmitting(true);
