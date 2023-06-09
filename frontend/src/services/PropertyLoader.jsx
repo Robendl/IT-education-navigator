@@ -27,7 +27,7 @@ const filters = {
         "name": "Groningen"
       },
       7: {
-        "name": "Heerlen"
+        "name": "Zeeland"
       },
       8: {
         "name": "Limburg"
