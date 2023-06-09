@@ -78,6 +78,15 @@ class CourseControllerTest {
     }
 
     @Test
+    void testGetCourseById() {
+        Authentication authentication = mock(Authentication.class);
+        long id = 1;
+        CourseResponseDTO mockCourse = mock(CourseResponseDTO.class);
+        when(courseService.getCourseById(id, authentication)).thenReturn(mockCourse);
+        assertEquals(mockCourse, courseController.getCourseById(id, authentication).getBody());
+    }
+
+    @Test
     void testCreateCourse() {
         CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
         CourseResponseDTO mockCourse = mock(CourseResponseDTO.class);
