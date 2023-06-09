@@ -7,9 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
@@ -91,31 +89,30 @@ class UserServiceTest {
     @Test
     void testGetUsers_EmptySearch() {
         String search = "";
-        Pageable mockPageable = mock(Pageable.class);
         User mockUser1 = mock(User.class);
         User mockUser2 = mock(User.class);
         List<User> userList = new ArrayList<>();
         userList.add(mockUser1);
         userList.add(mockUser2);
-        Page<User> users = new PageImpl<>(userList);
+        Sort mockSort = mock(Sort.class);
 
-        when(mockUserRepository.findAll(any(Pageable.class))).thenReturn(users);
+       when(mockUserRepository.findAll(mockSort)).thenReturn(userList);
 
-        assertEquals(2,userService.getUsers(search,mockPageable).size());
+        assertEquals(2,userService.getUsers(search,mockSort).size());
+        verify(mockUserRepository).findAll(mockSort);
     }
 
     @Test
     void testGetUsers_FilledSearch() {
         String search = "user";
-        Pageable mockPageable = mock(Pageable.class);
         User mockUser1 = mock(User.class);
         List<User> userList = new ArrayList<>();
         userList.add(mockUser1);
-        Page<User> users = new PageImpl<>(userList);
+        Sort mockSort = mock(Sort.class);
 
-        when(mockUserRepository.findAllUserByUsername(search, mockPageable)).thenReturn(users);
-
-        assertEquals(1,userService.getUsers(search,mockPageable).size());
+        when(mockUserRepository.findAllUserByUsername(search, mockSort)).thenReturn(userList);
+        assertEquals(1,userService.getUsers(search,mockSort).size());
+        verify(mockUserRepository).findAllUserByUsername(search, mockSort);
     }
 
     @Test
