@@ -121,4 +121,14 @@ class UserControllerTest {
 
         assertThrows(BadRequestException.class, ()-> userController.resetUserPassword(authentication, idUser));
     }
+
+    @Test
+    void testRemoveCourse() {
+        long userId = 1;
+        doAnswer(invocation -> {
+            assertEquals(userId,(long)invocation.getArgument(0));
+            return null;
+        }).when(mockUserService).deleteById(userId);
+        mockUserService.deleteById(userId);
+    }
 }

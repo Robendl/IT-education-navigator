@@ -74,6 +74,7 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.PUT, "/user/password/{id}/reset").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority(ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.DELETE, "/courses/**").hasAnyAuthority(ADMIN)
                 .antMatchers(HttpMethod.POST, "/courses").hasAnyAuthority(ADMIN, DATA_MANAGER)
                 .antMatchers(HttpMethod.PUT, "/courses/**").hasAnyAuthority(ADMIN, DATA_MANAGER)

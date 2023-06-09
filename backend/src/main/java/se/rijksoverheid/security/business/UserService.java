@@ -169,4 +169,13 @@ public class UserService implements UserDetailsService {
         }
         return sb.toString();
     }
+
+    /**
+     * Deletes a user by Id.
+     * @param id    id of user to be deleted.
+     */
+    @Transactional
+    public void deleteById(long id) {
+        userRepository.deleteById(id);
+    }
 }

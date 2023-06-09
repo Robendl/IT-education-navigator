@@ -36,4 +36,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByUsername(String username);
 
     Optional<User> findById(long id);
+
+    /**
+     * Method used for deleting user.
+     * @param id    id of user to be deleted.
+     */
+    void deleteById(long id);
 }
