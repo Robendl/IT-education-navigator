@@ -26,7 +26,7 @@ public class WebExceptionHandlerTest {
 
     @Test
     void testHandleEntityConflictException() {
-        String errorMessage = "test message";
+        String errorMessage = "entity conflict";
         EntityConflictException exception = new EntityConflictException(errorMessage);
         ResponseEntity<String> response = handler.handleEntityConflictException(exception);
         assertEquals(ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage), response);
