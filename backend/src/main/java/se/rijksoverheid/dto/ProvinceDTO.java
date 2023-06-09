@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Data Transer Object used for sending Province related data
+ * Data Transfer Object used for sending Province related data
  */
 @Data
 public class ProvinceDTO implements Serializable {

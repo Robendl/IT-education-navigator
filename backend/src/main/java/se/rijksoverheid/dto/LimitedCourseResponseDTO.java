@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * Data Transfer Object used for sending responses containing course data.
+ * Used for limited data consumer, which should not receive personal data.
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

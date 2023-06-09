@@ -69,9 +69,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Checks if a given string is a valid email address
-     * @param email string to be checked
-     * @return      true if string is a valid email address, false otherwise
+     * Method used for checking if a user already exists.
+     * @param email    email to be checked.
      */
     public void checkEmailAddress(String email) {
         String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
@@ -81,9 +80,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Function used for getting a list of all users and converting them to a DTO.
-     * @param pageable  page for frontend
-     * @return          UserResponseDTO.
+     * Retrieve list of all users
+     * @param search    possible search string
+     * @param pageable
+     * @return          List of all/found users
      */
     @Transactional
     public List<UserResponseDTO> getUsers(String search,Pageable pageable){
@@ -107,12 +107,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Change a user's permissions.
-     * @param userId                    Id of user to change permissions for.
-     * @param userPermDTO               DTO for all data to be changed.
-     * @return                          The user which was changed.
-     * @throws NotFoundException  No user with id was found.
-     * @throws Exception                Changed user to non-existing role.
+     * Edit permissions of a user.
+     * @param userId        ID of user to edit.
+     * @param userPermDTO   DTO containing new role.
+     * @return              The user that was changed.
      */
     @Transactional
     public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) {
@@ -125,11 +123,11 @@ public class UserService implements UserDetailsService {
         return userDTO;
     }
 
+
     /**
-     * Change a user's permissions.
-     * @param userDTO                    DTO for all data to be changed.
-     * @return                           The user that was changed.
-     * @throws UsernameNotFoundException No user with username was found.
+     * Change password of a user.
+     * @param userDTO   DTO containing username and new password.
+     * @return          The user that was changed.
      */
     public UserResponseDTO changePassword(UserChangePasswordRequestDTO userDTO) {
         User user = loadUserByUsername(userDTO.getUsername());

@@ -42,6 +42,12 @@ import java.util.List;
 public class WebSecurityConfig {
     private static final SecretKey secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
+    /**
+     * Initializes an AuthenticationProvider Bean, which is used by the AuthenticationManager to authenticate users.
+     * @param userService       the {@link UserDetailsService} to use
+     * @param passwordEncoder   the {@link PasswordEncoder} to use
+     * @return                  the initialized {@link AuthenticationProvider}
+     */
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -50,6 +56,12 @@ public class WebSecurityConfig {
         return authenticationProvider;
     }
 
+    /**
+     * Initializes an AuthenticationManager Bean, which is used by the SecurityFilterChain to authenticate users.
+     * @param userService       the {@link UserDetailsService} to use
+     * @param passwordEncoder   the {@link PasswordEncoder} to use
+     * @return                  the initialized {@link AuthenticationManager}
+     */
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userService, PasswordEncoder passwordEncoder) {
         return new ProviderManager(Collections.singletonList(authenticationProvider(userService, passwordEncoder)));
@@ -59,7 +71,7 @@ public class WebSecurityConfig {
      * Configures the security settings. Sets which endpoints need which roles and specifies classes to be used in the
      * security process.
      * @param http the {@link HttpSecurity} to modify
-     * @throws Exception
+     * @throws Exception    if an error occurs
      */
     @Bean
     protected SecurityFilterChain filterChain(
@@ -86,6 +98,10 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Initializes a CookieCsrfTokenRepository Bean, which is used by the SecurityFilterChain to handle CSRF tokens.
+     * @return  the initialized {@link CookieCsrfTokenRepository}
+     */
     @Bean
     public CookieCsrfTokenRepository cookieCsrfTokenRepository() {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
@@ -94,6 +110,10 @@ public class WebSecurityConfig {
         return repository;
     }
 
+    /**
+     * Initializes a CorsConfigurationSource Bean, which is used by the SecurityFilterChain to handle CORS.
+     * @return  the initialized {@link CorsConfigurationSource}
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -107,11 +127,19 @@ public class WebSecurityConfig {
         return source;
     }
 
+    /**
+     * Initializes a JwtParser Bean, which is used by JwtTokenUtil to create JWT tokens.
+     * @return  the initialized {@link JwtParser}
+     */
     @Bean
     public JwtParser jwtParser() {
         return Jwts.parserBuilder().setSigningKey(secret).build();
     }
 
+    /**
+     * Initializes a JwtBuilder Bean, which is used by JwtTokenUtil to parse JWT tokens.
+     * @return  the initialized {@link JwtBuilder}
+     */
     @Bean
     public JwtBuilder jwtBuilder() {
         return Jwts.builder().signWith(secret, SignatureAlgorithm.HS512);

@@ -27,6 +27,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    /**
+     * Enum for the different roles a user can have.
+     */
     public enum Role {
         ADMIN,
         DATA_MANAGER,
@@ -34,6 +37,10 @@ public class User implements UserDetails {
         LIM_DATA_CONSUMER
     }
 
+    /**
+     * Returns the authorities of the user, which is the role.
+     * @return  the authorities of the user
+     */
     @Override
     public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
