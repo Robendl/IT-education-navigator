@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class BackendApplicationTest {
+class BackendApplicationTest {
     @InjectMocks
     BackendApplication backendApplication;
     @Test
