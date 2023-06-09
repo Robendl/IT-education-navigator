@@ -5,13 +5,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.security.business.UserService;
-import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResetPasswordResponseDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
@@ -27,7 +24,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private AuthenticationManager authenticationManager;
     private UserService userService;
 
     /**

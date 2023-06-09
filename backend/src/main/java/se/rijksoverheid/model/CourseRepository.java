@@ -8,28 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Repository used for interacting with course data from the database.
  */
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    /**
-     * Method used for deleting course.
-     * @param id    id of course to be deleted
-     */
-    void deleteById(long id);
-
-    /**
-     * Method used for saving course.
-     * @param course must not be {@literal null}.   course to be saved
-     * @return saved course
-     */
-    Course save(Course course);
-
-    Optional<Course> findById(long id);
-
     /**
      * Method used for retrieving courses from the databse, a search can be performed and desired results can be further
      * specified through archived and pageable.

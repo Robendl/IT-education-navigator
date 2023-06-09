@@ -1,5 +1,6 @@
 package se.rijksoverheid.exceptions;
 
+import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class WebExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> handleAuthException(Exception e) {
-        log.info(e.getMessage());
+        log.info("abc");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
@@ -50,8 +51,9 @@ public class WebExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
-    @ExceptionHandler(SecurityException.class)
+    @ExceptionHandler(SignatureException.class)
     public ResponseEntity<String> handleJwtException() {
+        log.info("invalid token");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
     }
 }

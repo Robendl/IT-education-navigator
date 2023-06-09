@@ -51,7 +51,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManagerBean(UserDetailsService userService, PasswordEncoder passwordEncoder) {
+    public AuthenticationManager authenticationManager(UserDetailsService userService, PasswordEncoder passwordEncoder) {
         return new ProviderManager(Collections.singletonList(authenticationProvider(userService, passwordEncoder)));
     }
 

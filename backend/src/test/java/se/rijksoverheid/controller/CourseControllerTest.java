@@ -26,13 +26,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CourseControllerTest {
-
-
     @Mock
     private CourseService courseService;
 
     @InjectMocks CourseController courseController;
-
 
     @BeforeEach
     void setup() {
