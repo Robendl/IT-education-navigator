@@ -120,7 +120,9 @@ class UserControllerTest {
 
     @Test
     void testRemoveUser() {
-        long id = 1;
-        assertEquals(ResponseEntity.status(HttpStatus.NO_CONTENT).build(), userController.removeUser(id));
+        long userId = 1;
+        ResponseEntity<Object> response = userController.removeUser(userId);
+        verify(mockUserService,times(1)).deleteById(userId);
+        assertEquals(ResponseEntity.status(HttpStatus.NO_CONTENT).build(), response);
     }
 }
