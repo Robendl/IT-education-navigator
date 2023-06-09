@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
@@ -103,10 +105,8 @@ class CourseControllerTest {
     @Test
     void testRemoveCourse() {
         long courseId = 1;
-        doAnswer(invocation -> {
-            assertEquals(courseId,(long)invocation.getArgument(0));
-            return null;
-        }).when(courseService).deleteById(courseId);
-        courseService.deleteById(courseId);
+        ResponseEntity<Object> response = courseController.removeCourse(courseId);
+        verify(courseService,times(1)).deleteById(courseId);
+        assertEquals(ResponseEntity.status(HttpStatus.NO_CONTENT).build(), response);
     }
 }
