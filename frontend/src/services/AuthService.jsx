@@ -21,13 +21,17 @@ export const errorCodes = {
   ERR_LOGIN_INVALID: 1,
   ERR_NETWORK: 2,
   ERR_USERNAME_DUPLICATE: 3,
-  ERR_INVALID_ROLE: 4
+  ERR_INVALID_ROLE: 4,
+  ERR_PASSWORD_INVALID: 5
 }
 
 /* Function that rejects a http error with a corresponding error code */
 function handleHttpError(error, reject) {
   if (error.response && error.response.status === 404) {
     reject(errorCodes.ERR_LOGIN_INVALID);
+  }
+  if (error.response && error.response.status === 401) {
+    reject(errorCodes.ERR_PASSWORD_INVALID);
   }
   if (error.response && error.response.status === 409) {
     reject(errorCodes.ERR_USERNAME_DUPLICATE);
