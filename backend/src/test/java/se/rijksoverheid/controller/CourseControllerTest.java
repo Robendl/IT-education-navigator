@@ -3,10 +3,7 @@ package se.rijksoverheid.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -19,6 +16,7 @@ import se.rijksoverheid.filter.CourseFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,40 +46,33 @@ class CourseControllerTest {
         LimitedCourseResponseDTO mockCourse = mock(LimitedCourseResponseDTO.class);
         List<CourseResponseDTO> courses = new ArrayList<>();
         courses.add(mockCourse);
-        CourseFilter filter = mock(CourseFilter.class);
-        Sort sort = mock(Sort.class);
         Authentication authentication = mock(Authentication.class);
-
-        try (MockedStatic<Sort> mockSort = Mockito.mockStatic(Sort.class)) {
-            mockSort.when(() -> Sort.by(direction, orderBy)).thenReturn(sort);
-            CourseController spyCourseController = spy(courseController);
-            doReturn(filter).when(spyCourseController).getCourseFilter(
-                    search,
-                    archived,
-                    levels,
-                    regions,
-                    provinceIds,
-                    courseTypes
-            );
-
-            when(courseService.getCourses(
-                    filter,
-                    sort,
-                    authentication)
-            ).thenReturn(courses);
-
-            assertEquals(courses, spyCourseController.getCourses(
-                    authentication,
-                    search,
-                    archived,
-                    levels,
-                    regions,
-                    provinceIds,
-                    courseTypes,
-                    orderBy,
-                    direction).getBody()
-            );
-        }
+        ArgumentCaptor<CourseFilter> filterCaptor = ArgumentCaptor.forClass(CourseFilter.class);
+        ArgumentCaptor<Sort> sortCaptor = ArgumentCaptor.forClass(Sort.class);
+        when(courseService.getCourses(
+                filterCaptor.capture(),
+                sortCaptor.capture(),
+                any())
+        ).thenReturn(courses);
+        assertEquals(courses, courseController.getCourses(
+                authentication,
+                search,
+                archived,
+                levels,
+                regions,
+                provinceIds,
+                courseTypes,
+                orderBy,
+                direction).getBody()
+        );
+        assertEquals(orderBy, Objects.requireNonNull(sortCaptor.getValue().getOrderFor(orderBy)).getProperty());
+        assertEquals(direction, Objects.requireNonNull(sortCaptor.getValue().getOrderFor(orderBy)).getDirection());
+        assertEquals(search, filterCaptor.getValue().getSearch());
+        assertEquals(archived, filterCaptor.getValue().isArchived());
+        assertEquals(levels, filterCaptor.getValue().getLevels());
+        assertEquals(regions, filterCaptor.getValue().getRegions());
+        assertEquals(provinceIds, filterCaptor.getValue().getProvinceIds());
+        assertEquals(courseTypes, filterCaptor.getValue().getCourseTypes());
     }
 
     @Test

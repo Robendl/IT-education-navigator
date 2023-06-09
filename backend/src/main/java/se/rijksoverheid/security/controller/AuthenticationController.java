@@ -33,7 +33,7 @@ public class AuthenticationController {
     /**
      * Register a new user
      * @param userDTO   Data Transfer Object containing user info.
-     * @return          Created HTTP Status, or Bad Request HTTP Status if username is already in use.
+     * @return          Created HTTP Status
      */
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody @Validated UserRequestDTO userDTO) {
@@ -48,7 +48,8 @@ public class AuthenticationController {
     /**
      * Login endpoint
      * @param userDTO   Data Transfer Object containing login info
-     * @return          Data Transfer Object containing JwtToken and role of user
+     * @param response  Response object to add cookie containing JWT token to
+     * @return          The user that logged in
      */
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> createAuthenticationToken(@RequestBody @Validated UserRequestDTO userDTO,

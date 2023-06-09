@@ -31,9 +31,10 @@ public class CourseService {
 
     /**
      * Retrieves a list of courses.
-     * @param search        search string that will be used for looking in all string fields
-     * @param archived      determines whether to retrieve unarchived or archived courses
-     * @return              List of courses
+     * @param filter            contains search query and filters
+     * @param sort              contains sorting information
+     * @param authentication    authentication details, used for determining if personal data should be returned
+     * @return                  List of courses
      */
 
     public List<CourseResponseDTO> getCourses(CourseFilter filter, Sort sort, Authentication authentication) {
@@ -56,11 +57,23 @@ public class CourseService {
         return courseDTOs;
     }
 
+    /**
+     * Retrieves a course by id.
+     * @param id                id of the course to be retrieved
+     * @param authentication    authentication details, used for determining if personal data should be returned
+     * @return                  Course
+     */
     public CourseResponseDTO getCourseById(long id, Authentication authentication) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Course with id " + id + "could not be found."));
         return convertCourseAppropriately(course, authentication);
     }
 
+    /**
+     * Converts a course to a CourseResponseDTO, depending on the authentication details.
+     * @param course            course to be converted
+     * @param authentication    authentication details, used for determining if personal data should be returned
+     * @return                  CourseResponseDTO
+     */
     private CourseResponseDTO convertCourseAppropriately(Course course, Authentication authentication) {
         Collection<?> authorities = authentication.getAuthorities();
         if(authorities.contains(new SimpleGrantedAuthority(User.Role.ADMIN.toString()))
