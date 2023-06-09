@@ -1,12 +1,11 @@
 import logo from 'assets/svg/logo.svg';
 import MainHeader from 'components/layout/MainHeader';
 import Home from 'pages/home/Home';
-import Map from 'pages/map/Map';
 import LoginPage from 'pages/login/LoginPage';
-import {Routes, Route, Outlet, Link} from 'react-router-dom';
+import { Routes, Route, Outlet, Link } from 'react-router-dom';
 import './App.css';
 import AuthService, { UserContext } from 'services/AuthService';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import RegisterPage from "./pages/register/RegisterPage";
 import AdminPanel from 'pages/admin_panel/AdminPanel';
 import AccountManagement from 'components/layout/admin_panel/AccountManagement';
@@ -38,7 +37,6 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="course/:courseId" element={<CoursePage />}></Route>
-            <Route path="kaart" element={<Map />} />
             <Route path="admin" element={<AdminPanel />}>
               <Route path="accounts" element={<AccountManagement />} />
             </Route>
@@ -57,6 +55,10 @@ function Layout() {
   const [editEntry, setEditEntry] = useState({});
   const [deleteEntry, setDeleteEntry] = useState({});
 
+  const overlayConfig = useMemo(() => ({
+    openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry, openDeleteCourse: handleOpenDeleteCourse, closeDeleteCourse: () => setIsDeletingCourse(false), deleteEntry: deleteEntry
+  }), [editEntry, deleteEntry]);
+
   /* Function that is called when the user starts editing a course */
   function handleOpenEdit(entry) {
     setIsEditing(true);
@@ -73,9 +75,7 @@ function Layout() {
     <div>
       {(AuthService.isLoggedIn() &&
         <div>
-          <OverlayContext.Provider value={{
-            openAdd: () => setIsAdding(true), closeAdd: () => setIsAdding(false), openEdit: handleOpenEdit, closeEdit: () => setIsEditing(false), editEntry: editEntry, openDeleteCourse: handleOpenDeleteCourse, closeDeleteCourse: () => setIsDeletingCourse(false), deleteEntry: deleteEntry
-          }} >
+          <OverlayContext.Provider value={overlayConfig} >
             <header className="logo-header ignore-overlay">
               <Link to="/">
                 <img src={logo} className="ro-logo" alt="logo" />

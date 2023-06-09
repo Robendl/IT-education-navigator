@@ -1,8 +1,7 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import { UserContext, userRoles } from "services/AuthService";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 /* Enum containing possible tab options */
 const tabOption = {

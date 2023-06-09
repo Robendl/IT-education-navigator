@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { useContext, useState, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AuthService, { UserContext } from "services/AuthService";
 import { OverlayContext } from "components/layout/PageOverlay/PageOverlay";
 import ChangePasswordPopup from "../popups/ChangePasswordPopup/ChangePasswordPopup";
@@ -13,7 +13,7 @@ export default function MainHeader() {
   return (
     <div className="main-header ignore-overlay">
       <div className="page-wide">
-      <h2><Link to="/" className="header-title">Opleidingsregister</Link></h2>
+        <h2><Link to="/" className="header-title">Opleidingsregister</Link></h2>
         {user.loggedIn && <UserOption user={user} />}
       </div>
     </div>
@@ -57,6 +57,10 @@ function UserToolTip({ onClose, setLock }) {
   const [changingPassword, setChangingPassword] = useState(false);
   const navigate = useNavigate();
 
+  const overlayConfig = useMemo(() => ({
+    closeChangePassword: () => { setChangingPassword(false); onClose(); }
+  }), [onClose]);
+
   function handleLogout() {
     navigate("/");
     AuthService.logout();
@@ -75,9 +79,7 @@ function UserToolTip({ onClose, setLock }) {
       <div>
         <span onClick={handleChangePassword}>Verander wachtwoord</span>
       </div>
-      <OverlayContext.Provider value={{
-        closeChangePassword: () => { setChangingPassword(false); onClose(); }
-      }} >
+      <OverlayContext.Provider value={overlayConfig} >
         <PageOverlay isOpen={changingPassword}>
           <ChangePasswordPopup />
         </PageOverlay>

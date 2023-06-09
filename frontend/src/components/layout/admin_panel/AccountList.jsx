@@ -52,7 +52,7 @@ export default function AccountList() {
           </tr>
         </thead>
         <tbody>
-          {results.map((result, idx) => <AccountResult entry={result} key={idx} setErrorMessage={setErrorMessage} />)}
+          {results.map((result, idx) => <AccountResult entry={result} key={result["id"]} setErrorMessage={setErrorMessage} />)}
         </tbody>
       </table>
     </>

@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { CircularProgress, ClickAwayListener, IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
+import { CircularProgress, ClickAwayListener, IconButton, Tooltip } from '@mui/material';
 import CourseLoader, { errorCodes } from 'services/CourseLoader';
-import { useContext } from 'react';
 import { OverlayContext } from 'components/layout/PageOverlay/PageOverlay';
 import { UserContext, userRoles } from 'services/AuthService';
-import { useRef } from 'react';
 import { propertyTranslations } from 'config/translations';
 import CloseIcon from '@mui/icons-material/Close';
 import SortIcon from '@mui/icons-material/Sort';
@@ -235,7 +232,7 @@ function Result({ entry }) {
     <div className={`result ${entry["archived"] ? "archived" : ""}`} ref={resultElement}>
       <div className="result-head">
         <span className="result-tag">{entry["level"]}</span>
-        <Link to={`/course/${entry.id}`} state={{goBack: true}} className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
+        <Link to={`/course/${entry.id}`} state={{ goBack: true }} className="result-name">{entry["name"]} {entry["archived"] && <span>(gearchiveerd)</span>}</Link>
 
         { /* Edit button */
           (user.role >= userRoles.DATA_MANAGER) && !entry["archived"] &&

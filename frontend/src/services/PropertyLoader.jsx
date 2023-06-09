@@ -101,9 +101,7 @@ const filters = {
 
 /* Placeholder function for retrieving all properties with their possible values */
 function loadProperties() {
-  return new Promise((resolve, reject) => {
-    resolve(filters);
-  });
+  return Promise.resolve(filters);
 };
 
 const PropertyLoader = {
