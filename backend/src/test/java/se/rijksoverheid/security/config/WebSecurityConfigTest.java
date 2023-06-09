@@ -39,10 +39,10 @@ class WebSecurityConfigTest {
     }
 
     @Test
-    void testAuthenticationManagerBean() {
+    void testAuthenticationManager() {
         UserDetailsService userDetailsService = mock(UserDetailsService.class);
         PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-        AuthenticationManager authenticationManager = webSecurityConfig.authenticationManagerBean(userDetailsService, passwordEncoder);
+        AuthenticationManager authenticationManager = webSecurityConfig.authenticationManager(userDetailsService, passwordEncoder);
         assertNotNull(authenticationManager);
         assertEquals(ProviderManager.class, authenticationManager.getClass());
     }
