@@ -7,6 +7,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import se.rijksoverheid.dto.*;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
@@ -157,10 +159,7 @@ class CourseServiceTest {
     @Test
     void testDeleteById() {
         long courseId = 1;
-        doAnswer(invocation -> {
-            assertEquals(courseId, (long) invocation.getArgument(0));
-            return null;
-        }).when(mockCourseRepository).deleteById(courseId);
-        mockCourseRepository.deleteById(courseId);
+        courseService.deleteById(courseId);
+        verify(mockCourseRepository,times(1)).deleteById(courseId);
     }
 }
