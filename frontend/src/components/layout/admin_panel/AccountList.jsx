@@ -79,6 +79,14 @@ function AccountResult({ entry, setErrorMessage }) {
         case errorCodes.ERR_NETWORK:
           setErrorMessage("Kon niet verbinden met server.");
           break;
+        case errorCodes.ERR_LOGIN_INVALID:
+          setErrorMessage("U heeft niet voldoende rechten om dit te wijzigen.");
+          break;
+        case errorCodes.ERR_OTHER:
+          setErrorMessage("Kon gebruiker niet bewerken.");
+          break;
+        case errorCodes.ERR_CANCELED:
+          break;
         default:
           setErrorMessage("Er is iets misgegaan bij het bewerken van de gebruiker.");
           break;
