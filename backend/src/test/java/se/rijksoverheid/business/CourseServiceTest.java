@@ -7,13 +7,12 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import se.rijksoverheid.dto.*;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.dto.CoursePageDTO;
-import se.rijksoverheid.dto.CourseRequestDTO;
-import se.rijksoverheid.dto.CourseResponseDTO;
-import se.rijksoverheid.dto.ProvinceDTO;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
@@ -36,8 +35,6 @@ class CourseServiceTest {
     private CourseResponseDTO mockCourseDTO;
     private Province mockProvince;
     private List<Course> courseList;
-    private CoursePageDTO mockCoursePage;
-    private Page<Course> pageCourse;
     private CourseService courseService;
     private Authentication authentication;
 
@@ -51,8 +48,6 @@ class CourseServiceTest {
         courseList = new ArrayList<>();
         courseList.add(mockCourse);
         mockCourseDTO = mock(CourseResponseDTO.class);
-        mockCoursePage = mock(CoursePageDTO.class);
-        pageCourse = new PageImpl<>(courseList);
         authentication = mock(Authentication.class);
     }
 
@@ -86,8 +81,8 @@ class CourseServiceTest {
             // set up desired Mapper behaviour
             ProvinceDTO mockProvinceDTO = mock(ProvinceDTO.class);
             mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
-            CourseResponseDTO mockCourseDTO = mock(CourseResponseDTO.class);
-            mockMapper.when(() -> Mapper.map(mockCourse, CourseResponseDTO.class)).thenReturn(mockCourseDTO);
+            LimitedCourseResponseDTO mockCourseDTO = mock(LimitedCourseResponseDTO.class);
+            mockMapper.when(() -> Mapper.map(mockCourse, LimitedCourseResponseDTO.class)).thenReturn(mockCourseDTO);
             List<CourseResponseDTO> courses = courseService.getCourses(filter, sort, authentication);
             List<CourseResponseDTO> check = List.of(mockCourseDTO);
             assertEquals(courses, check);
@@ -104,7 +99,8 @@ class CourseServiceTest {
             mockMapper.when(() -> Mapper.map(mockCourseRequest, Course.class)).thenReturn(mockCourse);
             doNothing().when(mockCourse).setProvince(mockProvince);
             when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
-            assertEquals(mockCourse, courseService.save(mockCourseRequest));
+            mockMapper.when(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class)).thenReturn(mockCourseDTO);
+            assertEquals(mockCourseDTO, courseService.save(mockCourseRequest));
         }
     }
 
@@ -163,10 +159,7 @@ class CourseServiceTest {
     @Test
     void testDeleteById() {
         long courseId = 1;
-        doAnswer(invocation -> {
-            assertEquals(courseId, (long) invocation.getArgument(0));
-            return null;
-        }).when(mockCourseRepository).deleteById(courseId);
-        mockCourseRepository.deleteById(courseId);
+        courseService.deleteById(courseId);
+        verify(mockCourseRepository,times(1)).deleteById(courseId);
     }
 }

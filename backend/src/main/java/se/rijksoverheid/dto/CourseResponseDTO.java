@@ -5,10 +5,11 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Data Transfer Object used for sending responses containing course data.
+ * Data Transfer Object used for sending responses related to courses.
+ * Extended by LimitedCourseResponseDTO and FullCourseResponseDTO, so that personal data can be filtered out.
  */
 @Data
-public class CourseResponseDTO implements Serializable {
+public abstract class CourseResponseDTO implements Serializable {
     private long id;
     private Boolean archived;
     private String name;

@@ -89,7 +89,9 @@ class AuthenticationControllerTest {
     void testChangeUserPasswordSuccess() {
         UserResponseDTO mockUserResponse = mock(UserResponseDTO.class);
         when(mockUserService.changePassword(mockUserChangePasswordRequest)).thenReturn(mockUserResponse);
-        assertEquals(ResponseEntity.ok(mockUserResponse), authenticationController.changeUserPassword(mockUserChangePasswordRequest));
+        ResponseEntity<UserResponseDTO> responseEntity = authenticationController.changeUserPassword(mockUserChangePasswordRequest);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(mockUserResponse, responseEntity.getBody());
     }
 
     @Test

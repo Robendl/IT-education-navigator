@@ -1,15 +1,14 @@
 package se.rijksoverheid.business;
 
-import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.rijksoverheid.dto.*;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.dto.*;
 import se.rijksoverheid.mapper.Mapper;
 import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
@@ -32,9 +31,10 @@ public class CourseService {
 
     /**
      * Retrieves a list of courses.
-     * @param search        search string that will be used for looking in all string fields
-     * @param archived      determines whether to retrieve unarchived or archived courses
-     * @return              List of courses
+     * @param filter            contains search query and filters
+     * @param sort              contains sorting information
+     * @param authentication    authentication details, used for determining if personal data should be returned
+     * @return                  List of courses
      */
 
     public List<CourseResponseDTO> getCourses(CourseFilter filter, Sort sort, Authentication authentication) {
@@ -57,11 +57,23 @@ public class CourseService {
         return courseDTOs;
     }
 
+    /**
+     * Retrieves a course by id.
+     * @param id                id of the course to be retrieved
+     * @param authentication    authentication details, used for determining if personal data should be returned
+     * @return                  Course
+     */
     public CourseResponseDTO getCourseById(long id, Authentication authentication) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Course with id " + id + "could not be found."));
         return convertCourseAppropriately(course, authentication);
     }
 
+    /**
+     * Converts a course to a CourseResponseDTO, depending on the authentication details.
+     * @param course            course to be converted
+     * @param authentication    authentication details, used for determining if personal data should be returned
+     * @return                  CourseResponseDTO
+     */
     private CourseResponseDTO convertCourseAppropriately(Course course, Authentication authentication) {
         Collection<?> authorities = authentication.getAuthorities();
         if(authorities.contains(new SimpleGrantedAuthority(User.Role.ADMIN.toString()))
@@ -69,36 +81,33 @@ public class CourseService {
                 || authorities.contains(new SimpleGrantedAuthority(User.Role.DATA_MANAGER.toString()))) {
             return Mapper.map(course, FullCourseResponseDTO.class);
         } else {
-            return Mapper.map(course, CourseResponseDTO.class);
+            return Mapper.map(course, LimitedCourseResponseDTO.class);
         }
     }
 
     /**
      * Saves a course to the database
      * @param courseDTO                     Data Transfer Object containing information on course to be created.
-     * @throws IllegalArgumentException     when no province with the given provinceId can be found.
      * @return                              The saved course.
      */
     @Transactional
-    public Course save(CourseRequestDTO courseDTO) {
+    public CourseResponseDTO save(CourseRequestDTO courseDTO) {
         Province province = provinceRepository.findById(courseDTO.getProvinceId()).orElseThrow(() ->
                 new NotFoundException("Province with id " + courseDTO.getProvinceId() + " could not be found while " +
                         "trying to save new course"));
         Course course = Mapper.map(courseDTO, Course.class);
         course.setProvince(province);
-        return courseRepository.save(course);
+        return Mapper.map(courseRepository.save(course), FullCourseResponseDTO.class);
     }
 
     /**
      * Edits a course, can also be used for archiving.
      * @param courseId                      id of course to be edited.
      * @param courseDTO                     Data Transfer Object containing new data to be saved.
-     * @throws EntityNotFoundException      when the no course with courseId can be found.
-     * @throws IllegalArgumentException     when no province with the given provinceId can be found.
      * @return                              The new Course object
      */
     @Transactional
-    public Course edit(Long courseId, CourseRequestDTO courseDTO) {
+    public CourseResponseDTO edit(Long courseId, CourseRequestDTO courseDTO) {
         Course course = courseRepository.findById(courseId).orElseThrow(() ->
                 new NotFoundException("Course with id " + courseId + " could not be found while trying to edit"));
         Mapper.map(courseDTO, course);
@@ -108,7 +117,7 @@ public class CourseService {
                             "trying to edit course with id" + courseId));
             course.setProvince(province);
         }
-        return courseRepository.save(course);
+        return Mapper.map(courseRepository.save(course), FullCourseResponseDTO.class);
     }
 
     /**

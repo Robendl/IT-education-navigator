@@ -12,7 +12,6 @@ import se.rijksoverheid.business.CourseService;
 import se.rijksoverheid.dto.CourseRequestDTO;
 import se.rijksoverheid.dto.CourseResponseDTO;
 import se.rijksoverheid.filter.CourseFilter;
-import se.rijksoverheid.model.Course;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,12 +27,17 @@ public class CourseController {
     private CourseService courseService;
 
     /**
-     * Endpoint for retrieving courses
-     * @param search        every string field is checked for this search string when provided.
-     * @param archived      determines whether to return unarchived or archived course, unarchived by default.
-     * @param orderBy       what field to order by, name by default.
-     * @param direction     direction to order by, can be ASC or DESC, ASC by default.
-     * @return              List of courses.
+     * Endpoint for getting all courses.
+     * @param authentication    Authentication object containing the user's credentials.
+     * @param search            Search string to filter courses by.
+     * @param archived          Boolean to filter courses by.
+     * @param levels            List of levels to filter courses by.
+     * @param regions           List of regions to filter courses by.
+     * @param provinceIds       List of province ids to filter courses by.
+     * @param courseTypes       List of course types to filter courses by.
+     * @param orderBy           String to order courses by.
+     * @param direction         Direction to order courses by.
+     * @return                  List of courses.
      */
     @Transactional
     @GetMapping("")
@@ -49,22 +53,16 @@ public class CourseController {
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction
     ) {
         Sort sort = Sort.by(direction, orderBy);
-        CourseFilter filter = getCourseFilter(search, archived, levels, regions, provinceIds, courseTypes);
+        CourseFilter filter = new CourseFilter(search, archived, levels, regions, provinceIds, courseTypes);
         return ResponseEntity.ok(courseService.getCourses(filter, sort, authentication));
     }
 
-    protected CourseFilter getCourseFilter(String search, boolean archived, List<String> levels, List<String> regions,
-                                 List<Long> provinceIds, List<String> courseTypes) {
-        CourseFilter filter = new CourseFilter();
-        filter.setSearch(search);
-        filter.setArchived(archived);
-        filter.setLevels(levels);
-        filter.setRegions(regions);
-        filter.setProvinceIds(provinceIds);
-        filter.setCourseTypes(courseTypes);
-        return filter;
-    }
-
+    /**
+     * Endpoint for getting a course by id.
+     * @param id                id of the course to be retrieved.
+     * @param authentication    Authentication object containing the user's credentials.
+     * @return                  The course with the given id.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable long id, Authentication authentication) {
         return ResponseEntity.ok(courseService.getCourseById(id, authentication));
@@ -76,7 +74,7 @@ public class CourseController {
      * @return              The saved Course.
      */
     @PostMapping("")
-    public ResponseEntity<Course> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
+    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody @Validated CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.save(courseDTO));
     }
 
@@ -88,7 +86,7 @@ public class CourseController {
      *                      no course with the given id can be found.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Course> editCourse(
+    public ResponseEntity<CourseResponseDTO> editCourse(
             @PathVariable long id,
             @RequestBody @Valid CourseRequestDTO courseDTO) {
         return ResponseEntity.ok(courseService.edit(id, courseDTO));

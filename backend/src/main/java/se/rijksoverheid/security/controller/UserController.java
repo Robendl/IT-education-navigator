@@ -1,15 +1,12 @@
 package se.rijksoverheid.security.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
 import se.rijksoverheid.security.business.UserService;
-import se.rijksoverheid.security.dto.UserChangePasswordRequestDTO;
 import se.rijksoverheid.security.dto.UserPermRequestDTO;
 import se.rijksoverheid.security.dto.UserResetPasswordResponseDTO;
 import se.rijksoverheid.security.dto.UserResponseDTO;
@@ -25,24 +22,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private AuthenticationManager authenticationManager;
     private UserService userService;
 
     /**
      * Endpoint for retrieving users
-     * @param page          page number of page to return, 0 by default.
-     * @param size          size of page to return, 50 by default.
+     * @param search        Search string
+     * @param direction     Direction to sort by
      * @return              List of users
      */
     @GetMapping("")
     public ResponseEntity<List<UserResponseDTO>> getUsers(
             @RequestParam(required = false, defaultValue = "") String search,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "50") int size,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction direction){
         String orderBy = "username";
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        return ResponseEntity.ok(userService.getUsers(search, pageable));
+        Sort sort = Sort.by(direction, orderBy);
+        return ResponseEntity.ok(userService.getUsers(search, sort));
     }
 
     /**
@@ -65,7 +59,22 @@ public class UserController {
      */
     @PutMapping("/password/{id}/reset")
     public ResponseEntity<UserResetPasswordResponseDTO> resetUserPassword(
+            Authentication authentication,
             @PathVariable long id) {
+        if (id == userService.loadUserByUsername(authentication.getName()).getId()) {
+            throw new BadRequestException("Het eigen wachtwoord mag niet gereset worden");
+        }
         return ResponseEntity.ok(userService.resetPassword(id));
+    }
+
+    /**
+     * Endpoint used for deleting a user.
+     * @param id    id of user to be deleted.
+     * @return      No content response.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> removeUser(@PathVariable long id) {
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

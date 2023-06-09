@@ -1,10 +1,10 @@
 package se.rijksoverheid.security.model;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,14 +19,8 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     Optional<User> findUserByUsername(String username);
 
-    /**
-     * Retrieve all users.
-     * @param pageable  page information
-     * @return          All users
-     */
-    Page<User> findAll(Pageable pageable);
 
-    Page<User> findAllUserByUsername(String search, Pageable pageable);
+    List<User> findAllUserByUsername(String search, Sort sort);
 
     /**
      * Checks if username already exists in the database.
@@ -36,4 +30,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByUsername(String username);
 
     Optional<User> findById(long id);
+
+    /**
+     * Method used for deleting user.
+     * @param id    id of user to be deleted.
+     */
+    void deleteById(long id);
 }

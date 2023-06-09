@@ -13,6 +13,7 @@ import { OverlayContext } from '../PageOverlay/PageOverlay';
 /* AccountList component that displays a table with all users and corresponding actions */
 export default function AccountList() {
   const [results, setResults] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   /* Load the users when the account list is opened */
   useEffect(() => {
@@ -21,12 +22,18 @@ export default function AccountList() {
     }, (error) => {
       switch (error) {
         case errorCodes.ERR_NETWORK:
-          console.error("Kon niet verbinden met server.");
+          setErrorMessage("Kon niet verbinden met server.");
+          break;
+        case errorCodes.ERR_LOGIN_INVALID:
+          setErrorMessage("U heeft niet voldoende rechten om dit te bekijken.");
           break;
         case errorCodes.ERR_OTHER:
-          console.error("Kon gebruikers niet ophalen.");
+          setErrorMessage("Kon gebruikers niet ophalen.");
+          break;
+        case errorCodes.ERR_CANCELED:
           break;
         default:
+          setErrorMessage("Er is iets misgegaan bij het laden van de gebruikersaccounts.");
           break;
       }
     })
@@ -34,22 +41,25 @@ export default function AccountList() {
 
   /* AccountList component */
   return (
-    <table className="account-table">
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th style={{ minWidth: "30%" }}>Bevoegdheid</th>
-          <th style={{ minWidth: "30%" }}>Acties</th>
-        </tr>
-      </thead>
-      <tbody>
-        {results.map((result, idx) => <AccountResult entry={result} key={result["id"]} />)}
-      </tbody>
-    </table>
+    <>
+      {errorMessage && <span className="error-message">{errorMessage}</span>}
+      <table className="account-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th style={{ minWidth: "30%" }}>Bevoegdheid</th>
+            <th style={{ minWidth: "30%" }}>Acties</th>
+          </tr>
+        </thead>
+        <tbody>
+          {results.map((result, idx) => <AccountResult entry={result} key={result["id"]} setErrorMessage={setErrorMessage} />)}
+        </tbody>
+      </table>
+    </>
   )
 }
 
-function AccountResult({ entry }) {
+function AccountResult({ entry, setErrorMessage }) {
   const [isEditingRole, setIsEditingRole] = useState(false);
   const [isSavingRole, setIsSavingRole] = useState(false);
   const roleSelect = useRef();
@@ -67,12 +77,10 @@ function AccountResult({ entry }) {
     }, (error) => {
       switch (error) {
         case errorCodes.ERR_NETWORK:
-          console.error("Kon niet verbinden met server.");
-          break;
-        case errorCodes.ERR_OTHER:
-          console.error("Er is iets misgegaan bij het bewerken van de gebruiker.");
+          setErrorMessage("Kon niet verbinden met server.");
           break;
         default:
+          setErrorMessage("Er is iets misgegaan bij het bewerken van de gebruiker.");
           break;
       }
     })
@@ -88,6 +96,10 @@ function AccountResult({ entry }) {
 
   function handlePasswordReset() {
     overlay.showNewPassword(entry);
+  }
+
+  function handleDeleteUser() {
+    overlay.showDeleteUser(entry);
   }
 
   return (
@@ -135,7 +147,7 @@ function AccountResult({ entry }) {
             </ToolTipButton>
           }
           {(user.name !== entry["username"]) &&
-            <ToolTipButton title="Verwijderen" onClick={() => { return }}>
+            <ToolTipButton title="Verwijderen" onClick={handleDeleteUser}>
               <DeleteIcon />
             </ToolTipButton>
           }

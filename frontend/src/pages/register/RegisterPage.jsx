@@ -4,7 +4,7 @@ import { CircularProgress } from "@mui/material";
 
 import '../login/LoginPage.css'
 import { useState } from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
     return (
@@ -40,8 +40,8 @@ function RegisterForm() {
             }, 1500);
         }, (errorCode) => {
             switch (errorCode) {
-                case errorCodes.ERR_LOGIN_INVALID:
-                    setErrorMessage("Emailadres / wachtwoord is onjuist");
+                case errorCodes.ERR_USERNAME_DUPLICATE:
+                    setErrorMessage("Emailadres is al in gebruik.");
                     setIsSubmitting(false);
                     break;
 
@@ -61,14 +61,14 @@ function RegisterForm() {
     return (
         <form className="login-form" onSubmit={handleSubmit}>
             <h2>Opleidingsregister Registreren</h2>
-            <FormEntry type="email" propertyName="Emailadres" propertyKey="username" required/>
-            <FormEntry type="password" propertyName="Wachtwoord" propertyKey="password" required/>
-            <FormEntry type="password" propertyName="Herhaal Wachtwoord" propertyKey="confirmPassword" required/>
+            <FormEntry type="email" propertyName="Emailadres" propertyKey="username" required />
+            <FormEntry type="password" propertyName="Wachtwoord" propertyKey="password" required />
+            <FormEntry type="password" propertyName="Herhaal Wachtwoord" propertyKey="confirmPassword" required />
             <div>
                 <div className="login-form-footer">
                     <button type="submit">
                         {(isSubmitting &&
-                            <CircularProgress className="submit-loading"/>) ||
+                            <CircularProgress className="submit-loading" />) ||
                             <span>Registreer</span>
                         }
                     </button>

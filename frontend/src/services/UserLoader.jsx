@@ -69,10 +69,28 @@ function resetUserPassword(userId) {
   });
 }
 
+/* Function for deleting a user
+ * Accepts an object with user properties (must include an "id" property)
+ * Returns a promise that, once resolved, returns the http response body */
+function deleteUser(user) {
+  return new Promise((resolve, reject) => {
+    http.delete(`/user/${user.id}`, user, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }).then((response) => {
+      resolve(response);
+    }, (error) => {
+      reject("Kon account niet verwijderen.")
+    });
+  });
+}
+
 const UserLoader = {
   loadUsers,
   changeUserPermissions,
-  resetUserPassword
+  resetUserPassword,
+  deleteUser
 }
 
 export default UserLoader;

@@ -10,12 +10,19 @@ import se.rijksoverheid.model.Province;
 
 import java.util.List;
 
+/**
+ * Holds endpoints to which the province data can be accessed/altered from the outside world.
+ */
 @AllArgsConstructor
 @RestController
 @RequestMapping("/provinces")
 public class ProvinceController {
     private ProvinceService provinceService;
 
+    /**
+     * Endpoint for getting all provinces.
+     * @return List of provinces.
+     */
     @GetMapping("")
     public ResponseEntity<List<Province>> getProvinces() {
         return ResponseEntity.ok(provinceService.getProvinces());

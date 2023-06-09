@@ -1,10 +1,8 @@
 package se.rijksoverheid.security.business;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
@@ -24,12 +22,11 @@ import java.util.regex.Pattern;
  * UserService classed is used for interacting with userdata.
  * Is an implementation of UserDetailsService so that Spring security's AuthenticationManager can use it.
  */
+@RequiredArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final int NEW_RANDOM_PASSWORD_LENGTH = 12;
 
@@ -69,9 +66,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Checks if a given string is a valid email address
-     * @param email string to be checked
-     * @return      true if string is a valid email address, false otherwise
+     * Method used for checking if a user already exists.
+     * @param email    email to be checked.
      */
     public void checkEmailAddress(String email) {
         String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
@@ -81,22 +77,22 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Function used for getting a list of all users and converting them to a DTO.
-     * @param pageable  page for frontend
-     * @return          UserResponseDTO.
+     * Retrieve list of all users
+     * @param search    possible search string, if empty all users are returned
+     * @param sort      sort order
+     * @return          List of all/found users
      */
     @Transactional
-    public List<UserResponseDTO> getUsers(String search,Pageable pageable){
-        //TODO Remove paging from Users (don't forget to update tests)
-        Page<User> users;
+    public List<UserResponseDTO> getUsers(String search, Sort sort){
+        List<User> users;
         if(search.isEmpty()){
-            users = userRepository.findAll(pageable);
+            users = userRepository.findAll(sort);
         } else {
-            users = userRepository.findAllUserByUsername(search, pageable);
+            users = userRepository.findAllUserByUsername(search, sort);
         }
 
         List<UserResponseDTO> userResponseDTOs = new ArrayList<>();
-        for(User user: users.getContent()) {
+        for(User user: users) {
             UserResponseDTO userResDTO = new UserResponseDTO();
             userResDTO.setId(user.getId());
             userResDTO.setUsername(user.getUsername());
@@ -107,29 +103,27 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Change a user's permissions.
-     * @param userId                    Id of user to change permissions for.
-     * @param userPermDTO               DTO for all data to be changed.
-     * @return                          The user which was changed.
-     * @throws NotFoundException  No user with id was found.
-     * @throws Exception                Changed user to non-existing role.
+     * Edit permissions of a user.
+     * @param userId        ID of user to edit.
+     * @param userPermDTO   DTO containing new role.
+     * @return              The user that was changed.
      */
     @Transactional
     public UserResponseDTO editUserPerms(long userId, UserPermRequestDTO userPermDTO) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("User with id " + userId + " could not be found."));
-        Mapper.map(userPermDTO, user);
+        user.setRole(userPermDTO.getRole());
         userRepository.save(user);
         UserResponseDTO userDTO = new UserResponseDTO();
         Mapper.map(user, userDTO);
         return userDTO;
     }
 
+
     /**
-     * Change a user's permissions.
-     * @param userDTO                    DTO for all data to be changed.
-     * @return                           The user that was changed.
-     * @throws UsernameNotFoundException No user with username was found.
+     * Change password of a user.
+     * @param userDTO   DTO containing username and new password.
+     * @return          The user that was changed.
      */
     public UserResponseDTO changePassword(UserChangePasswordRequestDTO userDTO) {
         User user = loadUserByUsername(userDTO.getUsername());
@@ -168,5 +162,14 @@ public class UserService implements UserDetailsService {
             sb.append(randomChar);
         }
         return sb.toString();
+    }
+
+    /**
+     * Deletes a user by Id.
+     * @param id    id of user to be deleted.
+     */
+    @Transactional
+    public void deleteById(long id) {
+        userRepository.deleteById(id);
     }
 }
