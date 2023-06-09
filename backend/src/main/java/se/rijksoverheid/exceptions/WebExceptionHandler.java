@@ -22,7 +22,6 @@ public class WebExceptionHandler {
 
     @ExceptionHandler(EntityConflictException.class)
     public ResponseEntity<String> handleEntityConflictException(Exception e) {
-        log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
