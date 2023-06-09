@@ -95,7 +95,7 @@ export default function ResultList() {
       {(isLoading &&
         <LoadingMessage />) ||
         <div className="result-list-entries">
-          {results.map((result, idx) => <Result entry={result} key={idx} />)}
+          {results.map((result, idx) => <Result entry={result} key={result["id"]} />)}
         </div>
       }
     </div>
