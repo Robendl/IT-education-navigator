@@ -218,4 +218,11 @@ class UserServiceTest {
         when(mockUserRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, ()-> userService.resetPassword(userId));
     }
+
+    @Test
+    void testDeleteById() {
+        long userId = 1;
+        userService.deleteById(userId);
+        verify(mockUserRepository,times(1)).deleteById(userId);
+    }
 }
