@@ -1,7 +1,7 @@
 import { createContext } from "react"
 import './PageOverlay.css';
 
-export const OverlayContext = createContext();
+export const OverlayContext = createContext({ openAdd: null });
 
 /* PageOverlay component creates an overlay over the page (excluding the header)
  * Components such as popups can appear over this overlay */

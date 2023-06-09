@@ -5,7 +5,7 @@ export default function FormEntry({ type, propertyName, propertyKey, required, o
   return (
     <label>
       <div className={`form-entry form-entry-${type}`}>
-        <span className='form-entry-name'>{propertyName}</span>
+        <label htmlFor={propertyKey}><span className='form-entry-name'>{propertyName}</span></label>
         <div className="form-input">
           {
             (type === "checkbox" &&
