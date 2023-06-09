@@ -18,7 +18,7 @@ public class WebExceptionHandlerTest {
 
     @Test
     void testHandleBadRequestException() {
-        String errorMessage = "test message";
+        String errorMessage = "bad request";
         BadRequestException exception = new BadRequestException(errorMessage);
         ResponseEntity<String> response = handler.handleBadRequestException(exception);
         assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage), response);
