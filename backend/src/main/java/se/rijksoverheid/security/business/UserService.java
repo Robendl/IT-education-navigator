@@ -1,10 +1,9 @@
 package se.rijksoverheid.security.business;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
@@ -24,12 +23,11 @@ import java.util.regex.Pattern;
  * UserService classed is used for interacting with userdata.
  * Is an implementation of UserDetailsService so that Spring security's AuthenticationManager can use it.
  */
+@RequiredArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final int NEW_RANDOM_PASSWORD_LENGTH = 12;
 
@@ -81,22 +79,21 @@ public class UserService implements UserDetailsService {
 
     /**
      * Retrieve list of all users
-     * @param search    possible search string
-     * @param pageable
+     * @param search    possible search string, if empty all users are returned
+     * @param sort      sort order
      * @return          List of all/found users
      */
     @Transactional
-    public List<UserResponseDTO> getUsers(String search,Pageable pageable){
-        //TODO Remove paging from Users (don't forget to update tests)
-        Page<User> users;
+    public List<UserResponseDTO> getUsers(String search, Sort sort){
+        List<User> users;
         if(search.isEmpty()){
-            users = userRepository.findAll(pageable);
+            users = userRepository.findAll(sort);
         } else {
-            users = userRepository.findAllUserByUsername(search, pageable);
+            users = userRepository.findAllUserByUsername(search, sort);
         }
 
         List<UserResponseDTO> userResponseDTOs = new ArrayList<>();
-        for(User user: users.getContent()) {
+        for(User user: users) {
             UserResponseDTO userResDTO = new UserResponseDTO();
             userResDTO.setId(user.getId());
             userResDTO.setUsername(user.getUsername());
