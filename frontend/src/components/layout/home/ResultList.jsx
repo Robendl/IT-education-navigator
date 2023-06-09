@@ -89,7 +89,7 @@ export default function ResultList() {
               disableFocusListener
               disableTouchListener
             >
-              <IconButton onClick={handleSortByOpen}><SortIcon className="sort-icon" /></IconButton>
+              <IconButton onClick={handleSortByOpen} data-testid="sort-button"><SortIcon className="sort-icon" /></IconButton>
             </Tooltip>
           </div>
         </ClickAwayListener>

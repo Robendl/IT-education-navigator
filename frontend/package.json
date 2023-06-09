@@ -46,6 +46,6 @@
   },
   "jest": {
     "transformIgnorePatterns": ["node_modules\/(?!axios)"],
-    "testMatch": [ "**/__tests__/!(_*)/**/*.[jt]s?(x)" ]
+    "testMatch": [ "**/__tests__/!(_*)/**/*.[jt]s?(x)", "**/__tests__/*.[jt]s?(x)" ]
   }
 }
