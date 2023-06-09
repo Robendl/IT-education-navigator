@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -118,12 +119,10 @@ class UserControllerTest {
     }
 
     @Test
-    void testRemoveCourse() {
+    void testRemoveUser() {
         long userId = 1;
-        doAnswer(invocation -> {
-            assertEquals(userId,(long)invocation.getArgument(0));
-            return null;
-        }).when(mockUserService).deleteById(userId);
-        mockUserService.deleteById(userId);
+        ResponseEntity<Object> response = userController.removeUser(userId);
+        verify(mockUserService,times(1)).deleteById(userId);
+        assertEquals(ResponseEntity.status(HttpStatus.NO_CONTENT).build(), response);
     }
 }
