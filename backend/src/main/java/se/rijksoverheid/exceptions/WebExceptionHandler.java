@@ -13,7 +13,6 @@ import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
  * Exception handler for web exceptions.
  */
 @ControllerAdvice
-@Slf4j
 public class WebExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> handleBadRequestException(Exception e) {
