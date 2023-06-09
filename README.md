@@ -25,8 +25,13 @@ Om de ``npm`` te installeren. Run hierna:
 ```
 npm start
 ```
-
 De applicatie wordt automatisch geopend (http://localhost:3000).
+
+
+Beschikbare frontend tests kunnen worden opgestart met:
+```
+npm test
+```
 
 ### API
 Root URL:
