@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import se.rijksoverheid.exceptions.webexceptions.BadRequestException;
+import se.rijksoverheid.exceptions.webexceptions.EntityConflictException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,5 +21,13 @@ public class WebExceptionHandlerTest {
         BadRequestException exception = new BadRequestException(errorMessage);
         ResponseEntity<String> response = handler.handleBadRequestException(exception);
         assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage), response);
+    }
+
+    @Test
+    void testHandleEntityConflictException() {
+        String errorMessage = "test message";
+        EntityConflictException exception = new EntityConflictException(errorMessage);
+        ResponseEntity<String> response = handler.handleEntityConflictException(exception);
+        assertEquals(ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage), response);
     }
 }
