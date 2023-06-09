@@ -3,7 +3,19 @@
 ## Easy startup
 
 Run the following command from the main directory:
-``docker-compose up``
+```
+docker-compose up
+```
+
+Run backend tests with the following command from the backend directory:
+```
+./gradlew test
+```
+
+Run frontend test with the following command from the frontend directory:
+```
+npm test
+```
 
 ## Development startup guide
 ### DB
