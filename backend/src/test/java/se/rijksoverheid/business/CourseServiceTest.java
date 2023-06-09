@@ -3,12 +3,12 @@ package se.rijksoverheid.business;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import se.rijksoverheid.dto.*;
 import se.rijksoverheid.exceptions.webexceptions.NotFoundException;
@@ -18,8 +18,8 @@ import se.rijksoverheid.model.Course;
 import se.rijksoverheid.model.CourseRepository;
 import se.rijksoverheid.model.Province;
 import se.rijksoverheid.model.ProvinceRepository;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,26 +29,28 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CourseServiceTest {
+    @Mock
     private CourseRepository mockCourseRepository;
+    @Mock
     private ProvinceRepository mockProvinceRepository;
+    @InjectMocks
+    private CourseService courseService;
+    @Mock
     private Course mockCourse;
-    private CourseResponseDTO mockCourseDTO;
+    @Mock
+    private CourseRequestDTO mockCourseRequestDTO;
+    @Mock
+    private CourseResponseDTO mockCourseResponseDTO;
+    @Mock
     private Province mockProvince;
     private List<Course> courseList;
-    private CourseService courseService;
+    @Mock
     private Authentication authentication;
 
     @BeforeEach
     void setUp() {
-        mockCourseRepository = mock(CourseRepository.class);
-        mockProvinceRepository = mock(ProvinceRepository.class);
-        mockCourse = mock(Course.class);
-        mockProvince = mock(Province.class);
-        courseService = new CourseService(mockCourseRepository, mockProvinceRepository);
         courseList = new ArrayList<>();
         courseList.add(mockCourse);
-        mockCourseDTO = mock(CourseResponseDTO.class);
-        authentication = mock(Authentication.class);
     }
 
     @Test
@@ -78,7 +80,6 @@ class CourseServiceTest {
         )).thenReturn(courseList);
 
         try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
-            // set up desired Mapper behaviour
             ProvinceDTO mockProvinceDTO = mock(ProvinceDTO.class);
             mockMapper.when(() -> Mapper.map(mockProvince, ProvinceDTO.class)).thenReturn(mockProvinceDTO);
             LimitedCourseResponseDTO mockCourseDTO = mock(LimitedCourseResponseDTO.class);
@@ -87,6 +88,41 @@ class CourseServiceTest {
             List<CourseResponseDTO> check = List.of(mockCourseDTO);
             assertEquals(courses, check);
         }
+    }
+
+    @Test
+    void testGetCourseById_Limited() {
+        long id = 1;
+        Collection authorities = mock(Collection.class);
+        when(authentication.getAuthorities()).thenReturn(authorities);
+        when(authorities.contains(any())).thenReturn(false);
+        when(mockCourseRepository.findById(id)).thenReturn(Optional.of(mockCourse));
+        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
+            mockMapper.when(() -> Mapper.map(mockCourse, LimitedCourseResponseDTO.class)).thenReturn(mockCourseResponseDTO);
+            assertEquals(mockCourseResponseDTO, courseService.getCourseById(id, authentication));
+            mockMapper.verify(() -> Mapper.map(mockCourse, LimitedCourseResponseDTO.class));
+        }
+    }
+
+    @Test
+    void testGetCourseById_Full() {
+        long id = 1;
+        Collection authorities = mock(Collection.class);
+        when(authentication.getAuthorities()).thenReturn(authorities);
+        when(authorities.contains(any())).thenReturn(true);
+        when(mockCourseRepository.findById(id)).thenReturn(Optional.of(mockCourse));
+        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
+            mockMapper.when(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class)).thenReturn(mockCourseResponseDTO);
+            assertEquals(mockCourseResponseDTO, courseService.getCourseById(id, authentication));
+            mockMapper.verify(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class));
+        }
+    }
+
+    @Test
+    void testGetCourseById_NotFound() {
+        long id = 1;
+        when(mockCourseRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> courseService.getCourseById(id, authentication));
     }
 
     @Test
@@ -99,8 +135,8 @@ class CourseServiceTest {
             mockMapper.when(() -> Mapper.map(mockCourseRequest, Course.class)).thenReturn(mockCourse);
             doNothing().when(mockCourse).setProvince(mockProvince);
             when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
-            mockMapper.when(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class)).thenReturn(mockCourseDTO);
-            assertEquals(mockCourseDTO, courseService.save(mockCourseRequest));
+            mockMapper.when(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class)).thenReturn(mockCourseResponseDTO);
+            assertEquals(mockCourseResponseDTO, courseService.save(mockCourseRequest));
         }
     }
 
@@ -113,48 +149,63 @@ class CourseServiceTest {
         assertThrows(NotFoundException.class, () -> courseService.save(mockCourseRequest));
     }
 
-//    @Test
-//    void testEditCourse() {
-//        long courseId = 1;
-//        CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
-//        long provinceId = 1;
-//        when(mockCourseRequest.getProvinceId()).thenReturn(provinceId);
-//        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
-//        when(mockCourse.getProvince()).thenReturn(mockProvince);
-//        when(mockProvinceRepository.findById(provinceId)).thenReturn(Optional.of(mockProvince));
-//        doNothing().when(mockCourse).setProvince(mockProvince);
-//        when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
-//        assertEquals(mockCourse, courseService.edit(courseId, mockCourseRequest));
+    @Test
+    void testEditCourse_Successful() {
+        long courseId = 1;
+        long provinceId = 1;
+        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
+        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
+            when(mockCourseRequestDTO.getProvinceId()).thenReturn(provinceId);
+            when(mockCourse.getProvince()).thenReturn(mockProvince);
+            when(mockProvince.getId()).thenReturn(provinceId);
+            when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
+            mockMapper.when(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class)).thenReturn(mockCourseResponseDTO);
+            assertEquals(mockCourseResponseDTO, courseService.edit(courseId, mockCourseRequestDTO));
+            verify(mockCourseRepository).save(mockCourse);
+            mockMapper.verify(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class));
+        }
+    }
 
-//        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
-//            doAnswer(invocation -> {
-//                mockCourse = mockCourse2;
-//                return null;
-//            }).when(mockMapper); Mapper.map(mockCourseRequest, mockCourse);
-//            doNothing().when(() -> Mapper.map(mockCourseRequest,mockCourse));
-//            assertEquals(mockCourse, courseService.edit(courseId, mockCourseRequest));
-//        }
-//    }
+    @Test
+    void testEditCourse_IncorrectCourseId() {
+        long courseId = 1;
+        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> courseService.edit(courseId, mockCourseRequestDTO));
+    }
 
-//    @Test
-//    void testEditCourse_DifferentProvince() {
-//        long courseId = 1;
-//        long provinceId = 1, newProvinceId = 2;
-//        CourseRequestDTO mockCourseRequest = mock(CourseRequestDTO.class);
-//        Province newProvince = mock(Province.class);
-//
-//        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
-//
-//        //simulate different id's
-//        when(mockCourseRequest.getProvinceId()).thenReturn(newProvinceId);
-//        when(mockCourse.getProvince()).thenReturn(mockProvince);
-//        when(mockProvince.getId()).thenReturn(provinceId);
-//
-//        when(mockProvinceRepository.findById(newProvinceId)).thenReturn(Optional.of(newProvince));
-//        when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
-//
-//        assertEquals(mockCourse, courseService.edit(courseId, mockCourseRequest));
-//    }
+    @Test
+    void testEditCourse_DifferentProvince() {
+        long courseId = 1;
+        long originalProvinceId = 1;
+        long newProvinceId = 2;
+        Province mockNewProvince = mock(Province.class);
+        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
+        try (MockedStatic<Mapper> mockMapper = Mockito.mockStatic(Mapper.class)) {
+            when(mockCourseRequestDTO.getProvinceId()).thenReturn(newProvinceId);
+            when(mockCourse.getProvince()).thenReturn(mockProvince);
+            when(mockProvince.getId()).thenReturn(originalProvinceId);
+            when(mockProvinceRepository.findById(newProvinceId)).thenReturn(Optional.of(mockNewProvince));
+            when(mockCourseRepository.save(mockCourse)).thenReturn(mockCourse);
+            mockMapper.when(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class)).thenReturn(mockCourseResponseDTO);
+            assertEquals(mockCourseResponseDTO, courseService.edit(courseId, mockCourseRequestDTO));
+            verify(mockCourseRepository).save(mockCourse);
+            verify(mockCourse).setProvince(mockNewProvince);
+            mockMapper.verify(() -> Mapper.map(mockCourse, FullCourseResponseDTO.class));
+        }
+    }
+
+    @Test
+    void testEditCourse_DifferentProvinceIncorrectProvinceId() {
+        long courseId = 1;
+        long originalProvinceId = 1;
+        long newProvinceId = 2;
+        when(mockCourseRepository.findById(courseId)).thenReturn(Optional.of(mockCourse));
+        when(mockCourseRequestDTO.getProvinceId()).thenReturn(newProvinceId);
+        when(mockCourse.getProvince()).thenReturn(mockProvince);
+        when(mockProvince.getId()).thenReturn(originalProvinceId);
+        when(mockProvinceRepository.findById(newProvinceId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> courseService.edit(courseId, mockCourseRequestDTO));
+    }
 
     @Test
     void testDeleteById() {
