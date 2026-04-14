@@ -2,7 +2,7 @@
 
 Web application created for viewing and maintaining information on IT educational courses in the Netherlands. This project was conducted for the Software Engineering course in collaboration with 3 other Computing Science students.
 
-## Project Overview (for recruiters)
+## Project Overview
 
 IT Education Navigator is a full-stack web application that helps users discover and compare IT education options in the Netherlands. The platform provides searchable course data and secure functionality for maintaining course information.
 
